@@ -46,7 +46,7 @@ def changeWallpaper():
     ctypes.windll.user32.SystemParametersInfoW(
         SPI_SETDESKWALLPAPER,
         0,
-        None,
+        absolute_path,
         SPIF_UPDATEINIFILE | SPIF_SENDCHANGE,
     )
 
@@ -76,6 +76,10 @@ def set_wallpaper_per_monitor():
         r"C:\Users\Alexis\Documents\GitHub\WallpaperSwitch\Aoi Ogata.jpg",
         r"C:\Users\Alexis\Documents\GitHub\WallpaperSwitch\LucySexy.jpg",
     ]
+    wallpaper_path = [
+        # Replace with your actual image paths
+        r"C:\Users\Alexis\Documents\GitHub\WallpaperSwitch\MiniNez.png"
+    ]
 
     # Get number of monitors (optional)
     monitors = iad.GetMonitorDEsktopCount()
@@ -85,8 +89,8 @@ def set_wallpaper_per_monitor():
     # for i in range(min(monitors, len(wallpaper_paths))):
     #     iad.SetWallpaper(wallpaper_paths[i], i)
 
-    for i in range(min(monitors, len(wallpaper_paths))):
-        iad.SetWallpaper(wallpaper_paths[i], i)
+    for i in range(min(monitors, len(wallpaper_path))):
+        iad.SetWallpaper(wallpaper_path[i], i)
 
     # Apply changes
     iad.ApplyChanges(0x0002)  # AD_APPLY_FORCE
@@ -97,4 +101,4 @@ def set_wallpaper_per_monitor():
 
 # saveWallpaper("Alexis", "Aoi Ogata", "1")
 # changeWallpaper()
-# set_wallpaper_per_monitor()
+set_wallpaper_per_monitor()
