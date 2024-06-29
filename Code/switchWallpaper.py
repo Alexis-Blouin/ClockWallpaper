@@ -1,14 +1,8 @@
 import ctypes
 import os
+from time import sleep, strftime
 import win32api, win32con
 from PIL import Image, ImageDraw, ImageFont
-import comtypes.client
-
-# Generate the SHDocVw type library
-comtypes.client.GetModule("shdocvw.dll")
-
-# Import the generated SHDocVw module
-import comtypes.gen.SHDocVw as SHDocVw
 
 user = os.getlogin()
 
@@ -40,6 +34,40 @@ def saveWallpaper(imageName, ext, monitorId):
     )
 
 
+def addClock(imageName, ext):
+    path = f"Images/{imageName}{ext}"
+    img = Image.open(path)
+    # Get a drawing context
+    draw = ImageDraw.Draw(img)
+
+    # Set the font and position
+    font = ImageFont.load_default(300)  # You can use a custom font as well
+    width, height = img.size
+    x = 200
+    y = 350
+    positionHours = (x, y)
+    positionMinutess = (x + 200, y + 200)
+
+    # Set the text and color
+    hours = strftime("%H")
+    minutes = strftime("%M")
+    colorHours = (180, 16, 20)
+    colorMinutes = (245, 174, 51)
+
+    # Draw the text on the image
+    draw.text(
+        positionHours,
+        hours,
+        fill=colorHours,
+        font=font,
+    )
+    draw.text(positionMinutess, minutes, fill=colorMinutes, font=font)
+
+    # Save the modified image as a new JPEG file
+    output_path = f"Images/{imageName}_out{ext}"
+    img.save(output_path)
+
+
 def updateWallpaper():
     # Replace "username" with the actual username
     wallpaper_path = (
@@ -48,50 +76,13 @@ def updateWallpaper():
         + r"\AppData\Roaming\Microsoft\Windows\Themes\TranscodedWallpaper"
     )
     # Simulate a wallpaper change by sending a message
-    # win32api.SendMessage(win32con.HWND_BROADCAST, win32con.WM_DEACTIVATE, 0, 0)
+    # win32api.SendMessage(win32con.HWND_BROADCAST, win32con.WA_INACTIVE, 0, 0)
     # win32api.SendMessage(win32con.HWND_BROADCAST, win32con.WM_ACTIVATEAPP, 0, 0)
-    win32api.PostMessage(
-        win32con.HWND_BROADCAST, win32con.WM_SETTINGCHANGE, 0, "Environment"
-    )
+
+    SPI_SETDESKWALLPAPER = 20
+    ctypes.windll.user32.SystemParametersInfoA(SPI_SETDESKWALLPAPER, 0, None, 0)
 
 
-def set_wallpaper_per_monitor():
-    # Initialize COM
-    comtypes.CoInitialize()
-
-    CLSID_ActiveDesktop = comtypes.GUID("{75048700-EF1F-11D0-9888-006097DEACF9}")
-    # Create an instance of IActiveDesktop
-    iad = comtypes.client.CreateObject(CLSID_ActiveDesktop)
-
-    # Define the paths to your wallpapers for each monitor
-    wallpaper_paths = [
-        # Replace with your actual image paths
-        r"C:\Users\Alexis\Documents\GitHub\WallpaperSwitch\Images\MiniNez.png",
-        r"C:\Users\Alexis\Documents\GitHub\WallpaperSwitch\Images\Aoi Ogata.jpg",
-        r"C:\Users\Alexis\Documents\GitHub\WallpaperSwitch\Images\LucySexy.jpg",
-    ]
-    wallpaper_path = [
-        # Replace with your actual image paths
-        r"C:\Users\Alexis\Documents\GitHub\WallpaperSwitch\Images\MiniNez.png"
-    ]
-
-    # Get number of monitors (optional)
-    monitors = iad.GetMonitorDesktopCount()
-
-    # Set wallpaper for each monitor (using enumerate or explicit indices)
-    # Choose the method that suits your needs
-    # for i in range(min(monitors, len(wallpaper_paths))):
-    #     iad.SetWallpaper(wallpaper_paths[i], i)
-
-    for i in range(min(monitors, len(wallpaper_path))):
-        iad.SetWallpaper(wallpaper_path[i], i)
-
-    # Apply changes
-    iad.ApplyChanges(0x0002)  # AD_APPLY_FORCE
-
-    # Uninitialize COM
-    comtypes.CoUninitialize()
-
-
-saveWallpaper("Aoi ogata", ".jpg", "1")
-set_wallpaper_per_monitor()
+addClock("YorMirror", ".jpg")
+saveWallpaper("YorMirror_out", ".jpg", "1")
+updateWallpaper()
