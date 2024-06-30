@@ -5,29 +5,32 @@ import win32api, win32con
 from PIL import Image, ImageDraw, ImageFont
 
 user = os.getlogin()
+global_path = os.path.dirname(os.path.realpath(__file__))
+image_path = os.path.join(global_path, "..", "Images")
+font_path = os.path.join(global_path, "..", "Fonts")
 
 
-def saveWallpaper(imageName, ext, monitorId):
+def saveWallpaper(imageName, ext):
     winWallpaperPath = (
         r"C:\Users\\" + user + r"\AppData\Roaming\Microsoft\Windows\Themes"
     )
 
-    current_dir = os.path.dirname(os.path.abspath(__file__))
+    current_dir = global_path
     relative_path = os.path.join("..", "Images", imageName + ext)
     image = Image.open(os.path.join(current_dir, relative_path))
-    image.save(os.path.join(winWallpaperPath, f"Transcoded_00{monitorId}" + ext))
+    # image.save(os.path.join(winWallpaperPath, f"Transcoded_00{monitorId}" + ext))
     image.save(os.path.join(winWallpaperPath, f"TranscodedWallpaper" + ext))
 
-    if os.path.exists(os.path.join(winWallpaperPath, f"Transcoded_00{monitorId}")):
-        os.remove(os.path.join(winWallpaperPath, f"Transcoded_00{monitorId}"))
+    # if os.path.exists(os.path.join(winWallpaperPath, f"Transcoded_00{monitorId}")):
+    #     os.remove(os.path.join(winWallpaperPath, f"Transcoded_00{monitorId}"))
     if os.path.exists(os.path.join(winWallpaperPath, f"TranscodedWallpaper")):
         os.remove(os.path.join(winWallpaperPath, f"TranscodedWallpaper"))
 
     # # Renames the image to remove the extension
-    os.rename(
-        os.path.join(winWallpaperPath, "Transcoded_00" + monitorId + ext),
-        os.path.join(winWallpaperPath, "Transcoded_00" + monitorId),
-    )
+    # os.rename(
+    #     os.path.join(winWallpaperPath, "Transcoded_00" + monitorId + ext),
+    #     os.path.join(winWallpaperPath, "Transcoded_00" + monitorId),
+    # )
     os.rename(
         os.path.join(winWallpaperPath, "TranscodedWallpaper" + ext),
         os.path.join(winWallpaperPath, "TranscodedWallpaper"),
@@ -35,15 +38,16 @@ def saveWallpaper(imageName, ext, monitorId):
 
 
 def addClock(imageName, ext, font):
-    path = f"Images/{imageName}{ext}"
+    path = os.path.join(image_path, imageName + ext)
     img = Image.open(path)
     # Get a drawing context
     draw = ImageDraw.Draw(img)
 
     # Load the fonts
-    font_path = f"Fonts/{font}.ttf"
-    font = ImageFont.truetype(font_path, size=300)
-    fontSplit = ImageFont.truetype(font_path, size=150)
+    relative_path = os.path.join(font_path, f"{font}.ttf")
+    print(relative_path)
+    font = ImageFont.truetype(relative_path, size=300)
+    fontSplit = ImageFont.truetype(relative_path, size=150)
 
     x = 200
     y = 250
@@ -64,7 +68,7 @@ def addClock(imageName, ext, font):
     minutes = str(int(minutes) + 1)
     if len(minutes) == 1:
         minutes = "0" + minutes
-    colorHours = (180, 16, 20)
+    colorHours = (180, 255, 20)
     colorMinutes = (232, 156, 54)
 
     # Draw the text on the image
@@ -93,5 +97,7 @@ def updateWallpaper():
 
 
 addClock("YorMirror", ".jpg", "FiraMono-Regular")
-saveWallpaper("YorMirror_out", ".jpg", "1")
+saveWallpaper("YorMirror_out", ".jpg")
 updateWallpaper()
+print(os.path.dirname(os.path.realpath(__file__)))
+print(os.path.dirname(os.path.abspath(__file__)))
