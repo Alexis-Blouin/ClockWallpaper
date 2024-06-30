@@ -18,22 +18,32 @@ def saveWallpaper(imageName, ext):
     current_dir = global_path
     relative_path = os.path.join("..", "Images", imageName + ext)
     image = Image.open(os.path.join(current_dir, relative_path))
-    # image.save(os.path.join(winWallpaperPath, f"Transcoded_00{monitorId}" + ext))
     image.save(os.path.join(winWallpaperPath, f"TranscodedWallpaper" + ext))
 
-    # if os.path.exists(os.path.join(winWallpaperPath, f"Transcoded_00{monitorId}")):
-    #     os.remove(os.path.join(winWallpaperPath, f"Transcoded_00{monitorId}"))
     if os.path.exists(os.path.join(winWallpaperPath, f"TranscodedWallpaper")):
         os.remove(os.path.join(winWallpaperPath, f"TranscodedWallpaper"))
 
     # # Renames the image to remove the extension
-    # os.rename(
-    #     os.path.join(winWallpaperPath, "Transcoded_00" + monitorId + ext),
-    #     os.path.join(winWallpaperPath, "Transcoded_00" + monitorId),
-    # )
+
     os.rename(
         os.path.join(winWallpaperPath, "TranscodedWallpaper" + ext),
         os.path.join(winWallpaperPath, "TranscodedWallpaper"),
+    )
+
+
+def create_wallpaper(imageName, ext, monitor_id):
+    winWallpaperPath = (
+        r"C:\Users\\" + user + r"\AppData\Roaming\Microsoft\Windows\Themes"
+    )
+    current_dir = global_path
+    relative_path = os.path.join("..", "Images", imageName + ext)
+    image = Image.open(os.path.join(current_dir, relative_path))
+    image.save(os.path.join(winWallpaperPath, f"Transcoded_00{monitor_id}" + ext))
+    if os.path.exists(os.path.join(winWallpaperPath, f"Transcoded_00{monitor_id}")):
+        os.remove(os.path.join(winWallpaperPath, f"Transcoded_00{monitor_id}"))
+    os.rename(
+        os.path.join(winWallpaperPath, "Transcoded_00" + monitor_id + ext),
+        os.path.join(winWallpaperPath, "Transcoded_00" + monitor_id),
     )
 
 
@@ -71,11 +81,6 @@ def addClock(imageName, ext, font):
 
 def updateWallpaper():
     # Replace "username" with the actual username
-    wallpaper_path = (
-        r"C:\Users\\"
-        + user
-        + r"\AppData\Roaming\Microsoft\Windows\Themes\TranscodedWallpaper"
-    )
     # Simulate a wallpaper change by sending a message
     # win32api.SendMessage(win32con.HWND_BROADCAST, win32con.WA_INACTIVE, 0, 0)
     # win32api.SendMessage(win32con.HWND_BROADCAST, win32con.WM_ACTIVATEAPP, 0, 0)
@@ -105,17 +110,17 @@ def get_seconds():
 
 
 if __name__ == "__main__":
-    while get_seconds() != "00":
-        print(get_seconds())
-        sleep(1)
+    # while get_seconds() != "00":
+    #     print(get_seconds())
+    #     sleep(1)
     print(get_time())
     addClock("YorMirror", ".jpg", "FiraMono-Regular")
-    saveWallpaper("YorMirror_out", ".jpg")
+    # saveWallpaper("YorMirror_out", ".jpg")
+    create_wallpaper("YorMirror_out", ".jpg", "0")
     updateWallpaper()
 
 # TODO Wheen it noon, it writes AM, need to change this
 # TODO Make this all pretty
-# TODO create a aloop for 60 seconds that check if the clock change then make the change
 
 
 # TODO crate user interface where he can change a couple things like the font, the color, the position of the clock
