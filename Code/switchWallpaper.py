@@ -106,11 +106,14 @@ def get_seconds():
 
 if __name__ == "__main__":
     while get_seconds() != "00":
+        print(get_seconds())
         sleep(1)
+    print(get_time())
     addClock("YorMirror", ".jpg", "FiraMono-Regular")
     saveWallpaper("YorMirror_out", ".jpg")
     updateWallpaper()
 
+# TODO Wheen it noon, it writes AM, need to change this
 # TODO Make this all pretty
 # TODO create a aloop for 60 seconds that check if the clock change then make the change
 
