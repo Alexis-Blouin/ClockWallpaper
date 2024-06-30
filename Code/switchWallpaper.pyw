@@ -45,7 +45,6 @@ def addClock(imageName, ext, font):
 
     # Load the fonts
     relative_path = os.path.join(font_path, f"{font}.ttf")
-    print(relative_path)
     font = ImageFont.truetype(relative_path, size=300)
     fontSplit = ImageFont.truetype(relative_path, size=150)
 
@@ -68,7 +67,7 @@ def addClock(imageName, ext, font):
     minutes = str(int(minutes) + 1)
     if len(minutes) == 1:
         minutes = "0" + minutes
-    colorHours = (180, 255, 20)
+    colorHours = (180, 6, 20)
     colorMinutes = (232, 156, 54)
 
     # Draw the text on the image
@@ -77,7 +76,7 @@ def addClock(imageName, ext, font):
     draw.text(positionSplit, split, fill=colorHours, font=fontSplit)
 
     # Save the modified image as a new JPEG file
-    output_path = f"Images/{imageName}_out{ext}"
+    output_path = os.path.join(image_path, f"{imageName}_out{ext}")
     img.save(output_path)
 
 
@@ -99,5 +98,8 @@ def updateWallpaper():
 addClock("YorMirror", ".jpg", "FiraMono-Regular")
 saveWallpaper("YorMirror_out", ".jpg")
 updateWallpaper()
-print(os.path.dirname(os.path.realpath(__file__)))
-print(os.path.dirname(os.path.abspath(__file__)))
+
+# TODO Make this all pretty
+# TODO create a aloop for 60 seconds that check if the clock change then make the change
+
+# TODO crate user interface where he can change a couple things like the font, the color, the position of the clock
