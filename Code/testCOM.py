@@ -79,11 +79,11 @@ def main():
 
     desktop_wallpaper = IDesktopWallpaper.CoCreateInstance()
     monitor_count = desktop_wallpaper.GetMonitorDevicePathCount()
-    for i in range(monitor_count):
-        monitor_id = desktop_wallpaper.GetMonitorDevicePathAt(i)
-        wallpaper = random.choice(wallpapers)
-        print(wallpaper)
-        desktop_wallpaper.SetWallpaper(monitor_id, str(wallpaper))
+    # for i in range(monitor_count):
+    monitor_id = desktop_wallpaper.GetMonitorDevicePathAt(1)
+    wallpaper = random.choice(wallpapers)
+    print(wallpaper)
+    desktop_wallpaper.SetWallpaper(monitor_id, str(wallpaper))
 
 
 if __name__ == "__main__":
