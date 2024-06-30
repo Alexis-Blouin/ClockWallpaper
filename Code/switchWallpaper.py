@@ -34,34 +34,43 @@ def saveWallpaper(imageName, ext, monitorId):
     )
 
 
-def addClock(imageName, ext):
+def addClock(imageName, ext, font):
     path = f"Images/{imageName}{ext}"
     img = Image.open(path)
     # Get a drawing context
     draw = ImageDraw.Draw(img)
 
-    # Set the font and position
-    font = ImageFont.load_default(300)  # You can use a custom font as well
-    width, height = img.size
+    # Load the fonts
+    font_path = f"Fonts/{font}.ttf"
+    font = ImageFont.truetype(font_path, size=300)
+    fontSplit = ImageFont.truetype(font_path, size=150)
+
     x = 200
-    y = 350
+    y = 250
     positionHours = (x, y)
-    positionMinutess = (x + 200, y + 200)
+    positionMinutess = (x + 150, y + 150)
+    positionSplit = (x + 450, y + 450)
 
     # Set the text and color
+    split = "AM"
     hours = strftime("%H")
+    if int(hours) > 12:
+        hours = str(int(hours) - 12)
+        split = "PM"
+    if len(hours) == 1:
+        hours = "0" + hours
+
     minutes = strftime("%M")
+    minutes = str(int(minutes) + 1)
+    if len(minutes) == 1:
+        minutes = "0" + minutes
     colorHours = (180, 16, 20)
-    colorMinutes = (245, 174, 51)
+    colorMinutes = (232, 156, 54)
 
     # Draw the text on the image
-    draw.text(
-        positionHours,
-        hours,
-        fill=colorHours,
-        font=font,
-    )
+    draw.text(positionHours, hours, fill=colorHours, font=font)
     draw.text(positionMinutess, minutes, fill=colorMinutes, font=font)
+    draw.text(positionSplit, split, fill=colorHours, font=fontSplit)
 
     # Save the modified image as a new JPEG file
     output_path = f"Images/{imageName}_out{ext}"
@@ -83,6 +92,6 @@ def updateWallpaper():
     ctypes.windll.user32.SystemParametersInfoA(SPI_SETDESKWALLPAPER, 0, None, 0)
 
 
-addClock("YorMirror", ".jpg")
+addClock("YorMirror", ".jpg", "FiraMono-Regular")
 saveWallpaper("YorMirror_out", ".jpg", "1")
 updateWallpaper()
