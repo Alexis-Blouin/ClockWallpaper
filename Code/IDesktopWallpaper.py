@@ -6,10 +6,8 @@ from ctypes.wintypes import LPCWSTR, UINT, LPWSTR
 import comtypes
 from comtypes import IUnknown, GUID, COMMETHOD
 
-# from https://stackoverflow.com/questions/66375014/is-it-possible-to-use-idesktopwallpaper-in-python
 
-
-# noinspection PyPep8Naming
+# The code from this class comes from this page : https://stackoverflow.com/questions/66375014/is-it-possible-to-use-idesktopwallpaper-in-python
 class IDesktopWallpaper(IUnknown):
     # Ref: https://learn.microsoft.com/en-us/windows/win32/api/shobjidl_core/nn-shobjidl_core-idesktopwallpaper
 
@@ -69,22 +67,3 @@ class IDesktopWallpaper(IUnknown):
         count = UINT()
         self.__com_GetMonitorDevicePathCount(pointer(count))
         return count.value
-
-
-IMG_LIBRARY_DIR = Path("C:/Users/Alexis/Documents/GitHub/ClockWallpaper/Images")
-
-
-def main():
-    wallpapers = [*map(str, IMG_LIBRARY_DIR.iterdir())]
-
-    desktop_wallpaper = IDesktopWallpaper.CoCreateInstance()
-    monitor_count = desktop_wallpaper.GetMonitorDevicePathCount()
-    # for i in range(monitor_count):
-    monitor_id = desktop_wallpaper.GetMonitorDevicePathAt(1)
-    wallpaper = random.choice(wallpapers)
-    print(wallpaper)
-    desktop_wallpaper.SetWallpaper(monitor_id, str(wallpaper))
-
-
-if __name__ == "__main__":
-    main()
