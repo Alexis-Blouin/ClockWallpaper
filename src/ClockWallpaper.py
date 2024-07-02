@@ -13,7 +13,7 @@ font_path = os.path.join(global_path, "..", "Fonts")
 class ClockWallpaper:
 
     def addClock(self, imageName, ext, font):
-        path = os.path.join(image_path, imageName + ext)
+        path = os.path.join(image_path, imageName + "." + ext)
         img = Image.open(path)
         # Get a drawing context
         draw = ImageDraw.Draw(img)
@@ -40,7 +40,7 @@ class ClockWallpaper:
         draw.text(positionSplit, day_split, fill=colorHours, font=fontSplit)
 
         # Save the modified image as a new JPEG file
-        output_path = os.path.join(image_path, f"{imageName}_out{ext}")
+        output_path = os.path.join(image_path, f"{imageName}_out.{ext}")
         img.save(output_path)
 
     def get_time(self):

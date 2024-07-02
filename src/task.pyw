@@ -1,5 +1,5 @@
-import ClockWallpaper as cw
-import IDesktopWallpaper as idw
+import clockWallpaper as cw
+import iDesktopWallpaper as idw
 from time import sleep
 
 
