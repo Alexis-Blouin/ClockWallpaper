@@ -13,9 +13,7 @@ if __name__ == "__main__":
 
     desktop_wallpaper = idw.IDesktopWallpaper.CoCreateInstance()
     monitor_id = desktop_wallpaper.GetMonitorDevicePathAt(1)
-    wallpaper = (
-        "C:/Users/Alexis/Documents/GitHub/ClockWallpaper/Images/YorMirror_out.jpg"
-    )
+    wallpaper = "C:\\Users\\Alexis\\Documents\\GitHub\\ClockWallpaper\\Images\\YorMirror_out.jpg"
     desktop_wallpaper.SetWallpaper(monitor_id, wallpaper)
 
 
