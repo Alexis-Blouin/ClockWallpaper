@@ -9,7 +9,7 @@ if __name__ == "__main__":
     while clockWallpaper.get_seconds() != "00":
         sleep(1)
 
-    clockWallpaper.addClock("YorMirror", ".jpg", "FiraMono-Regular")
+    clockWallpaper.addClock("YorMirror", "jpg", "FiraMono-Regular", "ttf")
 
     desktop_wallpaper = idw.IDesktopWallpaper.CoCreateInstance()
     monitor_id = desktop_wallpaper.GetMonitorDevicePathAt(1)

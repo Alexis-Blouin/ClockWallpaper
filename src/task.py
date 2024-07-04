@@ -18,16 +18,23 @@ if __name__ == "__main__":
         config = configEditor.get_default_section()
 
     full_image_name = config["fullimagename"]
-    path = config["imagespath"]
+    images_path = config["imagespath"]
+    monitor_id = int(config["monitorid"])
+    full_font_name = config["fullfontname"]
+    
     image_parts = full_image_name.split(".")
     image_name = image_parts[0]
     image_ext = image_parts[1]
-    wallpaper = path + "\\" + image_name + "_out." + image_ext
+    wallpaper = images_path + "\\" + image_name + "_out." + image_ext
+    
+    font_parts = full_font_name.split(".")
+    font_name = font_parts[0]
+    font_ext = font_parts[1]
 
-    clockWallpaper.addClock(image_name, image_ext, "FiraMono-Regular")
+    clockWallpaper.addClock(image_name, image_ext, font_name, font_ext)
 
     desktop_wallpaper = IDesktopWallpaper.CoCreateInstance()
-    monitor_id = desktop_wallpaper.GetMonitorDevicePathAt(int(config["monitorid"]))
+    monitor_id = desktop_wallpaper.GetMonitorDevicePathAt(monitor_id)
     desktop_wallpaper.SetWallpaper(monitor_id, wallpaper)
 
 
