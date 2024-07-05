@@ -1,47 +1,44 @@
-import ctypes
 import os
-from time import sleep, strftime
-import win32api, win32con
+from time import strftime
 from PIL import Image, ImageDraw, ImageFont
-
-user = os.getlogin()
-global_path = os.path.dirname(os.path.realpath(__file__))
-image_path = os.path.join(global_path, "..", "Images")
-font_path = os.path.join(global_path, "..", "Fonts")
 
 
 class ClockWallpaper:
+    def add_clock(self, config):        
+        images_path = config["imagespath"]
+        full_image_name = config["fullimagename"]
+        image_parts = full_image_name.split(".")
+        image_name = image_parts[0]
+        image_ext = image_parts[1]
+        
+        fonts_path = config["fontspath"]
+        full_font_name = config["fullfontname"]
+        font_parts = full_font_name.split(".")
+        font_name = font_parts[0]
+        font_ext = font_parts[1]
+        
+        draw, img = self.__open_image(images_path, image_name, image_ext)
 
-    def addClock(self, image_name, image_ext, font, font_ext):
-        path = os.path.join(image_path, image_name + "." + image_ext)
-        img = Image.open(path)
-        # Get a drawing context
-        draw = ImageDraw.Draw(img)
+        hours_params = config["hours"].split(",")
+        minutes_params = config["minutes"].split(",")
+        split_params = config["split"].split(",")
+        
+        positionHours, positionMinutes, positionSplit = self.__set_position([hours_params, minutes_params, split_params])
+        
+        hours_color = self.__set_color(hours_params)
+        minutes_color = self.__set_color(minutes_params)
+        split_color = self.__set_color(split_params)
+        
+        hours_font = self.__set_font(fonts_path, font_name, font_ext, hours_params)
+        minutes_font = self.__set_font(fonts_path, font_name, font_ext, minutes_params)
+        split_font = self.__set_font(fonts_path, font_name, font_ext, split_params)
 
-        # Load the fonts
-        relative_path = os.path.join(font_path, f"{font}.{font_ext}")
-        font = ImageFont.truetype(relative_path, size=300)
-        fontSplit = ImageFont.truetype(relative_path, size=150)
-
-        x = 200
-        y = 250
-        positionHours = (x, y)
-        positionMinutess = (x + 150, y + 150)
-        positionSplit = (x + 450, y + 450)
-
-        # Set the text and color
         hours, minutes, day_split = self.get_time()
-        colorHours = (180, 6, 20)
-        colorMinutes = (232, 156, 54)
+        self.__draw_clock(draw, positionHours, hours, hours_color, hours_font)
+        self.__draw_clock(draw, positionMinutes, minutes, minutes_color, minutes_font)
+        self.__draw_clock(draw, positionSplit, day_split, split_color, split_font)
 
-        # Draw the text on the image
-        draw.text(positionHours, hours, fill=colorHours, font=font)
-        draw.text(positionMinutess, minutes, fill=colorMinutes, font=font)
-        draw.text(positionSplit, day_split, fill=colorHours, font=fontSplit)
-
-        # Save the modified image as a new JPEG file
-        output_path = os.path.join(image_path, f"{image_name}_out.{image_ext}")
-        img.save(output_path)
+        self.__save_image(img, images_path, image_name, image_ext)
 
     def get_time(self):
         day_split = "AM"
@@ -60,3 +57,28 @@ class ClockWallpaper:
 
     def get_seconds(self):
         return strftime("%S")
+    
+    def __open_image(self, images_path, image_name, image_ext):
+        path = os.path.join(images_path, f"{image_name}.{image_ext}")
+        img = Image.open(path)
+        return ImageDraw.Draw(img), img
+    
+    def __save_image(self, img, images_path, image_name, image_ext):
+        output_path = os.path.join(images_path, f"{image_name}_time.{image_ext}")
+        img.save(output_path)
+        
+    def __set_position(self, params):
+        result = []
+        for param in params:
+            result.append((int(param[0]), int(param[1])))
+        return result[0], result[1], result[2]
+    
+    def __set_color(self, params):
+        return (int(params[2]), int(params[3]), int(params[4]))
+    
+    def __set_font(self, fonts_path, font_name, font_ext, params):
+        font_path = os.path.join(fonts_path, f"{font_name}.{font_ext}")
+        return ImageFont.truetype(font_path, size=int(params[5]))
+    
+    def __draw_clock(self, draw, position, text, color, font):
+        draw.text(position, text, fill=color, font=font)

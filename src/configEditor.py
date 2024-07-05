@@ -19,35 +19,62 @@ class ConfigEditor:
             "YorMirror.jpg",
             "FiraMono-Regular.ttf",
             "1",
+            "200,250,300,180,6,20",
+            "400,450,300,232,156,54",
+            "400,450,150,180,6,20"
         )
         with open("../config/config.ini", "w") as configfile:
             self.config.write(configfile)
 
-    def add_user_section(
-        self, username, images_path, fonts_path, image_name, font_name, monitor_id
+    def add_section(
+        self,
+        config_name,
+        images_path,
+        fonts_path,
+        image_name,
+        font_name,
+        monitor_id,
+        hours,
+        minutes,
+        split
     ):
         self.config.read("config/config.ini")
-        self.config.add_section(username)
-        self.config[username] = self.__set_param(
+        self.config.add_section(config_name)
+        self.config[config_name] = self.__set_param(
             images_path,
             fonts_path,
             image_name,
             font_name,
-            monitor_id
+            monitor_id,
+            hours,
+            minutes,
+            split
         )
         with open("../config/config.ini", "w") as configfile:
             self.config.write(configfile)
 
-    def modify_user_section(
-        self, username, images_path, fonts_path, image_name,font_name, monitor_id
+    def modify_section(
+        self,
+        config_name,
+        images_path,
+        fonts_path,
+        image_name,
+        font_name,
+        monitor_id,
+        hours,
+        minutes,
+        split
     ):
         self.config.read("../config/config.ini")
-        self.config[username] = self.__set_param(
+        self.config[config_name] = self.__set_param(
             images_path,
             fonts_path,
             image_name,
             font_name,
-            monitor_id
+            monitor_id,
+            hours,
+            minutes,
+            split
         )
         with open("../config/config.ini", "w") as configfile:
             self.config.write(configfile)
@@ -56,21 +83,41 @@ class ConfigEditor:
         self.config.read("../config/config.ini")
         return self.config.defaults()
 
-    def get_user_section(self, username):
-        self.config.read("../config/config.ini")
+    def get_section(self, config_name):
+        self.__read_config
         values = {}
-        if username in self.config.sections():
-            for key in self.config[username]:
-                values[key] = self.config[username][key]
+        if config_name in self.config.sections():
+            for key in self.config[config_name]:
+                values[key] = self.config[config_name][key]
             return values
         else:
             return values
+        
+    def set_config(self, config_name):
+        self.__read_config()
+        
 
-    def __set_param(self, image_path, font_path, image_name, font_name, monitor_id):
+    def __set_param(
+            self,
+            images_path,
+            fonts_path,
+            image_name,
+            font_name,
+            monitor_id,
+            hours,
+            minutes,
+            split
+    ):
         return {
-            "imagespath": image_path,
-            "fontspath": font_path,
+            "imagespath": images_path,
+            "fontspath": fonts_path,
             "fullimagename": image_name,
             "fullfontname": font_name,
             "monitorid": monitor_id,
+            "hours": hours,
+            "minutes": minutes,
+            "split": split
         }
+        
+    def __read_config(self):
+        self.config.read("../config/config.ini")
