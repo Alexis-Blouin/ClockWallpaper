@@ -1,55 +1,60 @@
-import configparser
-import os
-from configEditor import ConfigEditor
+import tkinter as tk
+from tkinter import filedialog, colorchooser
 
-# https://docs.python.org/3.4/library/configparser.html#quick-start
+class Example(tk.Frame):
+    def __init__(self, parent):
+        tk.Frame.__init__(self, parent)
+
+        # create a prompt, an input box, an output label,
+        # and a button to do the computation
+        self.prompt = tk.Label(self, text="Enter a number:", anchor="w")
+        self.entry = tk.Entry(self)
+        self.prompt = tk.Label(self, text="Select a repo:", anchor="w")
+        self.prompt = tk.Label(self, text="Select a repo:", anchor="w")
+        self.submit = tk.Button(self, text="Submit", command = self.calculate)
+        self.button = tk.Button(self, text="Submit", command = self.select_directory)
+        self.color = tk.Button(self, text="Submit", command = self.choose_color)
+        self.output = tk.Label(self, text="")
+
+        # lay the widgets out on the screen. 
+        self.prompt.pack(side="top", fill="x")
+        self.entry.pack(side="top", fill="x", padx=20)
+        self.output.pack(side="top", fill="x", expand=True)
+        self.button.pack(side="top", fill="x", expand=True)
+        self.color.pack(side="top", fill="x", expand=True)
+        self.submit.pack(side="right")
+
+    def calculate(self):
+        # get the value from the input widget, convert
+        # it to an int, and do a calculation
+        try:
+            i = int(self.entry.get())
+            result = "%s*2=%s" % (i, i*2)
+        except ValueError:
+            result = "Please enter digits only"
+
+        # set the output widget to have our result
+        self.output.configure(text=result)
+        
+    def select_directory(self):
+        #https://pythonspot.com/tk-file-dialogs/
+        #ask the user to select a directory
+        directory = filedialog.askopenfilename(title="Select Folder")
+        #ask the user to select a file, then we get the ful path
+        directory = filedialog.askopenfilename(title="Select File")
+        print(directory)
+        
+    def choose_color(self):
+        #https://pythonspot.com/tk-color-picker/
+        #ask the user to select a color
+        color = colorchooser.askcolor()
+        print(color)
+
+# if this is run as a program (versus being imported),
+# create a root window and an instance of our example,
+# then start the event loop
 
 if __name__ == "__main__":
-    configEditor = ConfigEditor()
-    USERNAME = os.getlogin()
-    action = input(
-        "What do you want to do? (1-add, 2-read a config, 3-read default, 4-reset to default, 5-set a congif): "
-    )
-    match action:
-        case "1":
-            config_name = input("Config Name: ")
-            config = configEditor.get_section(config_name)
-            if config:
-                print("This config already exists")
-                print(config["imagespath"])
-            images_path = input("Images Path: ")
-            if config:
-                print(config["fontspath"])
-            fonts_path = input("Fonts Path: ")
-            if config:
-                print(config["imagename"])
-            image_name = input("Image Name: ")
-            if config:
-                print(config["fontname"])
-            font_name = input("Font Name: ")
-            if config:
-                print(config["monitorid"])
-            monitor_id = input("Monitor Id: ")
-            if config:
-                configEditor.modify_section(
-                    config_name, images_path, fonts_path, image_name, font_name, monitor_id, "200,250,300,180,6,20", "400,450,300,232,156,54", "650,700,150,180,6,20"
-                )
-            else:
-                configEditor.add_section(
-                    config_name, images_path, fonts_path, image_name, font_name, monitor_id, "200,250,300,180,6,20", "400,450,300,232,156,54", "650,700,150,180,6,20"
-                )
-        case "2":
-            config_name = input("Config Name: ")
-            config = configEditor.get_section(config_name)
-            if config:
-                print(config)
-            else:
-                print("This config doesn't exist")
-        case "3":
-            print(configEditor.get_default_section())
-        case "4":
-            configEditor.set_default_section()
-        case "5":
-            configEditor.set_config()
-        case _:
-            print("Invalid action")
+    root = tk.Tk()
+    Example(root).pack(fill="both", expand=True)
+    root.mainloop()
