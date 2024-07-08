@@ -20,7 +20,7 @@ if __name__ == "__main__":
     full_image_name = config["fullimagename"]
     images_path = config["imagespath"]
     monitor_id = int(config["monitorid"])
-    
+
     image_parts = full_image_name.split(".")
     image_name = image_parts[0]
     image_ext = image_parts[1]

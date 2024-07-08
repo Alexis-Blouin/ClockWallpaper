@@ -7,7 +7,7 @@ class ConfigEditor:
 
     def __init__(self) -> None:
         self.config = configparser.ConfigParser()
-        
+
         if not os.path.exists("../config/config.ini"):
             self.set_default_section()
 
@@ -21,7 +21,7 @@ class ConfigEditor:
             "1",
             "200,250,300,180,6,20",
             "400,450,300,232,156,54",
-            "400,450,150,180,6,20"
+            "400,450,150,180,6,20",
         )
         with open("../config/config.ini", "w") as configfile:
             self.config.write(configfile)
@@ -36,7 +36,7 @@ class ConfigEditor:
         monitor_id,
         hours,
         minutes,
-        split
+        split,
     ):
         self.config.read("config/config.ini")
         self.config.add_section(config_name)
@@ -48,7 +48,7 @@ class ConfigEditor:
             monitor_id,
             hours,
             minutes,
-            split
+            split,
         )
         with open("../config/config.ini", "w") as configfile:
             self.config.write(configfile)
@@ -63,7 +63,7 @@ class ConfigEditor:
         monitor_id,
         hours,
         minutes,
-        split
+        split,
     ):
         self.config.read("../config/config.ini")
         self.config[config_name] = self.__set_param(
@@ -74,7 +74,7 @@ class ConfigEditor:
             monitor_id,
             hours,
             minutes,
-            split
+            split,
         )
         with open("../config/config.ini", "w") as configfile:
             self.config.write(configfile)
@@ -92,21 +92,20 @@ class ConfigEditor:
             return values
         else:
             return values
-        
+
     def set_config(self, config_name):
         self.__read_config()
-        
 
     def __set_param(
-            self,
-            images_path,
-            fonts_path,
-            image_name,
-            font_name,
-            monitor_id,
-            hours,
-            minutes,
-            split
+        self,
+        images_path,
+        fonts_path,
+        image_name,
+        font_name,
+        monitor_id,
+        hours,
+        minutes,
+        split,
     ):
         return {
             "imagespath": images_path,
@@ -116,8 +115,8 @@ class ConfigEditor:
             "monitorid": monitor_id,
             "hours": hours,
             "minutes": minutes,
-            "split": split
+            "split": split,
         }
-        
+
     def __read_config(self):
         self.config.read("../config/config.ini")

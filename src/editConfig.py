@@ -32,11 +32,27 @@ if __name__ == "__main__":
             monitor_id = input("Monitor Id: ")
             if config:
                 configEditor.modify_section(
-                    config_name, images_path, fonts_path, image_name, font_name, monitor_id, "200,250,300,180,6,20", "400,450,300,232,156,54", "650,700,150,180,6,20"
+                    config_name,
+                    images_path,
+                    fonts_path,
+                    image_name,
+                    font_name,
+                    monitor_id,
+                    "200,250,300,180,6,20",
+                    "400,450,300,232,156,54",
+                    "650,700,150,180,6,20",
                 )
             else:
                 configEditor.add_section(
-                    config_name, images_path, fonts_path, image_name, font_name, monitor_id, "200,250,300,180,6,20", "400,450,300,232,156,54", "650,700,150,180,6,20"
+                    config_name,
+                    images_path,
+                    fonts_path,
+                    image_name,
+                    font_name,
+                    monitor_id,
+                    "200,250,300,180,6,20",
+                    "400,450,300,232,156,54",
+                    "650,700,150,180,6,20",
                 )
         case "2":
             config_name = input("Config Name: ")
