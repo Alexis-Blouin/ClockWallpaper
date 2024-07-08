@@ -58,6 +58,20 @@ class ClockWallpaper:
     def get_seconds(self):
         return strftime("%S")
     
+    def check_image(self, image_path):
+        try:
+            Image.open(image_path)
+            return True
+        except:
+            return False
+    
+    def check_font(self, font_path):
+        try:
+            ImageFont.truetype(font_path)
+            return True
+        except:
+            return False
+    
     def __open_image(self, images_path, image_name, image_ext):
         path = os.path.join(images_path, f"{image_name}.{image_ext}")
         img = Image.open(path)
