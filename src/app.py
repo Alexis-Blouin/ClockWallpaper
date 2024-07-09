@@ -1,132 +1,193 @@
 import tkinter as tk
+import screeninfo
 from tkinter import filedialog, colorchooser, ttk, messagebox
 from clockWallpaper import ClockWallpaper
+from configEditor import ConfigEditor
 
 
 class Example(tk.Frame):
     def __init__(self, parent):
         tk.Frame.__init__(self, parent)
 
-        # Image picker
+        # Conf name
+        self.conf_name_label = tk.Label(self, text="Configuration name:", anchor="w")
+        self.conf_name_entry = tk.Entry(self)
+
+        # Image
         self.img_label = tk.Label(self, text="Choose image:", anchor="w")
         self.img_entry = tk.Entry(self)
         self.img_button = tk.Button(
             self, text="...", command=lambda: self.select_file("image")
         )
 
-        # Font picker
+        # Font
         self.font_label = tk.Label(self, text="Choose font:", anchor="w")
         self.font_entry = tk.Entry(self)
         self.font_button = tk.Button(
             self, text="...", command=lambda: self.select_file("font")
         )
 
-        # Monitor picker
+        # Monitor
         self.monitor_label = tk.Label(self, text="Choose monitor:", anchor="w")
-        self.monitor_combo = ttk.Combobox(
-            self, values=["Monitor 1", "Monitor 2", "Monitor 3"]
-        )
+        monitor_count = self.get_monitor_count()
+        values = []
+        for i in range(monitor_count):
+            values.append(f"Monitor {i + 1}")
+        self.monitor_combo = ttk.Combobox(self, values=values)
         self.monitor_combo.current(0)
         self.monitor_combo.bind("<<ComboboxSelected>>", self.monitor_selected)
 
         # Position
-        self.hours_position_label = tk.Label(self, text="Position hours", anchor="w")
+        self.position_label = tk.Label(self, text="Position", anchor="w")
+
+        self.hours_position_label = tk.Label(self, text="Hours", anchor="w")
         self.hours_position_x_label = tk.Label(self, text="X", anchor="w")
         self.hours_position_x = tk.Entry(self)
         self.hours_position_y_label = tk.Label(self, text="Y", anchor="w")
         self.hours_position_y = tk.Entry(self)
 
-        self.minutes_position_label = tk.Label(
-            self, text="Position minutes", anchor="w"
-        )
+        self.minutes_position_label = tk.Label(self, text="Minutes", anchor="w")
         self.minutes_position_x_label = tk.Label(self, text="X", anchor="w")
         self.minutes_position_x = tk.Entry(self)
         self.minutes_position_y_label = tk.Label(self, text="Y", anchor="w")
         self.minutes_position_y = tk.Entry(self)
 
-        self.split_position_label = tk.Label(self, text="Position split", anchor="w")
+        self.split_position_label = tk.Label(self, text="Split", anchor="w")
         self.split_position_x_label = tk.Label(self, text="X", anchor="w")
         self.split_position_x = tk.Entry(self)
         self.split_position_y_label = tk.Label(self, text="Y", anchor="w")
         self.split_position_y = tk.Entry(self)
 
         # Size
-        self.hours_size_label = tk.Label(self, text="Size hours", anchor="w")
+        self.size_label = tk.Label(self, text="Size", anchor="w")
+
+        self.hours_size_label = tk.Label(self, text="Hours", anchor="w")
         self.hours_size = tk.Entry(self)
-        self.minutes_size_label = tk.Label(self, text="Size minutes", anchor="w")
+        self.minutes_size_label = tk.Label(self, text="Minutes", anchor="w")
         self.minutes_size = tk.Entry(self)
-        self.split_size_label = tk.Label(self, text="Size split", anchor="w")
+        self.split_size_label = tk.Label(self, text="Split", anchor="w")
         self.split_size = tk.Entry(self)
 
         # Color
-        self.hours_color_label = tk.Label(self, text="Color hours", anchor="w")
+        self.color_label = tk.Label(self, text="Color", anchor="w")
+
+        self.hours_color_label = tk.Label(self, text="Hours", anchor="w")
+        self.hours_color_entry = tk.Entry(self)
+        # TODO modify color picker to take entry argument
         self.hours_color = tk.Button(self, text="Pick", command=self.choose_color)
-        self.minutes_color_label = tk.Label(self, text="Color minutes", anchor="w")
+        self.minutes_color_label = tk.Label(self, text="Minutes", anchor="w")
+        self.minutes_color_entry = tk.Entry(self)
         self.minutes_color = tk.Button(self, text="Pick", command=self.choose_color)
-        self.split_color_label = tk.Label(self, text="Color split", anchor="w")
+        self.split_color_label = tk.Label(self, text="Split", anchor="w")
+        self.split_color_entry = tk.Entry(self)
         self.split_color = tk.Button(self, text="Pick", command=self.choose_color)
 
+        # Cancel button
+        self.cancel_button = tk.Button(self, text="Cancel", command=self.__cancel)
         # Save button
-        self.save_button = tk.Button(self, text="Save", command=self.__verify_inputs)
+        self.save_button = tk.Button(self, text="Save", command=self.__save_config)
 
         # Show the options
+        row_num = 0
         # TODO check colspan, cause not working...
-        self.img_label.grid(column=0, row=0, sticky="ew", padx=5, pady=5)
-        self.img_entry.grid(column=1, row=0, columnspan=2, sticky="ew", padx=5, pady=5)
-        self.img_button.grid(column=3, row=0, padx=5, pady=5)
+        # Conf name
+        self.conf_name_label.grid(row=row_num, column=0, sticky="ew", padx=5, pady=5)
+        self.conf_name_entry.grid(row=row_num, column=1, sticky="ew", padx=5, pady=5)
+        row_num += 1
 
-        self.font_label.grid(column=0, row=1, sticky="ew", padx=5, pady=5)
-        self.font_entry.grid(column=1, row=1, columnspan=2, sticky="ew", padx=5, pady=5)
-        self.font_button.grid(column=3, row=1, padx=5, pady=5)
+        # Image
+        self.img_label.grid(row=row_num, column=0, sticky="ew", padx=5, pady=5)
+        self.img_entry.grid(
+            row=row_num, column=1, columnspan=2, sticky="ew", padx=5, pady=5
+        )
+        self.img_button.grid(row=row_num, column=3, sticky="ew", padx=5, pady=5)
+        row_num += 1
 
-        self.monitor_label.grid(column=0, row=2, sticky="ew", padx=5, pady=5)
-        self.monitor_combo.grid(column=1, row=2, sticky="ew", padx=5, pady=5)
+        # Font
+        self.font_label.grid(row=row_num, column=0, sticky="ew", padx=5, pady=5)
+        self.font_entry.grid(
+            row=row_num, column=1, columnspan=2, sticky="ew", padx=5, pady=5
+        )
+        self.font_button.grid(row=row_num, column=3, sticky="ew", padx=5, pady=5)
+        row_num += 1
 
-        self.hours_position_label.grid(column=0, row=3, sticky="ew", padx=5, pady=5)
-        self.hours_position_x_label.grid(column=0, row=4, sticky="w", padx=5)
-        self.hours_position_x.grid(column=1, row=4, sticky="ew", padx=5)
-        self.hours_position_y_label.grid(column=0, row=5, sticky="w", padx=5)
-        self.hours_position_y.grid(column=1, row=5, sticky="ew", padx=5)
+        # Monitor
+        self.monitor_label.grid(row=row_num, column=0, sticky="ew", padx=5, pady=5)
+        self.monitor_combo.grid(row=row_num, column=1, sticky="ew", padx=5, pady=5)
+        row_num += 1
 
-        self.minutes_position_label.grid(column=0, row=6, sticky="ew", padx=5, pady=5)
-        self.minutes_position_x_label.grid(column=0, row=7, sticky="w", padx=5)
-        self.minutes_position_x.grid(column=1, row=7, sticky="ew", padx=5)
-        self.minutes_position_y_label.grid(column=0, row=8, sticky="w", padx=5)
-        self.minutes_position_y.grid(column=1, row=8, sticky="ew", padx=5)
+        # Position
+        self.position_label.grid(row=row_num, column=0, sticky="ew", padx=5, pady=5)
+        row_num += 1
 
-        self.split_position_label.grid(column=0, row=9, sticky="ew", padx=5, pady=5)
-        self.split_position_x_label.grid(column=0, row=10, sticky="w", padx=5)
-        self.split_position_x.grid(column=1, row=10, sticky="ew", padx=5)
-        self.split_position_y_label.grid(column=0, row=11, sticky="w", padx=5)
-        self.split_position_y.grid(column=1, row=11, sticky="ew", padx=5)
+        self.hours_position_label.grid(row=row_num, column=0, sticky="ew", padx=5)
+        row_num += 1
+        self.hours_position_x_label.grid(row=row_num, column=0, sticky="w", padx=5)
+        self.hours_position_x.grid(row=row_num, column=1, sticky="ew", padx=5)
+        row_num += 1
+        self.hours_position_y_label.grid(row=row_num, column=0, sticky="w", padx=5)
+        self.hours_position_y.grid(row=row_num, column=1, sticky="ew", padx=5)
+        row_num += 1
 
-        # self.hours_size_label.pack(side="top", fill="x")
-        # self.hours_size.pack(side="top", fill="x", expand=True)
-        # self.minutes_size_label.pack(side="top", fill="x")
-        # self.minutes_size.pack(side="top", fill="x", expand=True)
-        # self.split_size_label.pack(side="top", fill="x")
-        # self.split_size.pack(side="top", fill="x", expand=True)
+        self.minutes_position_label.grid(row=row_num, column=0, sticky="ew", padx=5)
+        row_num += 1
+        self.minutes_position_x_label.grid(row=row_num, column=0, sticky="w", padx=5)
+        self.minutes_position_x.grid(row=row_num, column=1, sticky="ew", padx=5)
+        row_num += 1
+        self.minutes_position_y_label.grid(row=row_num, column=0, sticky="w", padx=5)
+        self.minutes_position_y.grid(row=row_num, column=1, sticky="ew", padx=5)
+        row_num += 1
 
-        # self.hours_color_label.pack(side="top", fill="x")
-        # self.hours_color.pack(side="top", fill="x", expand=True)
-        # self.minutes_color_label.pack(side="top", fill="x")
-        # self.minutes_color.pack(side="top", fill="x", expand=True)
-        # self.split_color_label.pack(side="top", fill="x")
-        # self.split_color.pack(side="top", fill="x", expand=True)
+        self.split_position_label.grid(row=row_num, column=0, sticky="ew", padx=5)
+        row_num += 1
+        self.split_position_x_label.grid(row=row_num, column=0, sticky="w", padx=5)
+        self.split_position_x.grid(row=row_num, column=1, sticky="ew", padx=5)
+        row_num += 1
+        self.split_position_y_label.grid(row=row_num, column=0, sticky="w", padx=5)
+        self.split_position_y.grid(row=row_num, column=1, sticky="ew", padx=5)
+        row_num += 1
 
-        # self.save_button.pack(side="top", fill="x", expand=True)
+        # Size
+        self.size_label.grid(row=row_num, column=0, sticky="ew", padx=5, pady=5)
+        row_num += 1
+        self.hours_size_label.grid(row=row_num, column=0, sticky="ew", padx=5)
+        self.hours_size.grid(row=row_num, column=1, sticky="ew", padx=5)
+        row_num += 1
+        self.minutes_size_label.grid(row=row_num, column=0, sticky="ew", padx=5)
+        self.minutes_size.grid(row=row_num, column=1, sticky="ew", padx=5)
+        row_num += 1
+        self.split_size_label.grid(row=row_num, column=0, sticky="ew", padx=5)
+        self.split_size.grid(row=row_num, column=1, sticky="ew", padx=5)
+        row_num += 1
 
-    def calculate(self):
-        # get the value from the input widget, convert
-        # it to an int, and do a calculation
-        try:
-            i = int(self.entry.get())
-            result = "%s*2=%s" % (i, i * 2)
-        except ValueError:
-            result = "Please enter digits only"
+        # Color
+        self.color_label.grid(row=row_num, column=0, sticky="ew", padx=5, pady=5)
+        row_num += 1
+        self.hours_color_label.grid(row=row_num, column=0, sticky="ew", padx=5)
+        self.hours_color_entry.grid(row=row_num, column=1, sticky="ew", padx=5)
+        self.hours_color.grid(row=row_num, column=2, sticky="ew", padx=5)
+        row_num += 1
+        self.minutes_color_label.grid(row=row_num, column=0, sticky="ew", padx=5)
+        self.minutes_color_entry.grid(row=row_num, column=1, sticky="ew", padx=5)
+        self.minutes_color.grid(row=row_num, column=2, sticky="ew", padx=5)
+        row_num += 1
+        self.split_color_label.grid(row=row_num, column=0, sticky="ew", padx=5)
+        self.split_color_entry.grid(row=row_num, column=1, sticky="ew", padx=5)
+        self.split_color.grid(row=row_num, column=2, sticky="ew", padx=5)
+        row_num += 1
 
-        # set the output widget to have our result
-        self.output.configure(text=result)
+        # Cancel button
+        self.cancel_button.grid(row=row_num, column=2, sticky="ew", padx=5, pady=5)
+        # Save button
+        self.save_button.grid(row=row_num, column=3, sticky="ew", padx=5, pady=5)
+
+    def get_monitor_count(self):
+        infos = screeninfo.get_monitors()
+        res = []
+        for info in infos:
+            res.append((info.width, info.height))
+        # TODO use the res to modify image before modifiyyin it
+        return len(screeninfo.get_monitors())
 
     def select_file(self, type):
         # https://pythonspot.com/tk-file-dialogs/
@@ -169,9 +230,62 @@ class Example(tk.Frame):
         monitor_id = self.monitor_combo.current()
         print(monitor_id)
 
-    def __verify_inputs(self):
-        # TODO Verify that all the inputs are correct
-        pass
+    def __cancel(self):
+        self.destroy()  # closes completely the window
+        self.quit()  # close the mainloop, but doesn't close the window
+
+    def __save_config(self):
+        # TODO Verify that all the inputs are correct when quiting the focus
+
+        config_name = self.conf_name_entry.get()
+        image_path = self.img_entry.get()
+        image_name = image_path.split("\\")[-1]
+        font_path = self.font_entry.get()
+        font_name = font_path.split("\\")[-1]
+        monitor_id = self.monitor_combo.current()
+        text_hours = (
+            f"{self.hours_position_x.get()},{self.hours_position_y.get()},"
+            f"{self.hours_size.get()},{self.hours_color_entry.get()}"
+        )
+        text_minutes = (
+            f"{self.minutes_position_x.get()},{self.minutes_position_y.get()},"
+            f"{self.minutes_size.get()},{self.minutes_color_entry.get()}"
+        )
+        text_split = (
+            f"{self.split_position_x.get()},{self.split_position_y.get()},"
+            f"{self.split_size.get()},{self.split_color_entry.get()}"
+        )
+
+        configEditor = ConfigEditor()
+        config = configEditor.get_section(config_name)
+        if config:
+            message = f"Do you want to overwrite the config {config_name}?"
+            title = "Existing Config"
+            result = messagebox.askquestion(title, message)
+            if result == "yes":
+                configEditor.modify_section(
+                    config_name,
+                    image_path,
+                    font_path,
+                    image_name,
+                    font_name,
+                    monitor_id,
+                    text_hours,
+                    text_minutes,
+                    text_split,
+                )
+        else:
+            configEditor.add_section(
+                config_name,
+                image_path,
+                font_path,
+                image_name,
+                font_name,
+                monitor_id,
+                text_hours,
+                text_minutes,
+                text_split,
+            )
 
 
 # if this is run as a program (versus being imported),

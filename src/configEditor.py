@@ -19,9 +19,9 @@ class ConfigEditor:
             "YorMirror.jpg",
             "FiraMono-Regular.ttf",
             "1",
-            "200,250,300,180,6,20",
-            "400,450,300,232,156,54",
-            "400,450,150,180,6,20",
+            "200,250,180,6,20,300",
+            "400,450,232,156,54,300",
+            "400,450,180,6,20,150",
         )
         with open("../config/config.ini", "w") as configfile:
             self.config.write(configfile)
