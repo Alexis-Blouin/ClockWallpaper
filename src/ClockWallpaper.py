@@ -27,9 +27,9 @@ class ClockWallpaper:
             [hours_params, minutes_params, split_params]
         )
 
-        hours_color = self.__set_color(hours_params)
-        minutes_color = self.__set_color(minutes_params)
-        split_color = self.__set_color(split_params)
+        hours_color = self.__hex_to_rgb(hours_params)
+        minutes_color = self.__hex_to_rgb(minutes_params)
+        split_color = self.__hex_to_rgb(split_params)
 
         hours_font = self.__set_font(fonts_path, font_name, font_ext, hours_params)
         minutes_font = self.__set_font(fonts_path, font_name, font_ext, minutes_params)
@@ -89,12 +89,12 @@ class ClockWallpaper:
             result.append((int(param[0]), int(param[1])))
         return result[0], result[1], result[2]
 
-    def __set_color(self, params):
-        return (int(params[2]), int(params[3]), int(params[4]))
+    def __hex_to_rgb(self, params):
+        return tuple(int(params[2][i : i + 2], 16) for i in (0, 2, 4)) + (255,)
 
     def __set_font(self, fonts_path, font_name, font_ext, params):
         font_path = os.path.join(fonts_path, f"{font_name}.{font_ext}")
-        return ImageFont.truetype(font_path, size=int(params[5]))
+        return ImageFont.truetype(font_path, size=int(params[3]))
 
     def __draw_clock(self, draw, position, text, color, font):
         draw.text(position, text, fill=color, font=font)

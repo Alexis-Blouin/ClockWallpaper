@@ -35,7 +35,6 @@ class Example(tk.Frame):
             values.append(f"Monitor {i + 1}")
         self.monitor_combo = ttk.Combobox(self, values=values)
         self.monitor_combo.current(0)
-        self.monitor_combo.bind("<<ComboboxSelected>>", self.monitor_selected)
 
         # Position
         self.position_label = tk.Label(self, text="Position", anchor="w")
@@ -229,15 +228,18 @@ class Example(tk.Frame):
     def choose_color(self, picker_entry):
         # https://pythonspot.com/tk-color-picker/
         # ask the user to select a color
-        color = colorchooser.askcolor()
-        # TODO get the info inside the tuple to put it into the entry
-        color_str = str(color[0][0]) + "," + str(color[0][1]) + "," + str(color[0][2])
-        picker_entry.insert(0, color_str)
-
-    def monitor_selected(self, event):
-        # https://pythonspot.com/tk-drop-down-list/
-        # get the selected value from the combobox
-        monitor_id = self.monitor_combo.current()
+        initial_color = picker_entry.get()
+        if initial_color:
+            initial_color = initial_color.split(",")
+            initial_color = (
+                int(initial_color[0]),
+                int(initial_color[1]),
+                int(initial_color[2]),
+            )
+        else:
+            initial_color = (254, 254, 254)
+        rgb, hex = colorchooser.askcolor(initial_color)
+        picker_entry.insert(0, hex)
 
     def __cancel(self):
         self.destroy()  # closes completely the window
@@ -254,9 +256,9 @@ class Example(tk.Frame):
         font_path = "\\".join(font_path_array[:-1])
         font_name = font_path_array[-1]
         monitor_id = self.monitor_combo.current()
-        text_hours = f"{self.hours_position_x.get()},{self.hours_position_y.get()},{self.hours_size.get()},{self.hours_color_entry.get()}"
-        text_minutes = f"{self.minutes_position_x.get()},{self.minutes_position_y.get()},{self.minutes_size.get()},{self.minutes_color_entry.get()}"
-        text_split = f"{self.split_position_x.get()},{self.split_position_y.get()},{self.split_size.get()},{self.split_color_entry.get()}"
+        text_hours = f"{self.hours_position_x.get()},{self.hours_position_y.get()},{self.hours_color_entry.get()[1:]},{self.hours_size.get()}"
+        text_minutes = f"{self.minutes_position_x.get()},{self.minutes_position_y.get()},{self.minutes_color_entry.get()[1:]},{self.minutes_size.get()}"
+        text_split = f"{self.split_position_x.get()},{self.split_position_y.get()},{self.split_color_entry.get()[1:]},{self.split_size.get()}"
 
         configEditor = ConfigEditor()
         config = configEditor.get_section(config_name)

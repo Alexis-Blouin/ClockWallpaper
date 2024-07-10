@@ -19,9 +19,9 @@ class ConfigEditor:
             "YorMirror.jpg",
             "FiraMono-Regular.ttf",
             "1",
-            "200,250,300,180,6,20",
-            "400,450,300,232,156,54",
-            "400,450,150,180,6,20",
+            "200,250,B40614,300",
+            "400,450,E89C36,300",
+            "400,450,B40614,150",
         )
         with open("config/config.ini", "w") as configfile:
             self.config.write(configfile)
@@ -81,13 +81,11 @@ class ConfigEditor:
 
     def get_default_section(self):
         self.__read_config()
-        print(self.config.sections())
         return self.config.defaults()
 
     def get_section(self, config_name):
         self.__read_config()
         values = {}
-        print(self.config.sections())
         if self.config.has_section(config_name):
             for key in self.config[config_name]:
                 values[key] = self.config[config_name][key]
