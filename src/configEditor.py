@@ -8,7 +8,7 @@ class ConfigEditor:
     def __init__(self) -> None:
         self.config = configparser.ConfigParser()
 
-        if not os.path.exists("../config/config.ini"):
+        if not os.path.exists("config/config.ini"):
             self.set_default_section()
 
     def set_default_section(self):
@@ -19,11 +19,11 @@ class ConfigEditor:
             "YorMirror.jpg",
             "FiraMono-Regular.ttf",
             "1",
-            "200,250,180,6,20,300",
-            "400,450,232,156,54,300",
-            "400,450,180,6,20,150",
+            "200,250,300,180,6,20",
+            "400,450,300,232,156,54",
+            "400,450,150,180,6,20",
         )
-        with open("../config/config.ini", "w") as configfile:
+        with open("config/config.ini", "w") as configfile:
             self.config.write(configfile)
 
     def add_section(
@@ -38,7 +38,7 @@ class ConfigEditor:
         minutes,
         split,
     ):
-        self.config.read("config/config.ini")
+        self.__read_config()
         self.config.add_section(config_name)
         self.config[config_name] = self.__set_param(
             images_path,
@@ -50,7 +50,7 @@ class ConfigEditor:
             minutes,
             split,
         )
-        with open("../config/config.ini", "w") as configfile:
+        with open("config/config.ini", "w") as configfile:
             self.config.write(configfile)
 
     def modify_section(
@@ -65,7 +65,7 @@ class ConfigEditor:
         minutes,
         split,
     ):
-        self.config.read("../config/config.ini")
+        self.__read_config()
         self.config[config_name] = self.__set_param(
             images_path,
             fonts_path,
@@ -76,17 +76,19 @@ class ConfigEditor:
             minutes,
             split,
         )
-        with open("../config/config.ini", "w") as configfile:
+        with open("config/config.ini", "w") as configfile:
             self.config.write(configfile)
 
     def get_default_section(self):
-        self.config.read("../config/config.ini")
+        self.__read_config()
+        print(self.config.sections())
         return self.config.defaults()
 
     def get_section(self, config_name):
-        self.__read_config
+        self.__read_config()
         values = {}
-        if config_name in self.config.sections():
+        print(self.config.sections())
+        if self.config.has_section(config_name):
             for key in self.config[config_name]:
                 values[key] = self.config[config_name][key]
             return values
@@ -119,4 +121,4 @@ class ConfigEditor:
         }
 
     def __read_config(self):
-        self.config.read("../config/config.ini")
+        self.config.read("config/config.ini")

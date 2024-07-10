@@ -74,13 +74,21 @@ class Example(tk.Frame):
         self.hours_color_label = tk.Label(self, text="Hours", anchor="w")
         self.hours_color_entry = tk.Entry(self)
         # TODO modify color picker to take entry argument
-        self.hours_color = tk.Button(self, text="Pick", command=self.choose_color)
+        self.hours_color = tk.Button(
+            self, text="Pick", command=lambda: self.choose_color(self.hours_color_entry)
+        )
         self.minutes_color_label = tk.Label(self, text="Minutes", anchor="w")
         self.minutes_color_entry = tk.Entry(self)
-        self.minutes_color = tk.Button(self, text="Pick", command=self.choose_color)
+        self.minutes_color = tk.Button(
+            self,
+            text="Pick",
+            command=lambda: self.choose_color(self.minutes_color_entry),
+        )
         self.split_color_label = tk.Label(self, text="Split", anchor="w")
         self.split_color_entry = tk.Entry(self)
-        self.split_color = tk.Button(self, text="Pick", command=self.choose_color)
+        self.split_color = tk.Button(
+            self, text="Pick", command=lambda: self.choose_color(self.split_color_entry)
+        )
 
         # Cancel button
         self.cancel_button = tk.Button(self, text="Cancel", command=self.__cancel)
@@ -218,17 +226,18 @@ class Example(tk.Frame):
             self.font_entry.delete(0, "end")
             self.font_entry.insert(0, file)
 
-    def choose_color(self):
+    def choose_color(self, picker_entry):
         # https://pythonspot.com/tk-color-picker/
         # ask the user to select a color
         color = colorchooser.askcolor()
-        print(color)
+        # TODO get the info inside the tuple to put it into the entry
+        color_str = str(color[0][0]) + "," + str(color[0][1]) + "," + str(color[0][2])
+        picker_entry.insert(0, color_str)
 
     def monitor_selected(self, event):
         # https://pythonspot.com/tk-drop-down-list/
         # get the selected value from the combobox
         monitor_id = self.monitor_combo.current()
-        print(monitor_id)
 
     def __cancel(self):
         self.destroy()  # closes completely the window
@@ -238,23 +247,16 @@ class Example(tk.Frame):
         # TODO Verify that all the inputs are correct when quiting the focus
 
         config_name = self.conf_name_entry.get()
-        image_path = self.img_entry.get()
-        image_name = image_path.split("\\")[-1]
-        font_path = self.font_entry.get()
-        font_name = font_path.split("\\")[-1]
+        image_path_array = self.img_entry.get().split("\\")
+        image_path = "\\".join(image_path_array[:-1])
+        image_name = image_path_array[-1]
+        font_path_array = self.font_entry.get().split("\\")
+        font_path = "\\".join(font_path_array[:-1])
+        font_name = font_path_array[-1]
         monitor_id = self.monitor_combo.current()
-        text_hours = (
-            f"{self.hours_position_x.get()},{self.hours_position_y.get()},"
-            f"{self.hours_size.get()},{self.hours_color_entry.get()}"
-        )
-        text_minutes = (
-            f"{self.minutes_position_x.get()},{self.minutes_position_y.get()},"
-            f"{self.minutes_size.get()},{self.minutes_color_entry.get()}"
-        )
-        text_split = (
-            f"{self.split_position_x.get()},{self.split_position_y.get()},"
-            f"{self.split_size.get()},{self.split_color_entry.get()}"
-        )
+        text_hours = f"{self.hours_position_x.get()},{self.hours_position_y.get()},{self.hours_size.get()},{self.hours_color_entry.get()}"
+        text_minutes = f"{self.minutes_position_x.get()},{self.minutes_position_y.get()},{self.minutes_size.get()},{self.minutes_color_entry.get()}"
+        text_split = f"{self.split_position_x.get()},{self.split_position_y.get()},{self.split_size.get()},{self.split_color_entry.get()}"
 
         configEditor = ConfigEditor()
         config = configEditor.get_section(config_name)
