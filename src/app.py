@@ -1,17 +1,50 @@
 import tkinter as tk
 import screeninfo
-from tkinter import filedialog, colorchooser, ttk, messagebox
+from tkinter import filedialog, colorchooser, ttk, messagebox, simpledialog
 from clockWallpaper import ClockWallpaper
 from configEditor import ConfigEditor
 
 
 class Example(tk.Frame):
     def __init__(self, parent):
-        tk.Frame.__init__(self, parent)
+        self.parent = parent
+        tk.Frame.__init__(self, self.parent)
+
+        self.title = tk.Label(self, text="Clock Wallpaper", anchor="w")
+        self.add_config_button = tk.Button(
+            self, text="Add a Configuration", command=self.__add_config
+        )
+        self.edit_config_button = tk.Button(
+            self, text="Edit a Configuration", command=self.__edit_config
+        )
+
+        self.title.pack(side="top", fill="x")
+        self.add_config_button.pack(side="top", fill="x")
+        self.edit_config_button.pack(side="top", fill="x")
+
+    def __add_config(self):
+        conf_name = simpledialog.askstring(
+            "Configuration Name", "Enter the new configuration name:"
+        )
+
+        for widget in self.winfo_children():
+            widget.destroy()
+        self.__init_editing_frame(conf_name)
+
+    def __edit_config(self):
+        conf_name = simpledialog.askstring(
+            "Configuration Name", "Enter the configuration name to edit:"
+        )
+
+        for widget in self.winfo_children():
+            widget.destroy()
+        self.__init_editing_frame(conf_name)
+
+    def __init_editing_frame(self, config_name):
+        # tk.Frame.__init__(self, self.parent)
 
         # Conf name
-        self.conf_name_label = tk.Label(self, text="Configuration name:", anchor="w")
-        self.conf_name_entry = tk.Entry(self)
+        self.conf_name_label = tk.Label(self, text=config_name, anchor="w")
 
         # Image
         self.img_label = tk.Label(self, text="Choose image:", anchor="w")
@@ -74,19 +107,19 @@ class Example(tk.Frame):
         self.hours_color_entry = tk.Entry(self)
         # TODO modify color picker to take entry argument
         self.hours_color = tk.Button(
-            self, text="Pick", command=lambda: self.choose_color(self.hours_color_entry)
+            self, text="...", command=lambda: self.choose_color(self.hours_color_entry)
         )
         self.minutes_color_label = tk.Label(self, text="Minutes", anchor="w")
         self.minutes_color_entry = tk.Entry(self)
         self.minutes_color = tk.Button(
             self,
-            text="Pick",
+            text="...",
             command=lambda: self.choose_color(self.minutes_color_entry),
         )
         self.split_color_label = tk.Label(self, text="Split", anchor="w")
         self.split_color_entry = tk.Entry(self)
         self.split_color = tk.Button(
-            self, text="Pick", command=lambda: self.choose_color(self.split_color_entry)
+            self, text="...", command=lambda: self.choose_color(self.split_color_entry)
         )
 
         # Cancel button
@@ -98,8 +131,7 @@ class Example(tk.Frame):
         row_num = 0
         # TODO check colspan, cause not working...
         # Conf name
-        self.conf_name_label.grid(row=row_num, column=0, sticky="ew", padx=5, pady=5)
-        self.conf_name_entry.grid(row=row_num, column=1, sticky="ew", padx=5, pady=5)
+        self.conf_name_label.grid(row=row_num, column=1, sticky="ew", padx=5, pady=5)
         row_num += 1
 
         # Image
@@ -248,7 +280,7 @@ class Example(tk.Frame):
     def __save_config(self):
         # TODO Verify that all the inputs are correct when quiting the focus
 
-        config_name = self.conf_name_entry.get()
+        config_name = self.conf_name_label["text"]
         image_path_array = self.img_entry.get().split("\\")
         image_path = "\\".join(image_path_array[:-1])
         image_name = image_path_array[-1]
