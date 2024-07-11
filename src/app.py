@@ -37,7 +37,7 @@ class Example(tk.Frame):
 
     def __add_config(self):
         config_name = simpledialog.askstring(
-            "Configuration Name", "Enter the new configuration name:"
+            "Config Name", "Enter the new configuration name:"
         )
         if config_name is None:
             return
@@ -60,22 +60,22 @@ class Example(tk.Frame):
         section_names = configEditor.get_section_names()
 
         root = tk.Tk()
-        # root.withdraw()
+        root.title("Config Name")
 
         label = tk.Label(root, text="Choose a configuration to edit:")
-        label.pack()
+        label.grid(row=0, column=0, columnspan=2, sticky="ew", padx=(15, 5))
 
         combo = ttk.Combobox(root, values=section_names)
-        combo.pack()
+        combo.grid(row=1, column=0, columnspan=2, sticky="ew", padx=10)
 
-        cancel_button = tk.Button(root, text="Cancel", command=root.destroy)
-        cancel_button.pack()
         confirm_button = tk.Button(
             root,
-            text="Confirm",
+            text="OK",
             command=lambda: self.__confirm_edit_selection(root, combo.get()),
         )
-        confirm_button.pack()
+        confirm_button.grid(row=2, column=0, sticky="ew", padx=(15, 5), pady=(10, 5))
+        cancel_button = tk.Button(root, text="Cancel", command=root.destroy)
+        cancel_button.grid(row=2, column=1, sticky="ew", padx=(5, 15), pady=(10, 5))
 
     def __confirm_edit_selection(self, root, config_name):
         root.destroy()
@@ -83,6 +83,7 @@ class Example(tk.Frame):
         for widget in self.winfo_children():
             widget.destroy()
         self.__init_editing_frame(config_name)
+        # TODO get the config and send it to the editing frame
 
     def __init_editing_frame(self, config_name):
         # tk.Frame.__init__(self, self.parent)
@@ -149,7 +150,6 @@ class Example(tk.Frame):
 
         self.hours_color_label = tk.Label(self, text="Hours", anchor="w")
         self.hours_color_entry = tk.Entry(self)
-        # TODO modify color picker to take entry argument
         self.hours_color = tk.Button(
             self, text="...", command=lambda: self.choose_color(self.hours_color_entry)
         )
@@ -175,7 +175,7 @@ class Example(tk.Frame):
 
         # Show the options
         row_num = 0
-        # TODO check colspan, cause not working...
+
         # Conf name
         self.conf_name_label.grid(row=row_num, column=1, sticky="ew", padx=5, pady=5)
         row_num += 1
@@ -246,6 +246,7 @@ class Example(tk.Frame):
         row_num += 1
 
         # Color
+        # TODO add a color square to show the color
         self.color_label.grid(row=row_num, column=0, sticky="ew", padx=5, pady=5)
         row_num += 1
         self.hours_color_label.grid(row=row_num, column=0, sticky="ew", padx=5)
@@ -271,7 +272,7 @@ class Example(tk.Frame):
         res = []
         for info in infos:
             res.append((info.width, info.height))
-        # TODO use the res to modify image before modifiyyin it
+        # TODO use the res to modify image before modifying it
         return len(screeninfo.get_monitors())
 
     def select_file(self, file_entry, type):
