@@ -22,23 +22,67 @@ class Example(tk.Frame):
         self.add_config_button.pack(side="top", fill="x")
         self.edit_config_button.pack(side="top", fill="x")
 
+    def __re_init(self):
+        self.title = tk.Label(self, text="Clock Wallpaper", anchor="w")
+        self.add_config_button = tk.Button(
+            self, text="Add a Configuration", command=self.__add_config
+        )
+        self.edit_config_button = tk.Button(
+            self, text="Edit a Configuration", command=self.__edit_config
+        )
+
+        self.title.pack(side="top", fill="x")
+        self.add_config_button.pack(side="top", fill="x")
+        self.edit_config_button.pack(side="top", fill="x")
+
     def __add_config(self):
-        conf_name = simpledialog.askstring(
+        config_name = simpledialog.askstring(
             "Configuration Name", "Enter the new configuration name:"
         )
+        if config_name is None:
+            return
+        if not config_name:
+            configEditor = ConfigEditor()
+            section_names = configEditor.get_section_names()
+
+            config_name = "Config_"
+            config_id = 1
+            while config_name + str(config_id) in section_names:
+                config_id += 1
+            config_name += str(config_id)
 
         for widget in self.winfo_children():
             widget.destroy()
-        self.__init_editing_frame(conf_name)
+        self.__init_editing_frame(config_name)
 
     def __edit_config(self):
-        conf_name = simpledialog.askstring(
-            "Configuration Name", "Enter the configuration name to edit:"
+        configEditor = ConfigEditor()
+        section_names = configEditor.get_section_names()
+
+        root = tk.Tk()
+        # root.withdraw()
+
+        label = tk.Label(root, text="Choose a configuration to edit:")
+        label.pack()
+
+        combo = ttk.Combobox(root, values=section_names)
+        combo.pack()
+
+        cancel_button = tk.Button(root, text="Cancel", command=root.destroy)
+        cancel_button.pack()
+        confirm_button = tk.Button(
+            root,
+            text="Confirm",
+            command=lambda: self.__confirm_edit_selection(root, combo.get()),
         )
+        confirm_button.pack()
+
+    def __confirm_edit_selection(self, root, config_name):
+        root.destroy()
 
         for widget in self.winfo_children():
             widget.destroy()
-        self.__init_editing_frame(conf_name)
+        self.__init_editing_frame(config_name)
 
     def __init_editing_frame(self, config_name):
         # tk.Frame.__init__(self, self.parent)
@@ -50,14 +94,14 @@ class Example(tk.Frame):
         self.img_label = tk.Label(self, text="Choose image:", anchor="w")
         self.img_entry = tk.Entry(self)
         self.img_button = tk.Button(
-            self, text="...", command=lambda: self.select_file("image")
+            self, text="...", command=lambda: self.select_file(self.img_entry, "image")
         )
 
         # Font
         self.font_label = tk.Label(self, text="Choose font:", anchor="w")
         self.font_entry = tk.Entry(self)
         self.font_button = tk.Button(
-            self, text="...", command=lambda: self.select_file("font")
+            self, text="...", command=lambda: self.select_file(self.font_entry, "font")
         )
 
         # Monitor
@@ -123,7 +167,9 @@ class Example(tk.Frame):
         )
 
         # Cancel button
-        self.cancel_button = tk.Button(self, text="Cancel", command=self.__cancel)
+        self.cancel_button = tk.Button(
+            self, text="Cancel", command=self.__return_to_menu
+        )
         # Save button
         self.save_button = tk.Button(self, text="Save", command=self.__save_config)
 
@@ -228,7 +274,7 @@ class Example(tk.Frame):
         # TODO use the res to modify image before modifiyyin it
         return len(screeninfo.get_monitors())
 
-    def select_file(self, type):
+    def select_file(self, file_entry, type):
         # https://pythonspot.com/tk-file-dialogs/
         # ask the user to select a file, then we get the ful path
         file = filedialog.askopenfilename(title="Select File")
@@ -250,32 +296,32 @@ class Example(tk.Frame):
                 file_ok = clockWallpaper.check_image(file)
             elif type == "font":
                 file_ok = clockWallpaper.check_font(file)
-        if type == "image":
-            self.img_entry.delete(0, "end")
-            self.img_entry.insert(0, file)
-        elif type == "font":
-            self.font_entry.delete(0, "end")
-            self.font_entry.insert(0, file)
+
+        file_entry.delete(0, "end")
+        file_entry.insert(0, file)
 
     def choose_color(self, picker_entry):
         # https://pythonspot.com/tk-color-picker/
         # ask the user to select a color
         initial_color = picker_entry.get()
+        print(initial_color)
         if initial_color:
-            initial_color = initial_color.split(",")
-            initial_color = (
-                int(initial_color[0]),
-                int(initial_color[1]),
-                int(initial_color[2]),
-            )
+            initial_color = self.__hex_to_rgb(initial_color[1:])
         else:
-            initial_color = (254, 254, 254)
+            initial_color = (127, 127, 127)
+        print(initial_color)
         rgb, hex = colorchooser.askcolor(initial_color)
-        picker_entry.insert(0, hex)
+        if hex:
+            picker_entry.delete(0, "end")
+            picker_entry.insert(0, hex)
 
-    def __cancel(self):
-        self.destroy()  # closes completely the window
-        self.quit()  # close the mainloop, but doesn't close the window
+    def __hex_to_rgb(self, hex_color):
+        return tuple(int(hex_color[i : i + 2], 16) for i in (0, 2, 4))
+
+    def __return_to_menu(self):
+        for widget in self.winfo_children():
+            widget.destroy()
+        self.__re_init()
 
     def __save_config(self):
         # TODO Verify that all the inputs are correct when quiting the focus

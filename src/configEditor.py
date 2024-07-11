@@ -93,6 +93,10 @@ class ConfigEditor:
         else:
             return values
 
+    def get_section_names(self):
+        self.__read_config()
+        return self.config.sections()
+
     def set_config(self, config_name):
         self.__read_config()
 
