@@ -1,3 +1,4 @@
+import re
 import tkinter as tk
 import screeninfo
 from tkinter import filedialog, colorchooser, ttk, messagebox, simpledialog
@@ -5,7 +6,7 @@ from clockWallpaper import ClockWallpaper
 from configEditor import ConfigEditor
 
 
-class Example(tk.Frame):
+class Window(tk.Frame):
     def __init__(self, parent):
         self.parent = parent
         tk.Frame.__init__(self, self.parent)
@@ -95,19 +96,23 @@ class Example(tk.Frame):
         self.img_label = tk.Label(self, text="Choose image:", anchor="w")
         self.img_entry = tk.Entry(self)
         self.img_button = tk.Button(
-            self, text="...", command=lambda: self.select_file(self.img_entry, "image")
+            self,
+            text="...",
+            command=lambda: self.__select_file(self.img_entry, "image"),
         )
 
         # Font
         self.font_label = tk.Label(self, text="Choose font:", anchor="w")
         self.font_entry = tk.Entry(self)
         self.font_button = tk.Button(
-            self, text="...", command=lambda: self.select_file(self.font_entry, "font")
+            self,
+            text="...",
+            command=lambda: self.__select_file(self.font_entry, "font"),
         )
 
         # Monitor
         self.monitor_label = tk.Label(self, text="Choose monitor:", anchor="w")
-        monitor_count = self.get_monitor_count()
+        monitor_count = self.__get_monitor_count()
         values = []
         for i in range(monitor_count):
             values.append(f"Monitor {i + 1}")
@@ -151,19 +156,23 @@ class Example(tk.Frame):
         self.hours_color_label = tk.Label(self, text="Hours", anchor="w")
         self.hours_color_entry = tk.Entry(self)
         self.hours_color = tk.Button(
-            self, text="...", command=lambda: self.choose_color(self.hours_color_entry)
+            self,
+            text="...",
+            command=lambda: self.__choose_color(self.hours_color_entry),
         )
         self.minutes_color_label = tk.Label(self, text="Minutes", anchor="w")
         self.minutes_color_entry = tk.Entry(self)
         self.minutes_color = tk.Button(
             self,
             text="...",
-            command=lambda: self.choose_color(self.minutes_color_entry),
+            command=lambda: self.__choose_color(self.minutes_color_entry),
         )
         self.split_color_label = tk.Label(self, text="Split", anchor="w")
         self.split_color_entry = tk.Entry(self)
         self.split_color = tk.Button(
-            self, text="...", command=lambda: self.choose_color(self.split_color_entry)
+            self,
+            text="...",
+            command=lambda: self.__choose_color(self.split_color_entry),
         )
 
         # Cancel button
@@ -267,7 +276,7 @@ class Example(tk.Frame):
         # Save button
         self.save_button.grid(row=row_num, column=3, sticky="ew", padx=5, pady=5)
 
-    def get_monitor_count(self):
+    def __get_monitor_count(self):
         infos = screeninfo.get_monitors()
         res = []
         for info in infos:
@@ -275,49 +284,115 @@ class Example(tk.Frame):
         # TODO use the res to modify image before modifying it
         return len(screeninfo.get_monitors())
 
-    def select_file(self, file_entry, type):
+    def __select_file(self, file_entry, type):
         # https://pythonspot.com/tk-file-dialogs/
         # ask the user to select a file, then we get the ful path
         file = filedialog.askopenfilename(title="Select File")
         file = file.replace("/", "\\")
+        while not self.__check_path(file, type) and file:
+            file = filedialog.askopenfilename(title="Select File")
+            file = file.replace("/", "\\")
+
+        file_entry.delete(0, "end")
+        file_entry.insert(0, file)
+
+    def __check_path(self, file, type) -> bool:
         clockWallpaper = ClockWallpaper()
         if type == "image":
             file_ok = clockWallpaper.check_image(file)
         elif type == "font":
             file_ok = clockWallpaper.check_font(file)
-        while not file_ok and file:
-            message = (
-                f"Selected {type} is incompatible. Please choose a different {type}."
+
+        if not file_ok:
+            self.__show_warning(
+                "Compatibility Warning",
+                f"Selected {type} is incompatible. Please choose a different {type}.",
             )
-            title = "Compatibility Warning"
-            messagebox.showwarning(title, message)
+        return file_ok
 
-            file = filedialog.askopenfilename(title="Select File")
-            if type == "image":
-                file_ok = clockWallpaper.check_image(file)
-            elif type == "font":
-                file_ok = clockWallpaper.check_font(file)
+    def __check_position(self, name, position_x, position_y) -> bool:
+        if not position_x or not position_y:
+            self.__show_warning(
+                "Empty Position", f"Please fill in the {name} positions."
+            )
+            return False
 
-        file_entry.delete(0, "end")
-        file_entry.insert(0, file)
+        try:
+            position_x = int(position_x)
+            position_y = int(position_y)
+        except ValueError:
+            self.__show_warning(
+                "Position Warning",
+                f"Please make sure that positions from {name} are numbers.",
+            )
+            return False
 
-    def choose_color(self, picker_entry):
+        # TODO add check if the position is within the selected monitor size
+        if position_x < 0 or position_y < 0:
+            self.__show_warning(
+                "Position Warning",
+                f"Please make sure that positions from {name} are positive numbers and within the selected monitor size.",
+            )
+            return False
+
+        return True
+
+    def __check_size(self, name, size) -> bool:
+        if not size:
+            self.__show_warning("Empty Size", f"Please fill in the {name} size.")
+            return False
+
+        try:
+            size = int(size)
+        except ValueError:
+            self.__show_warning(
+                "Size Warning",
+                f"Please make sure that size from {name} is a number.",
+            )
+            return False
+
+        if size < 0:
+            self.__show_warning(
+                "Size Warning",
+                f"Please make sure that size from {name} is a positive number.",
+            )
+            return False
+
+        return True
+
+    def __choose_color(self, picker_entry):
         # https://pythonspot.com/tk-color-picker/
         # ask the user to select a color
         initial_color = picker_entry.get()
-        print(initial_color)
         if initial_color:
             initial_color = self.__hex_to_rgb(initial_color[1:])
         else:
             initial_color = (127, 127, 127)
-        print(initial_color)
         rgb, hex = colorchooser.askcolor(initial_color)
         if hex:
             picker_entry.delete(0, "end")
             picker_entry.insert(0, hex)
 
+    def __check_color(self, name, color) -> bool:
+        if not color:
+            self.__show_warning("Empty Color", f"Please select the {name} color.")
+            return False
+
+        regex = r"^#[0-9a-fA-F]{6}$"
+        if not re.match(regex, color):
+            self.__show_warning(
+                "Color Warning",
+                f"Please make sure that color from {name} is a hexadecimal color.",
+            )
+            return False
+
+        return True
+
     def __hex_to_rgb(self, hex_color):
         return tuple(int(hex_color[i : i + 2], 16) for i in (0, 2, 4))
+
+    def __show_warning(self, title, message):
+        messagebox.showwarning(title, message)
 
     def __return_to_menu(self):
         for widget in self.winfo_children():
@@ -326,15 +401,20 @@ class Example(tk.Frame):
 
     def __save_config(self):
         # TODO Verify that all the inputs are correct when quiting the focus
+        if not self.__check_inputs():
+            return
 
         config_name = self.conf_name_label["text"]
+
         image_path_array = self.img_entry.get().split("\\")
         image_path = "\\".join(image_path_array[:-1])
         image_name = image_path_array[-1]
+
         font_path_array = self.font_entry.get().split("\\")
         font_path = "\\".join(font_path_array[:-1])
         font_name = font_path_array[-1]
         monitor_id = self.monitor_combo.current()
+
         text_hours = f"{self.hours_position_x.get()},{self.hours_position_y.get()},{self.hours_color_entry.get()[1:]},{self.hours_size.get()}"
         text_minutes = f"{self.minutes_position_x.get()},{self.minutes_position_y.get()},{self.minutes_color_entry.get()[1:]},{self.minutes_size.get()}"
         text_split = f"{self.split_position_x.get()},{self.split_position_y.get()},{self.split_color_entry.get()[1:]},{self.split_size.get()}"
@@ -370,6 +450,41 @@ class Example(tk.Frame):
                 text_split,
             )
 
+    def __check_inputs(self) -> bool:
+        if not self.__check_path(self.img_entry.get(), "image"):
+            return False
+        if not self.__check_path(self.font_entry.get(), "font"):
+            return False
+
+        if not self.__check_position(
+            "Hours", self.hours_position_x.get(), self.hours_position_y.get()
+        ):
+            return False
+        if not self.__check_position(
+            "Minutes", self.minutes_position_x.get(), self.minutes_position_y.get()
+        ):
+            return False
+        if not self.__check_position(
+            "Split", self.split_position_x.get(), self.split_position_y.get()
+        ):
+            return False
+
+        if not self.__check_size("Hours", self.hours_size.get()):
+            return False
+        if not self.__check_size("Minutes", self.minutes_size.get()):
+            return False
+        if not self.__check_size("Split", self.split_size.get()):
+            return False
+
+        if not self.__check_color("Hours", self.hours_color_entry.get()):
+            return False
+        if not self.__check_color("Minutes", self.minutes_color_entry.get()):
+            return False
+        if not self.__check_color("Split", self.split_color_entry.get()):
+            return False
+
+        return True
+
 
 # if this is run as a program (versus being imported),
 # create a root window and an instance of our example,
@@ -377,5 +492,5 @@ class Example(tk.Frame):
 
 if __name__ == "__main__":
     root = tk.Tk()
-    Example(root).pack(fill="both", expand=True)
+    Window(root).pack(fill="both", expand=True)
     root.mainloop()
