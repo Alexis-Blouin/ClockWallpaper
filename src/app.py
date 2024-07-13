@@ -2,6 +2,7 @@ import os
 import re
 import tkinter as tk
 import screeninfo
+from PIL import Image, ImageTk
 from tkinter import filedialog, colorchooser, ttk, messagebox, simpledialog
 from clockWallpaper import ClockWallpaper
 from configEditor import ConfigEditor
@@ -118,6 +119,15 @@ class Window(tk.Frame):
         self.monitor_combo = ttk.Combobox(self, values=values)
         self.monitor_combo.current(0)
 
+        # Image preview
+        img = Image.open(
+            r"C:\Users\Alexis\Documents\GitHub\ClockWallpaper\Images\YorMirror.jpg"
+        )
+        img = img.resize((240, 135))
+        img = ImageTk.PhotoImage(img)
+        self.panel = tk.Label(self, image=img)
+        self.panel.image = img
+
         # Position
         self.position_label = tk.Label(self, text="Position", anchor="w")
 
@@ -150,6 +160,7 @@ class Window(tk.Frame):
         self.split_size = tk.Entry(self)
 
         # Color
+        # TODO add a color square to show the color
         self.color_label = tk.Label(self, text="Color", anchor="w")
 
         self.hours_color_label = tk.Label(self, text="Hours", anchor="w")
@@ -191,24 +202,31 @@ class Window(tk.Frame):
         row_num += 1
 
         # Image
-        self.img_label.grid(row=row_num, column=0, sticky="ew", padx=5, pady=5)
-        self.img_entry.grid(
-            row=row_num, column=1, columnspan=2, sticky="ew", padx=5, pady=5
-        )
-        self.img_button.grid(row=row_num, column=3, sticky="ew", padx=5, pady=5)
+        self.img_label.grid(row=row_num, column=0, sticky="ew", padx=5)
+        self.img_entry.grid(row=row_num, column=1, sticky="ew", padx=5)
+        self.img_button.grid(row=row_num, column=2, sticky="ew", padx=5, pady=2)
         row_num += 1
 
         # Font
-        self.font_label.grid(row=row_num, column=0, sticky="ew", padx=5, pady=5)
-        self.font_entry.grid(
-            row=row_num, column=1, columnspan=2, sticky="ew", padx=5, pady=5
-        )
-        self.font_button.grid(row=row_num, column=3, sticky="ew", padx=5, pady=5)
+        self.font_label.grid(row=row_num, column=0, sticky="ew", padx=5)
+        self.font_entry.grid(row=row_num, column=1, sticky="ew", padx=5)
+        self.font_button.grid(row=row_num, column=2, sticky="ew", padx=5, pady=2)
         row_num += 1
 
         # Monitor
         self.monitor_label.grid(row=row_num, column=0, sticky="ew", padx=5, pady=5)
         self.monitor_combo.grid(row=row_num, column=1, sticky="ew", padx=5, pady=5)
+
+        # Image preview
+        self.panel.grid(
+            row=row_num,
+            column=2,
+            rowspan=15,
+            columnspan=19,
+            sticky="ew",
+            padx=5,
+            pady=5,
+        )
         row_num += 1
 
         # Position
@@ -256,26 +274,25 @@ class Window(tk.Frame):
         row_num += 1
 
         # Color
-        # TODO add a color square to show the color
         self.color_label.grid(row=row_num, column=0, sticky="ew", padx=5, pady=5)
         row_num += 1
         self.hours_color_label.grid(row=row_num, column=0, sticky="ew", padx=5)
         self.hours_color_entry.grid(row=row_num, column=1, sticky="ew", padx=5)
-        self.hours_color.grid(row=row_num, column=2, sticky="ew", padx=12)
+        self.hours_color.grid(row=row_num, column=2, sticky="ew", padx=5, pady=2)
         row_num += 1
         self.minutes_color_label.grid(row=row_num, column=0, sticky="ew", padx=5)
         self.minutes_color_entry.grid(row=row_num, column=1, sticky="ew", padx=5)
-        self.minutes_color.grid(row=row_num, column=2, sticky="ew", padx=12)
+        self.minutes_color.grid(row=row_num, column=2, sticky="ew", padx=5, pady=2)
         row_num += 1
         self.split_color_label.grid(row=row_num, column=0, sticky="ew", padx=5)
         self.split_color_entry.grid(row=row_num, column=1, sticky="ew", padx=5)
-        self.split_color.grid(row=row_num, column=2, sticky="ew", padx=12)
+        self.split_color.grid(row=row_num, column=2, sticky="ew", padx=5, pady=2)
         row_num += 1
 
         # Cancel button
-        self.cancel_button.grid(row=row_num, column=2, sticky="ew", padx=5, pady=5)
+        self.cancel_button.grid(row=row_num, column=19, sticky="ew", padx=5, pady=5)
         # Save button
-        self.save_button.grid(row=row_num, column=3, sticky="ew", padx=5, pady=5)
+        self.save_button.grid(row=row_num, column=20, sticky="ew", padx=5, pady=5)
 
     def __instanciate_config(self, config_name):
         configEditor = ConfigEditor()
