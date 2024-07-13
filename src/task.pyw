@@ -12,7 +12,8 @@ if __name__ == "__main__":
         sleep(1)
 
     configEditor = ConfigEditor()
-    config = configEditor.get_default_section()
+    config_name = configEditor.get_config_name()
+    config = configEditor.get_section(config_name)
 
     image_path = config["imagepath"]
     font_path = config["fontpath"]

@@ -11,16 +11,9 @@ class ConfigEditor:
         if not os.path.exists("config/config.ini"):
             self.set_default_section()
 
-    def set_default_section(self):
-        username = os.getlogin()
-        self.config["DEFAULT"] = self.__set_param(
-            f"C:\\Users\\{username}\\Documents\\GitHub\\ClockWallpaper\\Images\\YorMirror.jpg",
-            f"C:\\Users\\{username}\\Documents\\GitHub\\ClockWallpaper\\Fonts\\FiraMono-Regular.ttf",
-            "1",
-            "200,250,B40614,300",
-            "400,450,E89C36,300",
-            "400,450,B40614,150",
-        )
+    def set_config(self, config_name):
+        self.__read_config()
+        self.config["DEFAULT"] = {"currentconfig": config_name}
         with open("config/config.ini", "w") as configfile:
             self.config.write(configfile)
 
@@ -69,9 +62,9 @@ class ConfigEditor:
         with open("config/config.ini", "w") as configfile:
             self.config.write(configfile)
 
-    def get_default_section(self):
+    def get_config_name(self):
         self.__read_config()
-        return self.config.defaults()
+        return self.config.defaults()["currentconfig"]
 
     def get_section(self, config_name):
         self.__read_config()
@@ -86,9 +79,6 @@ class ConfigEditor:
     def get_section_names(self):
         self.__read_config()
         return self.config.sections()
-
-    def set_config(self, config_name):
-        self.__read_config()
 
     def __set_param(
         self,

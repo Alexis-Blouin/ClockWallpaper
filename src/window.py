@@ -17,6 +17,9 @@ class Window(tk.Frame):
 
     def __init_menu(self):
         self.title = tk.Label(self, text="Clock Wallpaper", anchor="center")
+        self.button_select_config = tk.Button(
+            self, text="Select a Configuration", command=self.__select_config
+        )
         self.button_add_config = tk.Button(
             self, text="Add a Configuration", command=self.__add_config
         )
@@ -26,10 +29,55 @@ class Window(tk.Frame):
 
         self.button_quit = tk.Button(self, text="Quit", command=self.__quit)
 
-        self.title.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
-        self.button_add_config.grid(row=1, column=0, sticky="ew", padx=10, pady=5)
-        self.button_edit_config.grid(row=2, column=0, sticky="ew", padx=10, pady=5)
-        self.button_quit.grid(row=3, column=0, sticky="ew", padx=30, pady=5)
+        row_num = 0
+        self.title.grid(row=row_num, column=0, sticky="ew", padx=5, pady=5)
+        row_num += 1
+        self.button_select_config.grid(
+            row=row_num, column=0, sticky="ew", padx=10, pady=5
+        )
+        row_num += 1
+        self.button_add_config.grid(row=row_num, column=0, sticky="ew", padx=10, pady=5)
+        row_num += 1
+        self.button_edit_config.grid(
+            row=row_num, column=0, sticky="ew", padx=10, pady=5
+        )
+        row_num += 1
+        self.button_quit.grid(row=row_num, column=0, sticky="ew", padx=30, pady=5)
+
+    def __select_config(self):
+        configEditor = ConfigEditor()
+        section_names = configEditor.get_section_names()
+
+        root = tk.Tk()
+        root.title("Config Name")
+
+        label = tk.Label(root, text="Choose a configuration to use:")
+        label.grid(row=0, column=0, columnspan=2, sticky="ew", padx=(15, 5))
+
+        combo = ttk.Combobox(root, values=section_names)
+        combo.grid(row=1, column=0, columnspan=2, sticky="ew", padx=10)
+
+        confirm_button = tk.Button(
+            root,
+            text="OK",
+            command=lambda: self.__set_config(root, section_names, combo.get()),
+        )
+        confirm_button.grid(row=2, column=0, sticky="ew", padx=(15, 5), pady=(10, 5))
+        cancel_button = tk.Button(root, text="Cancel", command=root.destroy)
+        cancel_button.grid(row=2, column=1, sticky="ew", padx=(5, 15), pady=(10, 5))
+
+    def __set_config(self, root, section_names, config_name):
+        if config_name in section_names:
+            root.destroy()
+
+            configEditor = ConfigEditor()
+            configEditor.set_config(config_name)
+
+            self.__show_alert("Success", "Configuration set successfully.")
+        else:
+            self.__show_alert(
+                "Invalid Selection", "Please select a valid configuration."
+            )
 
     def __add_config(self):
         config_name = simpledialog.askstring(
@@ -195,7 +243,9 @@ class Window(tk.Frame):
         row_num = 0
 
         # Conf name
-        self.conf_name_label.grid(row=row_num, column=1, sticky="ew", padx=5, pady=5)
+        self.conf_name_label.grid(
+            row=row_num, column=0, columnspan=8, sticky="ew", padx=5, pady=5
+        )
         row_num += 1
 
         # Image
@@ -353,35 +403,41 @@ class Window(tk.Frame):
 
     def __update_image_preview(self):
         image_path = self.img_entry.get()
+        if not image_path or not self.__check_path(image_path, "image"):
+            return
         font_path = self.font_entry.get()
+        if not font_path or not self.__check_path(font_path, "font"):
+            return
 
-        hours_params = [
-            self.hours_position_x.get(),
-            self.hours_position_y.get(),
-            self.hours_color_entry.get()[1:],
-            self.hours_size.get(),
-        ]
-        for i in range(len(hours_params)):
-            if not hours_params[i]:
-                hours_params[i] = "000000"
-        minutes_params = [
-            self.minutes_position_x.get(),
-            self.minutes_position_y.get(),
-            self.minutes_color_entry.get()[1:],
-            self.minutes_size.get(),
-        ]
-        for i in range(len(minutes_params)):
-            if not minutes_params[i]:
-                minutes_params[i] = "000000"
-        split_params = [
-            self.split_position_x.get(),
-            self.split_position_y.get(),
-            self.split_color_entry.get()[1:],
-            self.split_size.get(),
-        ]
-        for i in range(len(split_params)):
-            if not split_params[i]:
-                split_params[i] = "000000"
+        hours_x = self.hours_position_x.get()
+        hours_x = hours_x if hours_x else 0
+        hours_y = self.hours_position_y.get()
+        hours_y = hours_y if hours_y else 0
+        hours_color = self.hours_color_entry.get()[1:]
+        hours_color = hours_color if hours_color else "000000"
+        hours_size = self.hours_size.get()
+        hours_size = hours_size if hours_size else 1
+        hours_params = [hours_x, hours_y, hours_color, hours_size]
+
+        minutes_x = self.minutes_position_x.get()
+        minutes_x = minutes_x if minutes_x else 0
+        minutes_y = self.minutes_position_y.get()
+        minutes_y = minutes_y if minutes_y else 0
+        minutes_color = self.minutes_color_entry.get()[1:]
+        minutes_color = minutes_color if minutes_color else "000000"
+        minutes_size = self.minutes_size.get()
+        minutes_size = minutes_size if minutes_size else 1
+        minutes_params = [minutes_x, minutes_y, minutes_color, minutes_size]
+
+        split_x = self.split_position_x.get()
+        split_x = split_x if split_x else 0
+        split_y = self.split_position_y.get()
+        split_y = split_y if split_y else 0
+        split_color = self.split_color_entry.get()[1:]
+        split_color = split_color if split_color else "000000"
+        split_size = self.split_size.get()
+        split_size = split_size if split_size else 1
+        split_params = [split_x, split_y, split_color, split_size]
 
         self.__set_image_preview(
             image_path, font_path, hours_params, minutes_params, split_params
@@ -417,6 +473,9 @@ class Window(tk.Frame):
 
         file_entry.delete(0, "end")
         file_entry.insert(0, new_file if new_file else file)
+
+        if new_file:
+            self.__update_image_preview()
 
     def __check_path(self, file, type) -> bool:
         clockWallpaper = ClockWallpaper()
