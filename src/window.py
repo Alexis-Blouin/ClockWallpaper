@@ -293,45 +293,54 @@ class Window(tk.Frame):
         config = configEditor.get_section(config_name)
         if config:
             # Paths
-            self.img_entry.insert(
-                0, config["imagepath"] + "\\" + config["fullimagename"]
-            )
-            self.font_entry.insert(
-                0, config["fontpath"] + "\\" + config["fullfontname"]
-            )
+            image_path = config["imagepath"]
+            font_path = config["fontpath"]
+            self.img_entry.insert(0, image_path)
+            self.font_entry.insert(0, font_path)
 
             # Monitor
             self.monitor_combo.current(int(config["monitorid"]))
 
             # Image preview
+            hours = config["hours"].split(",")
+            minutes = config["minutes"].split(",")
+            split = config["split"].split(",")
             self.__set_image_preview(
-                config["imagepath"] + "\\" + config["fullimagename"],
-                config["fontpath"] + "\\" + config["fullfontname"],
+                image_path,
+                font_path,
+                hours,
+                minutes,
+                split,
             )
 
             # Hours
-            hours = config["hours"].split(",")
             self.hours_position_x.insert(0, hours[0])
             self.hours_position_y.insert(0, hours[1])
             self.hours_color_entry.insert(0, f"#{hours[2]}")
             self.hours_size.insert(0, hours[3])
 
             # Minutes
-            minutes = config["minutes"].split(",")
             self.minutes_position_x.insert(0, minutes[0])
             self.minutes_position_y.insert(0, minutes[1])
             self.minutes_color_entry.insert(0, f"#{minutes[2]}")
             self.minutes_size.insert(0, minutes[3])
 
             # Split
-            split = config["split"].split(",")
             self.split_position_x.insert(0, split[0])
             self.split_position_y.insert(0, split[1])
             self.split_color_entry.insert(0, f"#{split[2]}")
             self.split_size.insert(0, split[3])
 
-    def __set_image_preview(self, image_path, font_path):
-        img = Image.open(image_path)
+    def __set_image_preview(
+        self, image_path, font_path, hours_params, minutes_params, split_params
+    ):
+        clockWallpaper = ClockWallpaper()
+
+        img = clockWallpaper.draw_clock(
+            image_path, font_path, hours_params, minutes_params, split_params
+        )
+
+        # Resize the image to fit the selected monitor
         img = img.resize((240, 135))
         img = ImageTk.PhotoImage(img)
 
@@ -479,13 +488,9 @@ class Window(tk.Frame):
 
         config_name = self.conf_name_label["text"]
 
-        image_path_array = self.img_entry.get().split("\\")
-        image_path = "\\".join(image_path_array[:-1])
-        image_name = image_path_array[-1]
+        image_path = self.img_entry.get()
+        font_path = self.font_entry.get()
 
-        font_path_array = self.font_entry.get().split("\\")
-        font_path = "\\".join(font_path_array[:-1])
-        font_name = font_path_array[-1]
         monitor_id = self.monitor_combo.current()
 
         text_hours = f"{self.hours_position_x.get()},{self.hours_position_y.get()},{self.hours_color_entry.get()[1:]},{self.hours_size.get()}"
@@ -506,8 +511,6 @@ class Window(tk.Frame):
                     config_name,
                     image_path,
                     font_path,
-                    image_name,
-                    font_name,
                     monitor_id,
                     text_hours,
                     text_minutes,
@@ -518,8 +521,6 @@ class Window(tk.Frame):
                 config_name,
                 image_path,
                 font_path,
-                image_name,
-                font_name,
                 monitor_id,
                 text_hours,
                 text_minutes,

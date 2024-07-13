@@ -12,26 +12,25 @@ if __name__ == "__main__":
     #     sleep(1)
 
     configEditor = ConfigEditor()
-    username = os.getlogin()
-    config = configEditor.get_section(username)
-    if not config:
-        config = configEditor.get_default_section()
+    config = configEditor.get_default_section()
 
-    full_image_name = config["fullimagename"]
-    images_path = config["imagepath"]
+    image_path = config["imagepath"]
+    font_path = config["fontpath"]
     monitor_id = int(config["monitorid"])
+    hours_params = config["hours"].split(",")
+    minutes_params = config["minutes"].split(",")
+    split_params = config["split"].split(",")
 
-    image_parts = full_image_name.split(".")
-    image_name = image_parts[0]
-    image_ext = image_parts[1]
-    wallpaper = images_path + "\\" + image_name + "_time." + image_ext
+    img = clockWallpaper.draw_clock(
+        image_path,
+        font_path,
+        hours_params,
+        minutes_params,
+        split_params,
+    )
 
-    clockWallpaper.add_clock(config)
+    clockWallpaper.save_image(img, image_path)
 
     desktop_wallpaper = IDesktopWallpaper.CoCreateInstance()
-    monitor_id = desktop_wallpaper.GetMonitorDevicePathAt(monitor_id)
-    desktop_wallpaper.SetWallpaper(monitor_id, wallpaper)
-
-
-# TODO Make this all pretty
-# TODO create user interface where he can change a couple things like the font, the color, the position of the clock
+    monitor = desktop_wallpaper.GetMonitorDevicePathAt(monitor_id)
+    desktop_wallpaper.SetWallpaper(monitor, clockWallpaper.get_save_path(image_path))

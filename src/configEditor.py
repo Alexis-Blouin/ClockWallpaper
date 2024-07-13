@@ -14,10 +14,8 @@ class ConfigEditor:
     def set_default_section(self):
         username = os.getlogin()
         self.config["DEFAULT"] = self.__set_param(
-            f"C:\\Users\\{username}\\Documents\\GitHub\\ClockWallpaper\\Images",
-            f"C:\\Users\\{username}\\Documents\\GitHub\\ClockWallpaper\\Fonts",
-            "YorMirror.jpg",
-            "FiraMono-Regular.ttf",
+            f"C:\\Users\\{username}\\Documents\\GitHub\\ClockWallpaper\\Images\\YorMirror.jpg",
+            f"C:\\Users\\{username}\\Documents\\GitHub\\ClockWallpaper\\Fonts\\FiraMono-Regular.ttf",
             "1",
             "200,250,B40614,300",
             "400,450,E89C36,300",
@@ -31,8 +29,6 @@ class ConfigEditor:
         config_name,
         images_path,
         fonts_path,
-        image_name,
-        font_name,
         monitor_id,
         hours,
         minutes,
@@ -43,8 +39,6 @@ class ConfigEditor:
         self.config[config_name] = self.__set_param(
             images_path,
             fonts_path,
-            image_name,
-            font_name,
             monitor_id,
             hours,
             minutes,
@@ -58,8 +52,6 @@ class ConfigEditor:
         config_name,
         images_path,
         fonts_path,
-        image_name,
-        font_name,
         monitor_id,
         hours,
         minutes,
@@ -69,8 +61,6 @@ class ConfigEditor:
         self.config[config_name] = self.__set_param(
             images_path,
             fonts_path,
-            image_name,
-            font_name,
             monitor_id,
             hours,
             minutes,
@@ -104,8 +94,6 @@ class ConfigEditor:
         self,
         images_path,
         fonts_path,
-        image_name,
-        font_name,
         monitor_id,
         hours,
         minutes,
@@ -114,8 +102,6 @@ class ConfigEditor:
         return {
             "imagepath": images_path,
             "fontpath": fonts_path,
-            "fullimagename": image_name,
-            "fullfontname": font_name,
             "monitorid": monitor_id,
             "hours": hours,
             "minutes": minutes,
