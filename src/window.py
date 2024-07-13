@@ -1,5 +1,6 @@
 import os
 import re
+import subprocess
 import tkinter as tk
 import screeninfo
 from PIL import Image, ImageTk
@@ -73,6 +74,7 @@ class Window(tk.Frame):
             configEditor = ConfigEditor()
             configEditor.set_config(config_name)
 
+            subprocess.run(["pythonw", "src/taskNoTime.pyw"])
             self.__show_alert("Success", "Configuration set successfully.")
         else:
             self.__show_alert(
