@@ -16,10 +16,10 @@ if __name__ == "__main__":
             config = configEditor.get_section(config_name)
             if config:
                 print("This config already exists")
-                print(config["imagespath"])
+                print(config["imagepath"])
             images_path = input("Images Path: ")
             if config:
-                print(config["fontspath"])
+                print(config["fontpath"])
             fonts_path = input("Fonts Path: ")
             if config:
                 print(config["imagename"])

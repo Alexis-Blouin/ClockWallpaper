@@ -18,7 +18,7 @@ if __name__ == "__main__":
         config = configEditor.get_default_section()
 
     full_image_name = config["fullimagename"]
-    images_path = config["imagespath"]
+    images_path = config["imagepath"]
     monitor_id = int(config["monitorid"])
 
     image_parts = full_image_name.split(".")

@@ -112,8 +112,8 @@ class ConfigEditor:
         split,
     ):
         return {
-            "imagespath": images_path,
-            "fontspath": fonts_path,
+            "imagepath": images_path,
+            "fontpath": fonts_path,
             "fullimagename": image_name,
             "fullfontname": font_name,
             "monitorid": monitor_id,

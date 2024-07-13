@@ -5,13 +5,13 @@ from PIL import Image, ImageDraw, ImageFont
 
 class ClockWallpaper:
     def add_clock(self, config):
-        images_path = config["imagespath"]
+        images_path = config["imagepath"]
         full_image_name = config["fullimagename"]
         image_parts = full_image_name.split(".")
         image_name = image_parts[0]
         image_ext = image_parts[1]
 
-        fonts_path = config["fontspath"]
+        fonts_path = config["fontpath"]
         full_font_name = config["fullfontname"]
         font_parts = full_font_name.split(".")
         font_name = font_parts[0]
