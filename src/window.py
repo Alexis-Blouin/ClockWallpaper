@@ -121,6 +121,9 @@ class Window(tk.Frame):
 
         # Image preview
         self.image_preview = tk.Label(self)
+        self.image_preview_button = tk.Button(
+            self, text="Update Preview", command=self.__update_image_preview
+        )
 
         # Position
         self.position_label = tk.Label(self, text="Position", anchor="w")
@@ -216,11 +219,12 @@ class Window(tk.Frame):
             row=row_num,
             column=2,
             rowspan=15,
-            columnspan=19,
+            columnspan=6,
             sticky="ew",
             padx=5,
             pady=5,
         )
+        self.image_preview_button.grid(row=row_num + 15, column=5, sticky="ew", padx=5)
         row_num += 1
 
         # Position
@@ -284,9 +288,9 @@ class Window(tk.Frame):
         row_num += 1
 
         # Cancel button
-        self.cancel_button.grid(row=row_num, column=19, sticky="ew", padx=5, pady=5)
+        self.cancel_button.grid(row=row_num, column=6, sticky="ew", padx=5, pady=5)
         # Save button
-        self.save_button.grid(row=row_num, column=20, sticky="ew", padx=5, pady=5)
+        self.save_button.grid(row=row_num, column=7, sticky="ew", padx=5, pady=5)
 
     def __instanciate_config(self, config_name):
         configEditor = ConfigEditor()
@@ -341,11 +345,47 @@ class Window(tk.Frame):
         )
 
         # Resize the image to fit the selected monitor
-        img = img.resize((240, 135))
+        img = img.resize((480, 270))
         img = ImageTk.PhotoImage(img)
 
         self.image_preview.config(image=img)
         self.image_preview.image = img
+
+    def __update_image_preview(self):
+        image_path = self.img_entry.get()
+        font_path = self.font_entry.get()
+
+        hours_params = [
+            self.hours_position_x.get(),
+            self.hours_position_y.get(),
+            self.hours_color_entry.get()[1:],
+            self.hours_size.get(),
+        ]
+        for i in range(len(hours_params)):
+            if not hours_params[i]:
+                hours_params[i] = "000000"
+        minutes_params = [
+            self.minutes_position_x.get(),
+            self.minutes_position_y.get(),
+            self.minutes_color_entry.get()[1:],
+            self.minutes_size.get(),
+        ]
+        for i in range(len(minutes_params)):
+            if not minutes_params[i]:
+                minutes_params[i] = "000000"
+        split_params = [
+            self.split_position_x.get(),
+            self.split_position_y.get(),
+            self.split_color_entry.get()[1:],
+            self.split_size.get(),
+        ]
+        for i in range(len(split_params)):
+            if not split_params[i]:
+                split_params[i] = "000000"
+
+        self.__set_image_preview(
+            image_path, font_path, hours_params, minutes_params, split_params
+        )
 
     def __quit(self):
         self.parent.quit()
