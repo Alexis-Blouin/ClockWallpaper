@@ -61,24 +61,25 @@ class Window(tk.Frame):
         confirm_button = tk.Button(
             root,
             text="OK",
-            command=lambda: self.__set_config(root, section_names, combo.get()),
+            command=lambda: self.__apply_config(section_names, combo.get(), root),
         )
         confirm_button.grid(row=2, column=0, sticky="ew", padx=(15, 5), pady=(10, 5))
         cancel_button = tk.Button(root, text="Cancel", command=root.destroy)
         cancel_button.grid(row=2, column=1, sticky="ew", padx=(5, 15), pady=(10, 5))
 
-    def __set_config(self, root, section_names, config_name):
+    def __apply_config(self, section_names, config_name, root=None):
         if config_name in section_names:
-            root.destroy()
+            if root:
+                root.destroy()
 
             configEditor = ConfigEditor()
-            configEditor.set_config(config_name)
+            configEditor.apply_config(config_name)
 
             subprocess.run(["pythonw", "src/taskNoTime.pyw"])
-            self.__show_alert("Success", "Configuration set successfully.")
+            self.__show_alert("Success", "Configuration applied successfully.", "info")
         else:
             self.__show_alert(
-                "Invalid Selection", "Please select a valid configuration."
+                "Invalid Selection", "Please select a valid configuration.", "warning"
             )
 
     def __add_config(self):
@@ -135,7 +136,7 @@ class Window(tk.Frame):
             self.__instanciate_config(config_name)
         else:
             self.__show_alert(
-                "Invalid Selection", "Please select a valid configuration."
+                "Invalid Selection", "Please select a valid configuration.", "warning"
             )
 
     def __init_editing_frame(self, config_name, mode):
@@ -490,12 +491,15 @@ class Window(tk.Frame):
             self.__show_alert(
                 "Compatibility Warning",
                 f"Selected {type} is incompatible. Please choose a different {type}.",
+                "warning",
             )
         return file_ok
 
     def __check_position(self, name, position_x, position_y) -> bool:
         if not position_x or not position_y:
-            self.__show_alert("Empty Position", f"Please fill in the {name} positions.")
+            self.__show_alert(
+                "Empty Position", f"Please fill in the {name} positions.", "warning"
+            )
             return False
 
         try:
@@ -505,6 +509,7 @@ class Window(tk.Frame):
             self.__show_alert(
                 "Position Warning",
                 f"Please make sure that positions from {name} are numbers.",
+                "warning",
             )
             return False
 
@@ -513,6 +518,7 @@ class Window(tk.Frame):
             self.__show_alert(
                 "Position Warning",
                 f"Please make sure that positions from {name} are positive numbers and within the selected monitor size.",
+                "warning",
             )
             return False
 
@@ -520,7 +526,9 @@ class Window(tk.Frame):
 
     def __check_size(self, name, size) -> bool:
         if not size:
-            self.__show_alert("Empty Size", f"Please fill in the {name} size.")
+            self.__show_alert(
+                "Empty Size", f"Please fill in the {name} size.", "warning"
+            )
             return False
 
         try:
@@ -529,6 +537,7 @@ class Window(tk.Frame):
             self.__show_alert(
                 "Size Warning",
                 f"Please make sure that size from {name} is a number.",
+                "warning",
             )
             return False
 
@@ -536,6 +545,7 @@ class Window(tk.Frame):
             self.__show_alert(
                 "Size Warning",
                 f"Please make sure that size from {name} is a positive number.",
+                "warning",
             )
             return False
 
@@ -560,13 +570,16 @@ class Window(tk.Frame):
 
     def __check_color(self, name, color) -> bool:
         if not color:
-            self.__show_alert("Empty Color", f"Please select the {name} color.")
+            self.__show_alert(
+                "Empty Color", f"Please select the {name} color.", "warning"
+            )
             return False
 
         if not self.__is_hex_color(color):
             self.__show_alert(
                 "Color Warning",
                 f"Please make sure that color from {name} is a hexadecimal color.",
+                "warning",
             )
             return False
 
@@ -575,8 +588,16 @@ class Window(tk.Frame):
     def __hex_to_rgb(self, hex_color):
         return tuple(int(hex_color[i : i + 2], 16) for i in (0, 2, 4))
 
-    def __show_alert(self, title, message):
-        messagebox.showwarning(title, message)
+    def __show_alert(self, title, message, type):
+        if type == "error":
+            messagebox.showerror(title, message)
+        elif type == "warning":
+            messagebox.showwarning(title, message)
+        elif type == "info":
+            messagebox.showinfo(title, message)
+
+    def __ask_question(self, title, message):
+        return messagebox.askquestion(title, message)
 
     def __return_to_menu(self):
         for widget in self.winfo_children():
@@ -604,7 +625,7 @@ class Window(tk.Frame):
             if mode != "edit":
                 message = f"Do you want to overwrite the config {config_name}?"
                 title = "Existing Config"
-                result = messagebox.askquestion(title, message)
+                result = self.__ask_question(title, message)
             else:
                 result = "yes"
             if result == "yes":
@@ -628,7 +649,13 @@ class Window(tk.Frame):
                 text_split,
             )
 
-        self.__show_alert("Success", "Configuration saved successfully.")
+        if (
+            self.__ask_question("Apply Config", "Do you want to apply the new config?")
+            == "yes"
+        ):
+            self.__apply_config([config_name], config_name)
+
+        self.__show_alert("Success", "Configuration saved successfully.", "info")
         self.__return_to_menu()
 
     def __check_inputs(self) -> bool:

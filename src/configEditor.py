@@ -11,7 +11,7 @@ class ConfigEditor:
         if not os.path.exists("config/config.ini"):
             self.set_default_section()
 
-    def set_config(self, config_name):
+    def apply_config(self, config_name):
         self.__read_config()
         self.config["DEFAULT"] = {"currentconfig": config_name}
         with open("config/config.ini", "w") as configfile:
