@@ -13,6 +13,7 @@ class Window(tk.Frame):
     def __init__(self, parent):
         self.parent = parent
         tk.Frame.__init__(self, self.parent)
+        self.config_editor = ConfigEditor()
 
         self.__init_menu()
 
@@ -46,16 +47,16 @@ class Window(tk.Frame):
         self.button_quit.grid(row=row_num, column=0, sticky="ew", padx=30, pady=5)
 
     def __select_config(self):
-        configEditor = ConfigEditor()
-        section_names = configEditor.get_section_names()
+        section_names = self.config_editor.get_section_names()
 
         root = tk.Tk()
         root.title("Config Name")
 
         label = tk.Label(root, text="Choose a configuration to use:")
-        label.grid(row=0, column=0, columnspan=2, sticky="ew", padx=(15, 5))
+        label.grid(row=0, column=0, columnspan=2, sticky="ew", padx=10)
 
         combo = ttk.Combobox(root, values=section_names)
+        combo.current(section_names.index(self.config_editor.get_config_name()))
         combo.grid(row=1, column=0, columnspan=2, sticky="ew", padx=10)
 
         confirm_button = tk.Button(
@@ -72,8 +73,7 @@ class Window(tk.Frame):
             if root:
                 root.destroy()
 
-            configEditor = ConfigEditor()
-            configEditor.apply_config(config_name)
+            self.config_editor.apply_config(config_name)
 
             subprocess.run(["pythonw", "src/taskNoTime.pyw"])
             self.__show_alert("Success", "Configuration applied successfully.", "info")
@@ -86,31 +86,30 @@ class Window(tk.Frame):
         config_name = simpledialog.askstring(
             "Config Name", "Enter the new configuration name:"
         )
+        while config_name and self.config_editor.config_name_exist(config_name):
+            self.__show_alert(
+                "Config Name Error", "This config name is already existing.", "error"
+            )
+            config_name = simpledialog.askstring(
+                "Config Name", "Enter the new configuration name:"
+            )
         if config_name is None:
             return
         if not config_name:
-            configEditor = ConfigEditor()
-            section_names = configEditor.get_section_names()
-
-            config_name = "Config_"
-            config_id = 1
-            while config_name + str(config_id) in section_names:
-                config_id += 1
-            config_name += str(config_id)
+            config_name = self.config_editor.generate_default_config_name()
 
         for widget in self.winfo_children():
             widget.destroy()
         self.__init_editing_frame(config_name, "add")
 
     def __edit_config(self):
-        configEditor = ConfigEditor()
-        section_names = configEditor.get_section_names()
+        section_names = self.config_editor.get_section_names()
 
         root = tk.Tk()
         root.title("Config Name")
 
         label = tk.Label(root, text="Choose a configuration to edit:")
-        label.grid(row=0, column=0, columnspan=2, sticky="ew", padx=(15, 5))
+        label.grid(row=0, column=0, columnspan=2, sticky="ew", padx=10)
 
         combo = ttk.Combobox(root, values=section_names)
         combo.grid(row=1, column=0, columnspan=2, sticky="ew", padx=10)
@@ -118,30 +117,34 @@ class Window(tk.Frame):
         confirm_button = tk.Button(
             root,
             text="OK",
-            command=lambda: self.__confirm_edit_selection(
-                root, section_names, combo.get()
-            ),
+            command=lambda: self.__confirm_edit_selection(root, combo.get()),
         )
         confirm_button.grid(row=2, column=0, sticky="ew", padx=(15, 5), pady=(10, 5))
         cancel_button = tk.Button(root, text="Cancel", command=root.destroy)
         cancel_button.grid(row=2, column=1, sticky="ew", padx=(5, 15), pady=(10, 5))
 
-    def __confirm_edit_selection(self, root, section_names, config_name):
-        if config_name in section_names:
+    def __confirm_edit_selection(self, root, config_name):
+        if self.config_editor.config_name_exist(config_name):
             root.destroy()
 
             for widget in self.winfo_children():
                 widget.destroy()
             self.__init_editing_frame(config_name, "edit")
             self.__instanciate_config(config_name)
+            self.config_editor.set_edit_config_name(config_name)
         else:
             self.__show_alert(
-                "Invalid Selection", "Please select a valid configuration.", "warning"
+                "Invalid Selection",
+                "Please select a valid configuration to edit.",
+                "warning",
             )
 
     def __init_editing_frame(self, config_name, mode):
         # Conf name
         self.conf_name_label = tk.Label(self, text=config_name, anchor="center")
+        self.conf_name_button = tk.Button(
+            self, text="Modify", command=self.__modify_config_name
+        )
 
         # Image
         self.img_label = tk.Label(self, text="Choose image:", anchor="w")
@@ -246,9 +249,8 @@ class Window(tk.Frame):
         row_num = 0
 
         # Conf name
-        self.conf_name_label.grid(
-            row=row_num, column=0, columnspan=8, sticky="ew", padx=5, pady=5
-        )
+        self.conf_name_label.grid(row=row_num, column=3, sticky="ew", padx=5, pady=5)
+        self.conf_name_button.grid(row=row_num, column=4, sticky="ew", padx=5, pady=5)
         row_num += 1
 
         # Image
@@ -346,8 +348,7 @@ class Window(tk.Frame):
         self.save_button.grid(row=row_num, column=7, sticky="ew", padx=5, pady=5)
 
     def __instanciate_config(self, config_name):
-        configEditor = ConfigEditor()
-        config = configEditor.get_section(config_name)
+        config = self.config_editor.get_section(config_name)
         if config:
             # Paths
             image_path = config["imagepath"]
@@ -387,6 +388,21 @@ class Window(tk.Frame):
             self.split_position_y.insert(0, split[1])
             self.split_color_entry.insert(0, f"#{split[2]}")
             self.split_size.insert(0, split[3])
+
+    def __modify_config_name(self):
+        new_config_name = simpledialog.askstring(
+            "Config Name", "Enter the new configuration name:"
+        )
+        while new_config_name and self.config_editor.config_name_exist(new_config_name):
+            self.__show_alert(
+                "Config Name Error", "This config name is already existing.", "error"
+            )
+            new_config_name = simpledialog.askstring(
+                "Config Name", "Enter the new configuration name:"
+            )
+
+        if new_config_name:
+            self.conf_name_label.config(text=new_config_name)
 
     def __set_image_preview(
         self, image_path, font_path, hours_params, minutes_params, split_params
@@ -619,27 +635,18 @@ class Window(tk.Frame):
         text_minutes = f"{self.minutes_position_x.get()},{self.minutes_position_y.get()},{self.minutes_color_entry.get()[1:]},{self.minutes_size.get()}"
         text_split = f"{self.split_position_x.get()},{self.split_position_y.get()},{self.split_color_entry.get()[1:]},{self.split_size.get()}"
 
-        configEditor = ConfigEditor()
-        config = configEditor.get_section(config_name)
-        if config:
-            if mode != "edit":
-                message = f"Do you want to overwrite the config {config_name}?"
-                title = "Existing Config"
-                result = self.__ask_question(title, message)
-            else:
-                result = "yes"
-            if result == "yes":
-                configEditor.modify_section(
-                    config_name,
-                    image_path,
-                    font_path,
-                    monitor_id,
-                    text_hours,
-                    text_minutes,
-                    text_split,
-                )
+        if mode == "edit":
+            self.config_editor.modify_section(
+                config_name,
+                image_path,
+                font_path,
+                monitor_id,
+                text_hours,
+                text_minutes,
+                text_split,
+            )
         else:
-            configEditor.add_section(
+            self.config_editor.add_section(
                 config_name,
                 image_path,
                 font_path,
@@ -649,13 +656,14 @@ class Window(tk.Frame):
                 text_split,
             )
 
+        self.__show_alert("Success", "Configuration saved successfully.", "info")
+
         if (
             self.__ask_question("Apply Config", "Do you want to apply the new config?")
             == "yes"
         ):
             self.__apply_config([config_name], config_name)
 
-        self.__show_alert("Success", "Configuration saved successfully.", "info")
         self.__return_to_menu()
 
     def __check_inputs(self) -> bool:

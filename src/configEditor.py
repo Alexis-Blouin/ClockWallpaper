@@ -7,9 +7,10 @@ class ConfigEditor:
 
     def __init__(self) -> None:
         self.config = configparser.ConfigParser()
+        self.edit_config_name = None
 
-        if not os.path.exists("config/config.ini"):
-            self.set_default_section()
+    def set_edit_config_name(self, config_name):
+        self.edit_config_name = config_name
 
     def apply_config(self, config_name):
         self.__read_config()
@@ -51,14 +52,26 @@ class ConfigEditor:
         split,
     ):
         self.__read_config()
-        self.config[config_name] = self.__set_param(
-            images_path,
-            fonts_path,
-            monitor_id,
-            hours,
-            minutes,
-            split,
-        )
+        if self.edit_config_name == config_name:
+            self.config[config_name] = self.__set_param(
+                images_path,
+                fonts_path,
+                monitor_id,
+                hours,
+                minutes,
+                split,
+            )
+        else:
+            self.config.remove_section(self.edit_config_name)
+            self.config.add_section(config_name)
+            self.config[config_name] = self.__set_param(
+                images_path,
+                fonts_path,
+                monitor_id,
+                hours,
+                minutes,
+                split,
+            )
         with open("config/config.ini", "w") as configfile:
             self.config.write(configfile)
 
@@ -79,6 +92,20 @@ class ConfigEditor:
     def get_section_names(self):
         self.__read_config()
         return self.config.sections()
+
+    def config_name_exist(self, config_name):
+        return config_name in self.get_section_names()
+
+    def generate_default_config_name(self):
+        section_names = self.get_section_names()
+        config_name = "Config_"
+        config_id = 1
+
+        while config_name + str(config_id) in section_names:
+            config_id += 1
+        config_name += str(config_id)
+
+        return config_name
 
     def __set_param(
         self,
