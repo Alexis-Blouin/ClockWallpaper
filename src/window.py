@@ -47,6 +47,8 @@ class Window(tk.Frame):
         self.button_quit.grid(row=row_num, column=0, sticky="ew", padx=30, pady=5)
 
     def __select_config(self):
+        self.__hide_window(self.parent)
+
         section_names = self.config_editor.get_section_names()
 
         root = tk.Tk()
@@ -65,7 +67,11 @@ class Window(tk.Frame):
             command=lambda: self.__apply_config(section_names, combo.get(), root),
         )
         confirm_button.grid(row=2, column=0, sticky="ew", padx=(15, 5), pady=(10, 5))
-        cancel_button = tk.Button(root, text="Cancel", command=root.destroy)
+        cancel_button = tk.Button(
+            root,
+            text="Cancel",
+            command=lambda: self.__close_choosing_window(root, self.parent),
+        )
         cancel_button.grid(row=2, column=1, sticky="ew", padx=(5, 15), pady=(10, 5))
 
     def __apply_config(self, section_names, config_name, root=None):
@@ -77,12 +83,16 @@ class Window(tk.Frame):
 
             subprocess.run(["pythonw", "src/taskNoTime.pyw"])
             self.__show_alert("Success", "Configuration applied successfully.", "info")
+
+            self.__show_window(self.parent)
         else:
             self.__show_alert(
                 "Invalid Selection", "Please select a valid configuration.", "warning"
             )
 
     def __add_config(self):
+        self.__hide_window(self.parent)
+
         config_name = simpledialog.askstring(
             "Config Name", "Enter the new configuration name:"
         )
@@ -94,6 +104,7 @@ class Window(tk.Frame):
                 "Config Name", "Enter the new configuration name:"
             )
         if config_name is None:
+            self.__show_window(self.parent)
             return
         if not config_name:
             config_name = self.config_editor.generate_default_config_name()
@@ -101,8 +112,11 @@ class Window(tk.Frame):
         for widget in self.winfo_children():
             widget.destroy()
         self.__init_editing_frame(config_name, "add")
+        self.__show_window(self.parent)
 
     def __edit_config(self):
+        self.__hide_window(self.parent)
+
         section_names = self.config_editor.get_section_names()
 
         root = tk.Tk()
@@ -120,7 +134,11 @@ class Window(tk.Frame):
             command=lambda: self.__confirm_edit_selection(root, combo.get()),
         )
         confirm_button.grid(row=2, column=0, sticky="ew", padx=(15, 5), pady=(10, 5))
-        cancel_button = tk.Button(root, text="Cancel", command=root.destroy)
+        cancel_button = tk.Button(
+            root,
+            text="Cancel",
+            command=lambda: self.__close_choosing_window(root, self.parent),
+        )
         cancel_button.grid(row=2, column=1, sticky="ew", padx=(5, 15), pady=(10, 5))
 
     def __confirm_edit_selection(self, root, config_name):
@@ -132,12 +150,24 @@ class Window(tk.Frame):
             self.__init_editing_frame(config_name, "edit")
             self.__instanciate_config(config_name)
             self.config_editor.set_edit_config_name(config_name)
+
+            self.__show_window(self.parent)
         else:
             self.__show_alert(
                 "Invalid Selection",
                 "Please select a valid configuration to edit.",
                 "warning",
             )
+
+    def __hide_window(self, window):
+        window.withdraw()
+
+    def __show_window(self, window):
+        window.deiconify()
+
+    def __close_choosing_window(self, root, window):
+        root.destroy()
+        self.__show_window(window)
 
     def __init_editing_frame(self, config_name, mode):
         # Conf name
