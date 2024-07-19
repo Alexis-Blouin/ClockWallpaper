@@ -45,17 +45,17 @@ class ClockWallpaper:
         return strftime("%S")
 
     def __get_layer(self, params):
-        return int(params.pop(0))
+        return int(params[0])
 
     def __get_position(self, params):
-        return (int(params.pop(0)), int(params.pop(0)))
+        return (int(params[1]), int(params[2]))
 
     def __hex_to_rgb(self, params):
-        hex_color = params.pop(0)
+        hex_color = params[3]
         return tuple(int(hex_color[i : i + 2], 16) for i in (0, 2, 4)) + (255,)
 
     def __get_font(self, font_path, params):
-        return ImageFont.truetype(font_path, size=int(params.pop(0)))
+        return ImageFont.truetype(font_path, size=int(params[4]))
 
     def __draw_clock(self, draw, text, font_path, params):
         position = self.__get_position(params)
