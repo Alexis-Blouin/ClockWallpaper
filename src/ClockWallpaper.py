@@ -10,9 +10,19 @@ class ClockWallpaper:
         draw, img = self.__open_image(image_path)
 
         hours, minutes, day_split = self.get_time()
-        self.__draw_clock(draw, hours, font_path, hours_params)
-        self.__draw_clock(draw, minutes, font_path, minutes_params)
-        self.__draw_clock(draw, day_split, font_path, split_params)
+
+        layers = (
+            self.__get_layer(hours_params),
+            self.__get_layer(minutes_params),
+            self.__get_layer(split_params),
+        )
+        for i in range(3):
+            if i == layers[0]:
+                self.__draw_clock(draw, hours, font_path, hours_params)
+            elif i == layers[1]:
+                self.__draw_clock(draw, minutes, font_path, minutes_params)
+            elif i == layers[2]:
+                self.__draw_clock(draw, day_split, font_path, split_params)
 
         return img
 
@@ -34,14 +44,18 @@ class ClockWallpaper:
     def get_seconds(self):
         return strftime("%S")
 
+    def __get_layer(self, params):
+        return int(params.pop(0))
+
     def __get_position(self, params):
-        return (int(params[0]), int(params[1]))
+        return (int(params.pop(0)), int(params.pop(0)))
 
     def __hex_to_rgb(self, params):
-        return tuple(int(params[2][i : i + 2], 16) for i in (0, 2, 4)) + (255,)
+        hex_color = params.pop(0)
+        return tuple(int(hex_color[i : i + 2], 16) for i in (0, 2, 4)) + (255,)
 
     def __get_font(self, font_path, params):
-        return ImageFont.truetype(font_path, size=int(params[3]))
+        return ImageFont.truetype(font_path, size=int(params.pop(0)))
 
     def __draw_clock(self, draw, text, font_path, params):
         position = self.__get_position(params)

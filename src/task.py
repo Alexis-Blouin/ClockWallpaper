@@ -9,4 +9,4 @@ from time import sleep
 if __name__ == "__main__":
     clockWallpaper = ClockWallpaper()
 
-    subprocess.run(["pythonw", "src/taskNoTime.pyw"])
+    subprocess.run(["python", "src/taskNoTime.py"])
