@@ -209,56 +209,77 @@ class Window(tk.Frame):
             self, text="Update Preview", command=self.__update_image_preview
         )
 
+        # Hours
+        self.hours_label = tk.Label(self, text="Hours", anchor="w")
+        # Layer
+        self.hours_layer_up = tk.Button(
+            self, text="<", command=lambda: self.__change_layer("up", "hours")
+        )
+        self.hours_layer_down = tk.Button(
+            self, text=">", command=lambda: self.__change_layer("down", "hours")
+        )
         # Position
-        self.position_label = tk.Label(self, text="Position", anchor="w")
-
-        self.hours_position_label = tk.Label(self, text="Hours", anchor="w")
-        self.hours_position_x_label = tk.Label(self, text="X", anchor="w")
+        self.hours_position_x_label = tk.Label(self, text="Position X", anchor="w")
         self.hours_position_x = tk.Entry(self)
-        self.hours_position_y_label = tk.Label(self, text="Y", anchor="w")
+        self.hours_position_y_label = tk.Label(self, text="Position Y", anchor="w")
         self.hours_position_y = tk.Entry(self)
-
-        self.minutes_position_label = tk.Label(self, text="Minutes", anchor="w")
-        self.minutes_position_x_label = tk.Label(self, text="X", anchor="w")
-        self.minutes_position_x = tk.Entry(self)
-        self.minutes_position_y_label = tk.Label(self, text="Y", anchor="w")
-        self.minutes_position_y = tk.Entry(self)
-
-        self.split_position_label = tk.Label(self, text="Split", anchor="w")
-        self.split_position_x_label = tk.Label(self, text="X", anchor="w")
-        self.split_position_x = tk.Entry(self)
-        self.split_position_y_label = tk.Label(self, text="Y", anchor="w")
-        self.split_position_y = tk.Entry(self)
-
         # Size
-        self.size_label = tk.Label(self, text="Size", anchor="w")
-
-        self.hours_size_label = tk.Label(self, text="Hours", anchor="w")
+        self.hours_size_label = tk.Label(self, text="Size", anchor="w")
         self.hours_size = tk.Entry(self)
-        self.minutes_size_label = tk.Label(self, text="Minutes", anchor="w")
-        self.minutes_size = tk.Entry(self)
-        self.split_size_label = tk.Label(self, text="Split", anchor="w")
-        self.split_size = tk.Entry(self)
-
         # Color
-        # TODO add a color square to show the color
-        self.color_label = tk.Label(self, text="Color", anchor="w")
-
-        self.hours_color_label = tk.Label(self, text="Hours", anchor="w")
+        self.hours_color_label = tk.Label(self, text="Color", anchor="w")
         self.hours_color_entry = tk.Entry(self)
         self.hours_color = tk.Button(
             self,
             text="...",
             command=lambda: self.__select_color(self.hours_color_entry),
         )
-        self.minutes_color_label = tk.Label(self, text="Minutes", anchor="w")
+
+        # Minutes
+        self.minutes_label = tk.Label(self, text="Minutes", anchor="w")
+        # Layer
+        self.minutes_layer_up = tk.Button(
+            self, text="<", command=lambda: self.__change_layer("up", "minutes")
+        )
+        self.minutes_layer_down = tk.Button(
+            self, text=">", command=lambda: self.__change_layer("down", "minutes")
+        )
+        # Position
+        self.minutes_position_x_label = tk.Label(self, text="Position X", anchor="w")
+        self.minutes_position_x = tk.Entry(self)
+        self.minutes_position_y_label = tk.Label(self, text="Position Y", anchor="w")
+        self.minutes_position_y = tk.Entry(self)
+        # Size
+        self.minutes_size_label = tk.Label(self, text="Size", anchor="w")
+        self.minutes_size = tk.Entry(self)
+        # Color
+        self.minutes_color_label = tk.Label(self, text="Color", anchor="w")
         self.minutes_color_entry = tk.Entry(self)
         self.minutes_color = tk.Button(
             self,
             text="...",
             command=lambda: self.__select_color(self.minutes_color_entry),
         )
-        self.split_color_label = tk.Label(self, text="Split", anchor="w")
+
+        # Split
+        self.split_label = tk.Label(self, text="Split", anchor="w")
+        # Layers
+        self.split_layer_up = tk.Button(
+            self, text="<", command=lambda: self.__change_layer("up", "split")
+        )
+        self.split_layer_down = tk.Button(
+            self, text=">", command=lambda: self.__change_layer("down", "split")
+        )
+        # Position
+        self.split_position_x_label = tk.Label(self, text="Position X", anchor="w")
+        self.split_position_x = tk.Entry(self)
+        self.split_position_y_label = tk.Label(self, text="Position Y", anchor="w")
+        self.split_position_y = tk.Entry(self)
+        # Size
+        self.split_size_label = tk.Label(self, text="Size", anchor="w")
+        self.split_size = tk.Entry(self)
+        # Color
+        self.split_color_label = tk.Label(self, text="Color", anchor="w")
         self.split_color_entry = tk.Entry(self)
         self.split_color = tk.Button(
             self,
@@ -285,25 +306,27 @@ class Window(tk.Frame):
 
         # Image
         self.img_label.grid(row=row_num, column=0, sticky="ew", padx=5)
-        self.img_entry.grid(row=row_num, column=1, sticky="ew", padx=5)
-        self.img_button.grid(row=row_num, column=2, sticky="ew", padx=5, pady=2)
+        self.img_entry.grid(row=row_num, column=1, columnspan=2, sticky="ew", padx=5)
+        self.img_button.grid(row=row_num, column=3, sticky="ew", padx=5, pady=2)
         row_num += 1
 
         # Font
         self.font_label.grid(row=row_num, column=0, sticky="ew", padx=5)
-        self.font_entry.grid(row=row_num, column=1, sticky="ew", padx=5)
-        self.font_button.grid(row=row_num, column=2, sticky="ew", padx=5, pady=2)
+        self.font_entry.grid(row=row_num, column=1, columnspan=2, sticky="ew", padx=5)
+        self.font_button.grid(row=row_num, column=3, sticky="ew", padx=5, pady=2)
         row_num += 1
 
         # Monitor
         self.monitor_label.grid(row=row_num, column=0, sticky="ew", padx=5, pady=5)
-        self.monitor_combo.grid(row=row_num, column=1, sticky="ew", padx=5, pady=5)
+        self.monitor_combo.grid(
+            row=row_num, column=1, columnspan=2, sticky="ew", padx=5, pady=5
+        )
 
         # Image preview
         self.image_preview.grid(
             row=row_num,
-            column=2,
-            rowspan=15,
+            column=4,
+            rowspan=14,
             columnspan=6,
             sticky="ew",
             padx=5,
@@ -312,65 +335,9 @@ class Window(tk.Frame):
         self.image_preview_button.grid(row=row_num + 15, column=5, sticky="ew", padx=5)
         row_num += 1
 
-        # Position
-        self.position_label.grid(row=row_num, column=0, sticky="ew", padx=5, pady=5)
-        row_num += 1
-
-        self.hours_position_label.grid(row=row_num, column=0, sticky="ew", padx=5)
-        row_num += 1
-        self.hours_position_x_label.grid(row=row_num, column=0, sticky="w", padx=5)
-        self.hours_position_x.grid(row=row_num, column=1, sticky="ew", padx=5)
-        row_num += 1
-        self.hours_position_y_label.grid(row=row_num, column=0, sticky="w", padx=5)
-        self.hours_position_y.grid(row=row_num, column=1, sticky="ew", padx=5)
-        row_num += 1
-
-        self.minutes_position_label.grid(row=row_num, column=0, sticky="ew", padx=5)
-        row_num += 1
-        self.minutes_position_x_label.grid(row=row_num, column=0, sticky="w", padx=5)
-        self.minutes_position_x.grid(row=row_num, column=1, sticky="ew", padx=5)
-        row_num += 1
-        self.minutes_position_y_label.grid(row=row_num, column=0, sticky="w", padx=5)
-        self.minutes_position_y.grid(row=row_num, column=1, sticky="ew", padx=5)
-        row_num += 1
-
-        self.split_position_label.grid(row=row_num, column=0, sticky="ew", padx=5)
-        row_num += 1
-        self.split_position_x_label.grid(row=row_num, column=0, sticky="w", padx=5)
-        self.split_position_x.grid(row=row_num, column=1, sticky="ew", padx=5)
-        row_num += 1
-        self.split_position_y_label.grid(row=row_num, column=0, sticky="w", padx=5)
-        self.split_position_y.grid(row=row_num, column=1, sticky="ew", padx=5)
-        row_num += 1
-
-        # Size
-        self.size_label.grid(row=row_num, column=0, sticky="ew", padx=5, pady=5)
-        row_num += 1
-        self.hours_size_label.grid(row=row_num, column=0, sticky="ew", padx=5)
-        self.hours_size.grid(row=row_num, column=1, sticky="ew", padx=5)
-        row_num += 1
-        self.minutes_size_label.grid(row=row_num, column=0, sticky="ew", padx=5)
-        self.minutes_size.grid(row=row_num, column=1, sticky="ew", padx=5)
-        row_num += 1
-        self.split_size_label.grid(row=row_num, column=0, sticky="ew", padx=5)
-        self.split_size.grid(row=row_num, column=1, sticky="ew", padx=5)
-        row_num += 1
-
-        # Color
-        self.color_label.grid(row=row_num, column=0, sticky="ew", padx=5, pady=5)
-        row_num += 1
-        self.hours_color_label.grid(row=row_num, column=0, sticky="ew", padx=5)
-        self.hours_color_entry.grid(row=row_num, column=1, sticky="ew", padx=5)
-        self.hours_color.grid(row=row_num, column=2, sticky="ew", padx=5, pady=2)
-        row_num += 1
-        self.minutes_color_label.grid(row=row_num, column=0, sticky="ew", padx=5)
-        self.minutes_color_entry.grid(row=row_num, column=1, sticky="ew", padx=5)
-        self.minutes_color.grid(row=row_num, column=2, sticky="ew", padx=5, pady=2)
-        row_num += 1
-        self.split_color_label.grid(row=row_num, column=0, sticky="ew", padx=5)
-        self.split_color_entry.grid(row=row_num, column=1, sticky="ew", padx=5)
-        self.split_color.grid(row=row_num, column=2, sticky="ew", padx=5, pady=2)
-        row_num += 1
+        # Inputs
+        self.layers = {"hours": 0, "minutes": 1, "split": 2}
+        row_num = self.__place_inputs_by_layers(row_num)
 
         # Cancel button
         self.cancel_button.grid(row=row_num, column=6, sticky="ew", padx=5, pady=5)
@@ -401,113 +368,12 @@ class Window(tk.Frame):
                 split,
             )
 
-            layers = (hours[0], minutes[0], split[0])
-            row_num_positions = 5
-            row_num_sizes = 12
-            row_num_colors = 19
-            for i in range(3):
-                if i == int(layers[0]):
-                    self.hours_position_label.grid(
-                        row=row_num_positions, column=0, sticky="ew", padx=5
-                    )
-                    self.hours_position_x_label.grid(
-                        row=row_num_positions + 1, column=0, sticky="w", padx=5
-                    )
-                    self.hours_position_x.grid(
-                        row=row_num_positions + 1, column=1, sticky="ew", padx=5
-                    )
-                    self.hours_position_y_label.grid(
-                        row=row_num_positions + 2, column=0, sticky="w", padx=5
-                    )
-                    self.hours_position_y.grid(
-                        row=row_num_positions + 2, column=1, sticky="ew", padx=5
-                    )
-
-                    self.hours_size_label.grid(
-                        row=row_num_sizes, column=0, sticky="ew", padx=5
-                    )
-                    self.hours_size.grid(
-                        row=row_num_sizes, column=1, sticky="ew", padx=5
-                    )
-
-                    self.hours_color_label.grid(
-                        row=row_num_colors, column=0, sticky="ew", padx=5
-                    )
-                    self.hours_color_entry.grid(
-                        row=row_num_colors, column=1, sticky="ew", padx=5
-                    )
-                    self.hours_color.grid(
-                        row=row_num_colors, column=2, sticky="ew", padx=5, pady=2
-                    )
-                elif i == int(layers[1]):
-                    self.minutes_position_label.grid(
-                        row=row_num_positions, column=0, sticky="ew", padx=5
-                    )
-                    self.minutes_position_x_label.grid(
-                        row=row_num_positions + 1, column=0, sticky="w", padx=5
-                    )
-                    self.minutes_position_x.grid(
-                        row=row_num_positions + 1, column=1, sticky="ew", padx=5
-                    )
-                    self.minutes_position_y_label.grid(
-                        row=row_num_positions + 2, column=0, sticky="w", padx=5
-                    )
-                    self.minutes_position_y.grid(
-                        row=row_num_positions + 2, column=1, sticky="ew", padx=5
-                    )
-
-                    self.minutes_size_label.grid(
-                        row=row_num_sizes, column=0, sticky="ew", padx=5
-                    )
-                    self.minutes_size.grid(
-                        row=row_num_sizes, column=1, sticky="ew", padx=5
-                    )
-
-                    self.minutes_color_label.grid(
-                        row=row_num_colors, column=0, sticky="ew", padx=5
-                    )
-                    self.minutes_color_entry.grid(
-                        row=row_num_colors, column=1, sticky="ew", padx=5
-                    )
-                    self.minutes_color.grid(
-                        row=row_num_colors, column=2, sticky="ew", padx=5, pady=2
-                    )
-                elif i == int(layers[2]):
-                    self.split_position_label.grid(
-                        row=row_num_positions, column=0, sticky="ew", padx=5
-                    )
-                    self.split_position_x_label.grid(
-                        row=row_num_positions + 1, column=0, sticky="w", padx=5
-                    )
-                    self.split_position_x.grid(
-                        row=row_num_positions + 1, column=1, sticky="ew", padx=5
-                    )
-                    self.split_position_y_label.grid(
-                        row=row_num_positions + 2, column=0, sticky="w", padx=5
-                    )
-                    self.split_position_y.grid(
-                        row=row_num_positions + 2, column=1, sticky="ew", padx=5
-                    )
-
-                    self.split_size_label.grid(
-                        row=row_num_sizes, column=0, sticky="ew", padx=5
-                    )
-                    self.split_size.grid(
-                        row=row_num_sizes, column=1, sticky="ew", padx=5
-                    )
-
-                    self.split_color_label.grid(
-                        row=row_num_colors, column=0, sticky="ew", padx=5
-                    )
-                    self.split_color_entry.grid(
-                        row=row_num_colors, column=1, sticky="ew", padx=5
-                    )
-                    self.split_color.grid(
-                        row=row_num_colors, column=2, sticky="ew", padx=5, pady=2
-                    )
-                row_num_positions += 3
-                row_num_sizes += 1
-                row_num_colors += 1
+            self.layers = {
+                "hours": int(hours[0]),
+                "minutes": int(minutes[0]),
+                "split": int(split[0]),
+            }
+            self.__place_inputs_by_layers()
 
             # Hours
             self.hours_position_x.insert(0, hours[1])
@@ -542,6 +408,154 @@ class Window(tk.Frame):
         if new_config_name:
             self.conf_name_label.config(text=new_config_name)
 
+    def __change_layer(self, direction, element):
+        if element == "hours":
+            current_layer = self.layers["hours"]
+        elif element == "minutes":
+            current_layer = self.layers["minutes"]
+        elif element == "split":
+            current_layer = self.layers["split"]
+
+        if current_layer == 0 and direction == "down":
+            return
+        if current_layer == 2 and direction == "up":
+            return
+
+        if direction == "up":
+            for key, value in self.layers.items():
+                if value == current_layer + 1:
+                    layer_index_to_change = key
+                    break
+            self.layers[element] = current_layer + 1
+            self.layers[layer_index_to_change] = current_layer
+        elif direction == "down":
+            for key, value in self.layers.items():
+                if value == current_layer - 1:
+                    layer_index_to_change = key
+                    break
+            self.layers[element] = current_layer - 1
+            self.layers[layer_index_to_change] = current_layer
+
+        self.__place_inputs_by_layers()
+
+    def __place_inputs_by_layers(self, row_num=5) -> int:
+        for i in reversed(range(3)):
+            if i == int(self.layers["hours"]):
+                # Hours
+                self.hours_label.grid(row=row_num, column=0, sticky="ew", padx=5)
+                # Layer
+                self.hours_layer_up.grid(row=row_num, column=1, sticky="e", padx=5)
+                self.hours_layer_down.grid(row=row_num, column=2, sticky="w", padx=5)
+                row_num += 1
+                # Position
+                self.hours_position_x_label.grid(
+                    row=row_num, column=0, sticky="ew", padx=5
+                )
+                self.hours_position_x.grid(
+                    row=row_num, column=1, columnspan=2, sticky="ew", padx=5
+                )
+                row_num += 1
+                self.hours_position_y_label.grid(
+                    row=row_num, column=0, sticky="ew", padx=5
+                )
+                self.hours_position_y.grid(
+                    row=row_num, column=1, columnspan=2, sticky="ew", padx=5
+                )
+                row_num += 1
+                # Size
+                self.hours_size_label.grid(row=row_num, column=0, sticky="ew", padx=5)
+                self.hours_size.grid(
+                    row=row_num, column=1, columnspan=2, sticky="ew", padx=5
+                )
+                row_num += 1
+                # Color
+                self.hours_color_label.grid(row=row_num, column=0, sticky="ew", padx=5)
+                self.hours_color_entry.grid(
+                    row=row_num, column=1, columnspan=2, sticky="ew", padx=5
+                )
+                self.hours_color.grid(
+                    row=row_num, column=3, sticky="ew", padx=5, pady=2
+                )
+                row_num += 1
+            elif i == int(self.layers["minutes"]):
+                # Minutes
+                self.minutes_label.grid(row=row_num, column=0, sticky="ew", padx=5)
+                # Layer
+                self.minutes_layer_up.grid(row=row_num, column=1, sticky="e", padx=5)
+                self.minutes_layer_down.grid(row=row_num, column=2, sticky="w", padx=5)
+                row_num += 1
+                # Position
+                self.minutes_position_x_label.grid(
+                    row=row_num, column=0, sticky="ew", padx=5
+                )
+                self.minutes_position_x.grid(
+                    row=row_num, column=1, columnspan=2, sticky="ew", padx=5
+                )
+                row_num += 1
+                self.minutes_position_y_label.grid(
+                    row=row_num, column=0, sticky="ew", padx=5
+                )
+                self.minutes_position_y.grid(
+                    row=row_num, column=1, columnspan=2, sticky="ew", padx=5
+                )
+                row_num += 1
+                # Size
+                self.minutes_size_label.grid(row=row_num, column=0, sticky="ew", padx=5)
+                self.minutes_size.grid(
+                    row=row_num, column=1, columnspan=2, sticky="ew", padx=5
+                )
+                row_num += 1
+                # Color
+                self.minutes_color_label.grid(
+                    row=row_num, column=0, sticky="ew", padx=5
+                )
+                self.minutes_color_entry.grid(
+                    row=row_num, column=1, columnspan=2, sticky="ew", padx=5
+                )
+                self.minutes_color.grid(
+                    row=row_num, column=3, sticky="ew", padx=5, pady=2
+                )
+                row_num += 1
+            elif i == int(self.layers["split"]):
+                # Split
+                self.split_label.grid(row=row_num, column=0, sticky="ew", padx=5)
+                # Layer
+                self.split_layer_up.grid(row=row_num, column=1, sticky="e", padx=5)
+                self.split_layer_down.grid(row=row_num, column=2, sticky="w", padx=5)
+                row_num += 1
+                # Position
+                self.split_position_x_label.grid(
+                    row=row_num, column=0, sticky="ew", padx=5
+                )
+                self.split_position_x.grid(
+                    row=row_num, column=1, columnspan=2, sticky="ew", padx=5
+                )
+                row_num += 1
+                self.split_position_y_label.grid(
+                    row=row_num, column=0, sticky="ew", padx=5
+                )
+                self.split_position_y.grid(
+                    row=row_num, column=1, columnspan=2, sticky="ew", padx=5
+                )
+                row_num += 1
+                # Size
+                self.split_size_label.grid(row=row_num, column=0, sticky="ew", padx=5)
+                self.split_size.grid(
+                    row=row_num, column=1, columnspan=2, sticky="ew", padx=5
+                )
+                row_num += 1
+                # Color
+                self.split_color_label.grid(row=row_num, column=0, sticky="ew", padx=5)
+                self.split_color_entry.grid(
+                    row=row_num, column=1, columnspan=2, sticky="ew", padx=5
+                )
+                self.split_color.grid(
+                    row=row_num, column=3, sticky="ew", padx=5, pady=2
+                )
+                row_num += 1
+
+        return row_num
+
     def __set_image_preview(
         self, image_path, font_path, hours_params, minutes_params, split_params
     ):
@@ -574,7 +588,7 @@ class Window(tk.Frame):
         hours_color = hours_color if hours_color else "000000"
         hours_size = self.hours_size.get()
         hours_size = hours_size if hours_size else 1
-        hours_params = [hours_x, hours_y, hours_color, hours_size]
+        hours_params = [self.layers["hours"], hours_x, hours_y, hours_color, hours_size]
 
         minutes_x = self.minutes_position_x.get()
         minutes_x = minutes_x if minutes_x else 0
@@ -584,7 +598,13 @@ class Window(tk.Frame):
         minutes_color = minutes_color if minutes_color else "000000"
         minutes_size = self.minutes_size.get()
         minutes_size = minutes_size if minutes_size else 1
-        minutes_params = [minutes_x, minutes_y, minutes_color, minutes_size]
+        minutes_params = [
+            self.layers["minutes"],
+            minutes_x,
+            minutes_y,
+            minutes_color,
+            minutes_size,
+        ]
 
         split_x = self.split_position_x.get()
         split_x = split_x if split_x else 0
@@ -594,7 +614,7 @@ class Window(tk.Frame):
         split_color = split_color if split_color else "000000"
         split_size = self.split_size.get()
         split_size = split_size if split_size else 1
-        split_params = [split_x, split_y, split_color, split_size]
+        split_params = [self.layers["split"], split_x, split_y, split_color, split_size]
 
         self.__set_image_preview(
             image_path, font_path, hours_params, minutes_params, split_params
@@ -765,9 +785,9 @@ class Window(tk.Frame):
 
         monitor_id = self.monitor_combo.current()
 
-        text_hours = f"{self.hours_position_x.get()},{self.hours_position_y.get()},{self.hours_color_entry.get()[1:]},{self.hours_size.get()}"
-        text_minutes = f"{self.minutes_position_x.get()},{self.minutes_position_y.get()},{self.minutes_color_entry.get()[1:]},{self.minutes_size.get()}"
-        text_split = f"{self.split_position_x.get()},{self.split_position_y.get()},{self.split_color_entry.get()[1:]},{self.split_size.get()}"
+        text_hours = f"{self.layers["hours"]},{self.hours_position_x.get()},{self.hours_position_y.get()},{self.hours_color_entry.get()[1:]},{self.hours_size.get()}"
+        text_minutes = f"{self.layers["minutes"]},{self.minutes_position_x.get()},{self.minutes_position_y.get()},{self.minutes_color_entry.get()[1:]},{self.minutes_size.get()}"
+        text_split = f"{self.layers["split"]},{self.split_position_x.get()},{self.split_position_y.get()},{self.split_color_entry.get()[1:]},{self.split_size.get()}"
 
         if mode == "edit":
             self.config_editor.modify_section(
