@@ -1,5 +1,5 @@
 import subprocess
-from clockWallpaper import ClockWallpaper
+from clock_wallpaper import ClockWallpaper
 from time import sleep
 
 

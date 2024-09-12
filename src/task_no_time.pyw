@@ -1,6 +1,6 @@
-from clockWallpaper import ClockWallpaper
-from configEditor import ConfigEditor
-from iDesktopWallpaper import IDesktopWallpaper
+from clock_wallpaper import ClockWallpaper
+from config_editor import ConfigEditor
+from idesktop_wallpaper import IDesktopWallpaper
 from time import sleep
 
 
@@ -13,7 +13,7 @@ if __name__ == "__main__":
 
     image_path = config["imagepath"]
     font_path = config["fontpath"]
-    monitor_id = int(config["monitorid"])
+    monitor = config["monitor"]
     hours_params = config["hours"].split(",")
     minutes_params = config["minutes"].split(",")
     split_params = config["split"].split(",")
@@ -29,5 +29,5 @@ if __name__ == "__main__":
     clockWallpaper.save_image(img, image_path)
 
     desktop_wallpaper = IDesktopWallpaper.CoCreateInstance()
-    monitor = desktop_wallpaper.GetMonitorDevicePathAt(monitor_id)
+    monitor = desktop_wallpaper.GetMonitorDevicePathAt(monitor.split(",")[0])
     desktop_wallpaper.SetWallpaper(monitor, clockWallpaper.get_save_path(image_path))

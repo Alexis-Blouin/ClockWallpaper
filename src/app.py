@@ -1,6 +1,4 @@
 import tkinter as tk
-from clockWallpaper import ClockWallpaper
-from configEditor import ConfigEditor
 from window import Window
 
 if __name__ == "__main__":

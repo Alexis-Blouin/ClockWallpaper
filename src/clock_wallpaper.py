@@ -5,9 +5,15 @@ from PIL import Image, ImageDraw, ImageFont
 
 class ClockWallpaper:
     def draw_clock(
-        self, image_path, font_path, hours_params, minutes_params, split_params
+        self,
+        image_path,
+        resolution,
+        font_path,
+        hours_params,
+        minutes_params,
+        split_params,
     ):
-        draw, img = self.__open_image(image_path)
+        draw, img = self.__open_image(image_path, resolution)
 
         hours, minutes, day_split = self.get_time()
 
@@ -26,13 +32,43 @@ class ClockWallpaper:
 
         return img
 
+    def __crop_to_ratio(self, img, ratio):
+        # Get the dimensions of the image
+        img_width, img_height = img.size
+        target_width, target_height = ratio
+
+        # Calculate aspect ratios
+        img_aspect_ratio = img_width / img_height
+        target_aspect_ratio = target_width / target_height
+
+        # Determine how to crop based on the aspect ratios
+        if img_aspect_ratio > target_aspect_ratio:
+            # The image is wider than the target aspect ratio
+            # Crop the width
+            new_width = int(img_height * target_aspect_ratio)
+            left = (img_width - new_width) / 2
+            top = 0
+            right = (img_width + new_width) / 2
+            bottom = img_height
+        else:
+            # The image is taller than the target aspect ratio
+            # Crop the height
+            new_height = int(img_width / target_aspect_ratio)
+            left = 0
+            top = (img_height - new_height) / 2
+            right = img_width
+            bottom = (img_height + new_height) / 2
+
+        # Crop the image
+        cropped_img = img.crop((left, top, right, bottom))
+
+        return cropped_img
+
     def get_time(self):
-        day_split = "AM"
+        day_split = strftime("%p")
         hours = strftime("%H")
-        if int(hours) >= 12:
-            day_split = "PM"
-            if int(hours) > 12:
-                hours = str(int(hours) - 12)
+        if int(hours) > 12:
+            hours = str(int(hours) - 12)
         if len(hours) == 1:
             hours = "0" + hours
         minutes = strftime("%M")
@@ -77,8 +113,9 @@ class ClockWallpaper:
         except:
             return False
 
-    def __open_image(self, image_path):
+    def __open_image(self, image_path, resolution):
         img = Image.open(image_path)
+        img = self.__crop_to_ratio(img, resolution)
         return ImageDraw.Draw(img), img
 
     def save_image(self, img, image_path):

@@ -111,7 +111,7 @@ class ConfigEditor:
         self,
         images_path,
         fonts_path,
-        monitor_id,
+        monitor,
         hours,
         minutes,
         split,
@@ -119,7 +119,7 @@ class ConfigEditor:
         return {
             "imagepath": images_path,
             "fontpath": fonts_path,
-            "monitorid": monitor_id,
+            "monitor": monitor,
             "hours": hours,
             "minutes": minutes,
             "split": split,

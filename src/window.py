@@ -5,8 +5,8 @@ import tkinter as tk
 import screeninfo
 from PIL import Image, ImageTk
 from tkinter import filedialog, colorchooser, ttk, messagebox, simpledialog
-from clockWallpaper import ClockWallpaper
-from configEditor import ConfigEditor
+from clock_wallpaper import ClockWallpaper
+from config_editor import ConfigEditor
 
 
 class Window(tk.Frame):
@@ -354,7 +354,7 @@ class Window(tk.Frame):
             self.font_entry.insert(0, font_path)
 
             # Monitor
-            self.monitor_combo.current(int(config["monitorid"]))
+            self.monitor_combo.current(int(config["monitor"].split(",")[0]))
 
             # Image preview
             hours = config["hours"].split(",")
@@ -560,9 +560,12 @@ class Window(tk.Frame):
         self, image_path, font_path, hours_params, minutes_params, split_params
     ):
         clockWallpaper = ClockWallpaper()
+        
+        monitor_id = self.monitor_combo.current()
+        resolutions = self.__get_monitor_resolution(monitor_id)
 
         img = clockWallpaper.draw_clock(
-            image_path, font_path, hours_params, minutes_params, split_params
+            image_path, resolutions, font_path, hours_params, minutes_params, split_params
         )
 
         # Resize the image to fit the selected monitor
@@ -630,6 +633,11 @@ class Window(tk.Frame):
             res.append((info.width, info.height))
         # TODO use the res to modify image before modifying it
         return len(screeninfo.get_monitors())
+    
+    def __get_monitor_resolution(self, monitor_id):
+        info = screeninfo.get_monitors()[monitor_id]
+        resolution = (info.width, info.height)
+        return resolution
 
     def __select_file(self, file_entry, type):
         file = file_entry.get()
@@ -784,6 +792,8 @@ class Window(tk.Frame):
         font_path = self.font_entry.get()
 
         monitor_id = self.monitor_combo.current()
+        resolution = self.__get_monitor_resolution(monitor_id)
+        monitor = f"{monitor_id},{resolution[0]},{resolution[1]}"
 
         text_hours = f"{self.layers["hours"]},{self.hours_position_x.get()},{self.hours_position_y.get()},{self.hours_color_entry.get()[1:]},{self.hours_size.get()}"
         text_minutes = f"{self.layers["minutes"]},{self.minutes_position_x.get()},{self.minutes_position_y.get()},{self.minutes_color_entry.get()[1:]},{self.minutes_size.get()}"
@@ -794,7 +804,7 @@ class Window(tk.Frame):
                 config_name,
                 image_path,
                 font_path,
-                monitor_id,
+                monitor,
                 text_hours,
                 text_minutes,
                 text_split,
@@ -804,7 +814,7 @@ class Window(tk.Frame):
                 config_name,
                 image_path,
                 font_path,
-                monitor_id,
+                monitor,
                 text_hours,
                 text_minutes,
                 text_split,
