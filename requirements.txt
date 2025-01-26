@@ -1,4 +1,4 @@
-comptypes==1.4.6
+comtypes==1.4.6
 screeninfo==0.8.1
 pillow==10.4.0
 tk==0.1.0
