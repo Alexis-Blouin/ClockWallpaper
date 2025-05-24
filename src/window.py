@@ -657,13 +657,20 @@ class Window(tk.Frame):
 
     def __select_file(self, file_entry, type):
         file = file_entry.get()
-        if os.path.exists(file) and self.__check_path(file_entry.get(), type):
-            dir_path = os.path.dirname(file_entry.get())
+        if os.path.exists(file) and self.__check_path(file, type):
+            dir_path = os.path.dirname(file)
             new_file = filedialog.askopenfilename(
                 initialdir=dir_path, title="Select File"
             )
         else:
-            new_file = filedialog.askopenfilename(title="Select File")
+            if type == "image":
+                default_folder = "Images"
+            else:
+                default_folder = "Fonts"
+            default_path = os.getcwd() + "\\" + default_folder
+            new_file = filedialog.askopenfilename(
+                initialdir=default_path, title="Select File"
+            )
         new_file = new_file.replace("/", "\\")
 
         while new_file and not self.__check_path(new_file, type):
