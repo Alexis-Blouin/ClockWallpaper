@@ -13,13 +13,14 @@ if __name__ == "__main__":
 
     image_path = config["imagepath"]
     font_path = config["fontpath"]
-    monitor = config["monitor"]
+    monitor = config["monitor"].split(",")
     hours_params = config["hours"].split(",")
     minutes_params = config["minutes"].split(",")
     split_params = config["split"].split(",")
 
     img = clockWallpaper.draw_clock(
         image_path,
+        (monitor[1], monitor[2]),
         font_path,
         hours_params,
         minutes_params,
@@ -29,5 +30,5 @@ if __name__ == "__main__":
     clockWallpaper.save_image(img, image_path)
 
     desktop_wallpaper = IDesktopWallpaper.CoCreateInstance()
-    monitor = desktop_wallpaper.GetMonitorDevicePathAt(monitor.split(",")[0])
+    monitor = desktop_wallpaper.GetMonitorDevicePathAt(monitor[0])
     desktop_wallpaper.SetWallpaper(monitor, clockWallpaper.get_save_path(image_path))

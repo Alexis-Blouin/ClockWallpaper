@@ -7,6 +7,7 @@ from PIL import Image, ImageTk
 from tkinter import filedialog, colorchooser, ttk, messagebox, simpledialog
 from clock_wallpaper import ClockWallpaper
 from config_editor import ConfigEditor
+from idesktop_wallpaper import IDesktopWallpaper
 
 
 class Window(tk.Frame):
@@ -209,6 +210,11 @@ class Window(tk.Frame):
             self, text="Update Preview", command=self.__update_image_preview
         )
 
+        # Test on monitor button
+        self.test_on_monitor_button = tk.Button(
+            self, text="Test on Monitor", command=self.__test_preview_on_monitor
+        )
+
         # Hours
         self.hours_label = tk.Label(self, text="Hours", anchor="w")
         # Layer
@@ -333,6 +339,11 @@ class Window(tk.Frame):
             pady=5,
         )
         self.image_preview_button.grid(row=row_num + 15, column=5, sticky="ew", padx=5)
+
+        # Test on monitor button
+        self.test_on_monitor_button.grid(
+            row=row_num + 15, column=6, sticky="ew", padx=5
+        )
         row_num += 1
 
         # Inputs
@@ -340,9 +351,9 @@ class Window(tk.Frame):
         row_num = self.__place_inputs_by_layers(row_num)
 
         # Cancel button
-        self.cancel_button.grid(row=row_num, column=6, sticky="ew", padx=5, pady=5)
+        self.cancel_button.grid(row=row_num, column=7, sticky="ew", padx=5, pady=5)
         # Save button
-        self.save_button.grid(row=row_num, column=7, sticky="ew", padx=5, pady=5)
+        self.save_button.grid(row=row_num, column=8, sticky="ew", padx=5, pady=5)
 
     def __instanciate_config(self, config_name):
         config = self.config_editor.get_section(config_name)
@@ -560,12 +571,17 @@ class Window(tk.Frame):
         self, image_path, font_path, hours_params, minutes_params, split_params
     ):
         clockWallpaper = ClockWallpaper()
-        
+
         monitor_id = self.monitor_combo.current()
         resolutions = self.__get_monitor_resolution(monitor_id)
 
         img = clockWallpaper.draw_clock(
-            image_path, resolutions, font_path, hours_params, minutes_params, split_params
+            image_path,
+            resolutions,
+            font_path,
+            hours_params,
+            minutes_params,
+            split_params,
         )
 
         # Resize the image to fit the selected monitor
@@ -633,7 +649,7 @@ class Window(tk.Frame):
             res.append((info.width, info.height))
         # TODO use the res to modify image before modifying it
         return len(screeninfo.get_monitors())
-    
+
     def __get_monitor_resolution(self, monitor_id):
         info = screeninfo.get_monitors()[monitor_id]
         resolution = (info.width, info.height)
@@ -864,3 +880,42 @@ class Window(tk.Frame):
             return False
 
         return True
+
+    def __test_preview_on_monitor(self):
+        if not (self.__check_inputs):
+            return False
+
+        image_path = self.img_entry.get()
+        font_path = self.font_entry.get()
+
+        monitor_id = self.monitor_combo.current()
+        resolution = self.__get_monitor_resolution(monitor_id)
+        monitor = f"{monitor_id},{resolution[0]},{resolution[1]}"
+
+        text_hours = (
+            f"{self.layers["hours"]},{self.hours_position_x.get()},{self.hours_position_y.get()},{self.hours_color_entry.get()[1:]},{self.hours_size.get()}"
+        ).split(",")
+        text_minutes = (
+            f"{self.layers["minutes"]},{self.minutes_position_x.get()},{self.minutes_position_y.get()},{self.minutes_color_entry.get()[1:]},{self.minutes_size.get()}"
+        ).split(",")
+        text_split = (
+            f"{self.layers["split"]},{self.split_position_x.get()},{self.split_position_y.get()},{self.split_color_entry.get()[1:]},{self.split_size.get()}"
+        ).split(",")
+
+        clockWallpaper = ClockWallpaper()
+        img = clockWallpaper.draw_clock(
+            image_path,
+            resolution,
+            font_path,
+            text_hours,
+            text_minutes,
+            text_split,
+        )
+
+        clockWallpaper.save_image(img, image_path)
+
+        desktop_wallpaper = IDesktopWallpaper.CoCreateInstance()
+        monitor = desktop_wallpaper.GetMonitorDevicePathAt(int(monitor.split(",")[0]))
+        desktop_wallpaper.SetWallpaper(
+            monitor, clockWallpaper.get_save_path(image_path)
+        )
