@@ -1,8 +1,7 @@
 import tkinter as tk
-from window import Window
+from menu import Menu
 
 if __name__ == "__main__":
     root = tk.Tk()
-    # Window(root).pack(fill="both", expand=True)
-    Window(root).grid(row=0, column=0)
+    Menu(root).grid(row=0, column=0)
     root.mainloop()

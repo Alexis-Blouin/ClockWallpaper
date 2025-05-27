@@ -9,17 +9,18 @@ from clock_wallpaper import ClockWallpaper
 from config_editor import ConfigEditor
 from idesktop_wallpaper import IDesktopWallpaper
 from inputs.file_picker import FilePicker
-from inputs.text_zone import TextZone
+from inputs.text_inputs import TextInputs
 from utils import check_path, is_hex_color, show_alert
+from window_utils import apply_config, hide_window, show_window
 
 
-class Window(tk.Frame):
-    def __init__(self, parent):
+class Editor(tk.Frame):
+    def __init__(self, parent, config_name, mode):
         self.parent = parent
         tk.Frame.__init__(self, self.parent)
         self.config_editor = ConfigEditor()
 
-        self.__init_menu()
+        self.__init_editing_frame(config_name, mode)
 
     def __init_menu(self):
         self.title = tk.Label(self, text="Clock Wallpaper", anchor="center")
@@ -51,7 +52,7 @@ class Window(tk.Frame):
         self.button_quit.grid(row=row_num, column=0, sticky="ew", padx=30, pady=5)
 
     def __select_config(self):
-        self.__hide_window(self.parent)
+        hide_window(self.parent)
 
         section_names = self.config_editor.get_section_names()
 
@@ -68,7 +69,7 @@ class Window(tk.Frame):
         confirm_button = tk.Button(
             root,
             text="OK",
-            command=lambda: self.__apply_config(section_names, combo.get(), root),
+            command=lambda: apply_config(section_names, combo.get(), root),
         )
         confirm_button.grid(row=2, column=0, sticky="ew", padx=(15, 5), pady=(10, 5))
         cancel_button = tk.Button(
@@ -88,14 +89,14 @@ class Window(tk.Frame):
             subprocess.run(["pythonw", "src/taskNoTime.pyw"])
             show_alert("Success", "Configuration applied successfully.", "info")
 
-            self.__show_window(self.parent)
+            show_window(self.parent)
         else:
             show_alert(
                 "Invalid Selection", "Please select a valid configuration.", "warning"
             )
 
     def __add_config(self):
-        self.__hide_window(self.parent)
+        hide_window(self.parent)
 
         config_name = simpledialog.askstring(
             "Config Name", "Enter the new configuration name:"
@@ -108,7 +109,7 @@ class Window(tk.Frame):
                 "Config Name", "Enter the new configuration name:"
             )
         if config_name is None:
-            self.__show_window(self.parent)
+            show_window(self.parent)
             return
         if not config_name:
             config_name = self.config_editor.generate_default_config_name()
@@ -116,10 +117,10 @@ class Window(tk.Frame):
         for widget in self.winfo_children():
             widget.destroy()
         self.__init_editing_frame(config_name, "add")
-        self.__show_window(self.parent)
+        show_window(self.parent)
 
     def __edit_config(self):
-        self.__hide_window(self.parent)
+        hide_window(self.parent)
 
         section_names = self.config_editor.get_section_names()
 
@@ -155,7 +156,7 @@ class Window(tk.Frame):
             self.__instanciate_config(config_name)
             self.config_editor.set_edit_config_name(config_name)
 
-            self.__show_window(self.parent)
+            show_window(self.parent)
         else:
             show_alert(
                 "Invalid Selection",
@@ -163,15 +164,9 @@ class Window(tk.Frame):
                 "warning",
             )
 
-    def __hide_window(self, window):
-        window.withdraw()
-
-    def __show_window(self, window):
-        window.deiconify()
-
     def __close_choosing_window(self, root, window):
         root.destroy()
-        self.__show_window(window)
+        show_window(window)
 
     def __init_editing_frame(self, config_name, mode):
         # Conf name
@@ -182,23 +177,9 @@ class Window(tk.Frame):
 
         # Image
         self.file_picker_image = FilePicker(self, "image")
-        # self.img_label = tk.Label(self, text="Choose image:", anchor="w")
-        # self.img_entry = tk.Entry(self)
-        # self.img_button = tk.Button(
-        #     self,
-        #     text="...",
-        #     command=lambda: self.__select_file(self.img_entry, "image"),
-        # )
 
         # Font
         self.file_picker_font = FilePicker(self, "font")
-        # self.font_label = tk.Label(self, text="Choose font:", anchor="w")
-        # self.font_entry = tk.Entry(self)
-        # self.font_button = tk.Button(
-        #     self,
-        #     text="...",
-        #     command=lambda: self.__select_file(self.font_entry, "font"),
-        # )
 
         # Monitor
         self.monitor_label = tk.Label(self, text="Choose monitor:", anchor="w")
@@ -221,85 +202,13 @@ class Window(tk.Frame):
         )
 
         # Hours
-        self.hours_input = TextZone(self, "Hours")
-        # self.hours_label = tk.Label(self, text="Hours", anchor="w")
-        # # Layer
-        # self.hours_layer_up = tk.Button(
-        #     self, text="<", command=lambda: self.__change_layer("up", "hours")
-        # )
-        # self.hours_layer_down = tk.Button(
-        #     self, text=">", command=lambda: self.__change_layer("down", "hours")
-        # )
-        # # Position
-        # self.hours_position_x_label = tk.Label(self, text="Position X", anchor="w")
-        # self.hours_position_x = tk.Entry(self)
-        # self.hours_position_y_label = tk.Label(self, text="Position Y", anchor="w")
-        # self.hours_position_y = tk.Entry(self)
-        # # Size
-        # self.hours_size_label = tk.Label(self, text="Size", anchor="w")
-        # self.hours_size = tk.Entry(self)
-        # # Color
-        # self.hours_color_label = tk.Label(self, text="Color", anchor="w")
-        # self.hours_color_entry = tk.Entry(self)
-        # self.hours_color = tk.Button(
-        #     self,
-        #     text="...",
-        #     command=lambda: self.__select_color(self.hours_color_entry),
-        # )
+        self.hours_input = TextInputs(self, "Hours")
 
         # Minutes
-        self.minutes_input = TextZone(self, "Minutes")
-        # self.minutes_label = tk.Label(self, text="Minutes", anchor="w")
-        # # Layer
-        # self.minutes_layer_up = tk.Button(
-        #     self, text="<", command=lambda: self.__change_layer("up", "minutes")
-        # )
-        # self.minutes_layer_down = tk.Button(
-        #     self, text=">", command=lambda: self.__change_layer("down", "minutes")
-        # )
-        # # Position
-        # self.minutes_position_x_label = tk.Label(self, text="Position X", anchor="w")
-        # self.minutes_position_x = tk.Entry(self)
-        # self.minutes_position_y_label = tk.Label(self, text="Position Y", anchor="w")
-        # self.minutes_position_y = tk.Entry(self)
-        # # Size
-        # self.minutes_size_label = tk.Label(self, text="Size", anchor="w")
-        # self.minutes_size = tk.Entry(self)
-        # # Color
-        # self.minutes_color_label = tk.Label(self, text="Color", anchor="w")
-        # self.minutes_color_entry = tk.Entry(self)
-        # self.minutes_color = tk.Button(
-        #     self,
-        #     text="...",
-        #     command=lambda: self.__select_color(self.minutes_color_entry),
-        # )
+        self.minutes_input = TextInputs(self, "Minutes")
 
         # Split
-        self.split_input = TextZone(self, "Split")
-        # self.split_label = tk.Label(self, text="Split", anchor="w")
-        # # Layers
-        # self.split_layer_up = tk.Button(
-        #     self, text="<", command=lambda: self.__change_layer("up", "split")
-        # )
-        # self.split_layer_down = tk.Button(
-        #     self, text=">", command=lambda: self.__change_layer("down", "split")
-        # )
-        # # Position
-        # self.split_position_x_label = tk.Label(self, text="Position X", anchor="w")
-        # self.split_position_x = tk.Entry(self)
-        # self.split_position_y_label = tk.Label(self, text="Position Y", anchor="w")
-        # self.split_position_y = tk.Entry(self)
-        # # Size
-        # self.split_size_label = tk.Label(self, text="Size", anchor="w")
-        # self.split_size = tk.Entry(self)
-        # # Color
-        # self.split_color_label = tk.Label(self, text="Color", anchor="w")
-        # self.split_color_entry = tk.Entry(self)
-        # self.split_color = tk.Button(
-        #     self,
-        #     text="...",
-        #     command=lambda: self.__select_color(self.split_color_entry),
-        # )
+        self.split_input = TextInputs(self, "Split")
 
         # Cancel button
         self.cancel_button = tk.Button(
@@ -320,16 +229,10 @@ class Window(tk.Frame):
 
         # Image
         self.file_picker_image.grid(row=row_num, column=0, sticky="ew", padx=5)
-        # self.img_label.grid(row=row_num, column=0, sticky="ew", padx=5)
-        # self.img_entry.grid(row=row_num, column=1, columnspan=2, sticky="ew", padx=5)
-        # self.img_button.grid(row=row_num, column=3, sticky="ew", padx=5, pady=2)
         row_num += 1
 
         # Font
         self.file_picker_font.grid(row=row_num, column=0, sticky="ew", padx=5)
-        # self.font_label.grid(row=row_num, column=0, sticky="ew", padx=5)
-        # self.font_entry.grid(row=row_num, column=1, columnspan=2, sticky="ew", padx=5)
-        # self.font_button.grid(row=row_num, column=3, sticky="ew", padx=5, pady=2)
         row_num += 1
 
         # Monitor
@@ -364,6 +267,8 @@ class Window(tk.Frame):
         self.cancel_button.grid(row=row_num, column=7, sticky="ew", padx=5, pady=5)
         # Save button
         self.save_button.grid(row=row_num, column=8, sticky="ew", padx=5, pady=5)
+
+        show_window(self.parent)
 
     def __instanciate_config(self, config_name):
         config = self.config_editor.get_section(config_name)
@@ -429,123 +334,49 @@ class Window(tk.Frame):
         if new_config_name:
             self.conf_name_label.config(text=new_config_name)
 
+    def change_layer(self, direction, element):
+        if element == "hours":
+            current_layer = self.layers["hours"]
+        elif element == "minutes":
+            current_layer = self.layers["minutes"]
+        elif element == "split":
+            current_layer = self.layers["split"]
+
+        if current_layer == 0 and direction == "down":
+            return
+        if current_layer == 2 and direction == "up":
+            return
+
+        if direction == "up":
+            for key, value in self.layers.items():
+                if value == current_layer + 1:
+                    layer_index_to_change = key
+                    break
+            self.layers[element] = current_layer + 1
+            self.layers[layer_index_to_change] = current_layer
+        elif direction == "down":
+            for key, value in self.layers.items():
+                if value == current_layer - 1:
+                    layer_index_to_change = key
+                    break
+            self.layers[element] = current_layer - 1
+            self.layers[layer_index_to_change] = current_layer
+
+        self.place_inputs_by_layers()
+
     def place_inputs_by_layers(self, row_num=5) -> int:
         for i in reversed(range(3)):
             if i == int(self.layers["hours"]):
                 # Hours
                 self.hours_input.grid(row=row_num, column=0, sticky="ew", padx=5)
-                # self.hours_label.grid(row=row_num, column=0, sticky="ew", padx=5)
-                # # Layer
-                # self.hours_layer_up.grid(row=row_num, column=1, sticky="e", padx=5)
-                # self.hours_layer_down.grid(row=row_num, column=2, sticky="w", padx=5)
-                # row_num += 1
-                # # Position
-                # self.hours_position_x_label.grid(
-                #     row=row_num, column=0, sticky="ew", padx=5
-                # )
-                # self.hours_position_x.grid(
-                #     row=row_num, column=1, columnspan=2, sticky="ew", padx=5
-                # )
-                # row_num += 1
-                # self.hours_position_y_label.grid(
-                #     row=row_num, column=0, sticky="ew", padx=5
-                # )
-                # self.hours_position_y.grid(
-                #     row=row_num, column=1, columnspan=2, sticky="ew", padx=5
-                # )
-                # row_num += 1
-                # # Size
-                # self.hours_size_label.grid(row=row_num, column=0, sticky="ew", padx=5)
-                # self.hours_size.grid(
-                #     row=row_num, column=1, columnspan=2, sticky="ew", padx=5
-                # )
-                # row_num += 1
-                # # Color
-                # self.hours_color_label.grid(row=row_num, column=0, sticky="ew", padx=5)
-                # self.hours_color_entry.grid(
-                #     row=row_num, column=1, columnspan=2, sticky="ew", padx=5
-                # )
-                # self.hours_color.grid(
-                #     row=row_num, column=3, sticky="ew", padx=5, pady=2
-                # )
                 row_num += 1
             elif i == int(self.layers["minutes"]):
                 # Minutes
                 self.minutes_input.grid(row=row_num, column=0, sticky="ew", padx=5)
-                # self.minutes_label.grid(row=row_num, column=0, sticky="ew", padx=5)
-                # # Layer
-                # self.minutes_layer_up.grid(row=row_num, column=1, sticky="e", padx=5)
-                # self.minutes_layer_down.grid(row=row_num, column=2, sticky="w", padx=5)
-                # row_num += 1
-                # # Position
-                # self.minutes_position_x_label.grid(
-                #     row=row_num, column=0, sticky="ew", padx=5
-                # )
-                # self.minutes_position_x.grid(
-                #     row=row_num, column=1, columnspan=2, sticky="ew", padx=5
-                # )
-                # row_num += 1
-                # self.minutes_position_y_label.grid(
-                #     row=row_num, column=0, sticky="ew", padx=5
-                # )
-                # self.minutes_position_y.grid(
-                #     row=row_num, column=1, columnspan=2, sticky="ew", padx=5
-                # )
-                # row_num += 1
-                # # Size
-                # self.minutes_size_label.grid(row=row_num, column=0, sticky="ew", padx=5)
-                # self.minutes_size.grid(
-                #     row=row_num, column=1, columnspan=2, sticky="ew", padx=5
-                # )
-                # row_num += 1
-                # # Color
-                # self.minutes_color_label.grid(
-                #     row=row_num, column=0, sticky="ew", padx=5
-                # )
-                # self.minutes_color_entry.grid(
-                #     row=row_num, column=1, columnspan=2, sticky="ew", padx=5
-                # )
-                # self.minutes_color.grid(
-                #     row=row_num, column=3, sticky="ew", padx=5, pady=2
-                # )
                 row_num += 1
             elif i == int(self.layers["split"]):
                 # Split
                 self.split_input.grid(row=row_num, column=0, sticky="ew", padx=5)
-                # self.split_label.grid(row=row_num, column=0, sticky="ew", padx=5)
-                # # Layer
-                # self.split_layer_up.grid(row=row_num, column=1, sticky="e", padx=5)
-                # self.split_layer_down.grid(row=row_num, column=2, sticky="w", padx=5)
-                # row_num += 1
-                # # Position
-                # self.split_position_x_label.grid(
-                #     row=row_num, column=0, sticky="ew", padx=5
-                # )
-                # self.split_position_x.grid(
-                #     row=row_num, column=1, columnspan=2, sticky="ew", padx=5
-                # )
-                # row_num += 1
-                # self.split_position_y_label.grid(
-                #     row=row_num, column=0, sticky="ew", padx=5
-                # )
-                # self.split_position_y.grid(
-                #     row=row_num, column=1, columnspan=2, sticky="ew", padx=5
-                # )
-                # row_num += 1
-                # # Size
-                # self.split_size_label.grid(row=row_num, column=0, sticky="ew", padx=5)
-                # self.split_size.grid(
-                #     row=row_num, column=1, columnspan=2, sticky="ew", padx=5
-                # )
-                # row_num += 1
-                # # Color
-                # self.split_color_label.grid(row=row_num, column=0, sticky="ew", padx=5)
-                # self.split_color_entry.grid(
-                #     row=row_num, column=1, columnspan=2, sticky="ew", padx=5
-                # )
-                # self.split_color.grid(
-                #     row=row_num, column=3, sticky="ew", padx=5, pady=2
-                # )
                 row_num += 1
 
         return row_num
@@ -637,49 +468,6 @@ class Window(tk.Frame):
         info = screeninfo.get_monitors()[monitor_id]
         resolution = (info.width, info.height)
         return resolution
-
-    # def __select_file(self, file_entry, type):
-    #     file = file_entry.get()
-    #     if os.path.exists(file) and show_alcheck_pathert(file, type):
-    #         dir_path = os.path.dirname(file)
-    #         new_file = filedialog.askopenfilename(
-    #             initialdir=dir_path, title="Select File"
-    #         )
-    #     else:
-    #         if type == "image":
-    #             default_folder = "Images"
-    #         else:
-    #             default_folder = "Fonts"
-    #         default_path = os.getcwd() + "\\" + default_folder
-    #         new_file = filedialog.askopenfilename(
-    #             initialdir=default_path, title="Select File"
-    #         )
-    #     new_file = new_file.replace("/", "\\")
-
-    #     while new_file and not show_alcheck_pathert(new_file, type):
-    #         new_file = filedialog.askopenfilename(title="Select File")
-    #         new_file = new_file.replace("/", "\\")
-
-    #     file_entry.delete(0, "end")
-    #     file_entry.insert(0, new_file if new_file else file)
-
-    #     if new_file:
-    #         self.update_image_preview()
-
-    # def __check_path(self, file, type) -> bool:
-    #     clockWallpaper = ClockWallpaper()
-    #     if type == "image":
-    #         file_ok = clockWallpaper.check_image(file)
-    #     elif type == "font":
-    #         file_ok = clockWallpaper.check_font(file)
-
-    #     if not file_ok:
-    #         show_alert(
-    #             "Compatibility Warning",
-    #             f"Selected {type} is incompatible. Please choose a different {type}.",
-    #             "warning",
-    #         )
-    #     return file_ok
 
     def __check_position(self, name, position_x, position_y) -> bool:
         if not position_x or not position_y:
@@ -802,7 +590,7 @@ class Window(tk.Frame):
             self.__ask_question("Apply Config", "Do you want to apply the new config?")
             == "yes"
         ):
-            self.__apply_config([config_name], config_name)
+            apply_config([config_name], config_name)
 
         self.__return_to_menu()
 
