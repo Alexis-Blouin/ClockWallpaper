@@ -9,13 +9,20 @@ class ConfigEditor:
         self.config = configparser.ConfigParser()
         self.edit_config_name = None
 
+        # Depending on if you're running the program from root or src folder, the path is different
+        cwd = os.getcwd()
+        if "src" not in cwd:
+            self.config_path = "config/config.ini"
+        else:
+            self.config_path = "../config/config.ini"
+
     def set_edit_config_name(self, config_name):
         self.edit_config_name = config_name
 
     def apply_config(self, config_name):
         self.__read_config()
         self.config["DEFAULT"] = {"currentconfig": config_name}
-        with open("config/config.ini", "w") as configfile:
+        with open(self.config_path, "w") as configfile:
             self.config.write(configfile)
 
     def add_section(
@@ -38,7 +45,7 @@ class ConfigEditor:
             minutes,
             split,
         )
-        with open("config/config.ini", "w") as configfile:
+        with open(self.config_path, "w") as configfile:
             self.config.write(configfile)
 
     def modify_section(
@@ -72,7 +79,7 @@ class ConfigEditor:
                 minutes,
                 split,
             )
-        with open("config/config.ini", "w") as configfile:
+        with open(self.config_path, "w") as configfile:
             self.config.write(configfile)
 
     def get_config_name(self):
@@ -126,4 +133,4 @@ class ConfigEditor:
         }
 
     def __read_config(self):
-        self.config.read("config/config.ini")
+        self.config.read(self.config_path)
