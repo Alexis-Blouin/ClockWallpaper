@@ -39,7 +39,7 @@ class ClockWallpaper:
 
         # Calculate aspect ratios
         img_aspect_ratio = img_width / img_height
-        target_aspect_ratio = target_width / target_height
+        target_aspect_ratio = int(target_width) / int(target_height)
 
         # Determine how to crop based on the aspect ratios
         if img_aspect_ratio > target_aspect_ratio:
