@@ -11,18 +11,18 @@ class FilePicker(tk.Frame):
         self.parent = parent
         super().__init__(self.parent)
 
-        self.img_label = tk.Label(self, text="Choose " + file_type + ":", anchor="w")
-        self.img_entry = tk.Entry(self)
-        self.img_button = tk.Button(
+        self.label = tk.Label(self, text="Choose " + file_type + ":", anchor="w")
+        self.entry = tk.Entry(self)
+        self.button = tk.Button(
             self,
             text="...",
-            command=lambda: self.__select_file(self.img_entry, file_type),
+            command=lambda: self.__select_file(self.entry, file_type),
         )
 
         row_num = 0
-        self.img_label.grid(row=row_num, column=0, sticky="ew", padx=5)
-        self.img_entry.grid(row=row_num, column=1, columnspan=2, sticky="ew", padx=5)
-        self.img_button.grid(row=row_num, column=3, sticky="ew", padx=5, pady=2)
+        self.label.grid(row=row_num, column=0, sticky="ew", padx=5)
+        self.entry.grid(row=row_num, column=1, columnspan=2, sticky="ew", padx=5)
+        self.button.grid(row=row_num, column=3, sticky="ew", padx=5, pady=2)
 
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=1)
@@ -57,4 +57,7 @@ class FilePicker(tk.Frame):
             self.parent.update_image_preview()
 
     def get(self):
-        return self.img_entry.get()
+        return self.entry.get()
+
+    def set(self, path):
+        self.entry.insert(0, path)

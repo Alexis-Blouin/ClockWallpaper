@@ -10,7 +10,6 @@ class TextInputs(tk.Frame):
         super().__init__(self.parent)
         self.label = tk.Label(self, text=label, anchor="w")
         # Layer
-        self.layers = {"hours": 0, "minutes": 1, "split": 2}
         self.layer_up = tk.Button(
             self,
             text="<",
@@ -21,7 +20,7 @@ class TextInputs(tk.Frame):
             text=">",
             command=lambda: self.parent.change_layer("down", label.lower()),
         )
-        # Enable
+        # Enabled
         self.enable_check = tk.Checkbutton(self, text="Enabled")
         # Position
         self.position_x_label = tk.Label(self, text="Position X", anchor="w")
@@ -47,7 +46,7 @@ class TextInputs(tk.Frame):
         self.layer_up.grid(row=row_num, column=1, sticky="e", padx=5)
         self.layer_down.grid(row=row_num, column=2, sticky="w", padx=5)
         row_num += 1
-        # Enable
+        # Enabled
         self.enable_check.grid(row=row_num, column=1, sticky="ew", padx=5)
         row_num += 1
         # Position
@@ -88,11 +87,33 @@ class TextInputs(tk.Frame):
     def get_position_x(self):
         return self.position_x.get()
 
+    def set_position_x(self, x):
+        self.position_x.insert(0, x)
+
     def get_position_y(self):
         return self.position_y.get()
+
+    def set_position_y(self, y):
+        self.position_x.insert(0, y)
 
     def get_size(self):
         return self.size.get()
 
+    def set_size(self, size):
+        self.size.insert(0, size)
+
     def get_color(self):
         return self.color_entry.get()
+
+    def set_color(self, color):
+        self.color_entry.insert(0, color)
+
+    def get_enabled(self):
+        return self.enable_check.getint()
+
+    def set_enabled(self, enabled):
+        if enabled:
+            self.enable_check.select()
+
+    def get_input_config(self):
+        return f"{self.get_position_x()},{self.get_position_y()},{self.get_color()[1:]},{self.get_size()},{self.get_enabled()}"

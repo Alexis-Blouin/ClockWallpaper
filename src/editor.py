@@ -21,6 +21,7 @@ class Editor(tk.Frame):
         self.config_editor = ConfigEditor()
 
         self.__init_editing_frame(config_name, mode)
+        self.__instanciate_config(config_name)
 
     def __init_menu(self):
         self.title = tk.Label(self, text="Clock Wallpaper", anchor="center")
@@ -260,8 +261,8 @@ class Editor(tk.Frame):
             # Paths
             image_path = config["imagepath"]
             font_path = config["fontpath"]
-            self.img_entry.insert(0, image_path)
-            self.font_entry.insert(0, font_path)
+            self.file_picker_image.set(image_path)
+            self.file_picker_font.set(font_path)
 
             # Monitor
             self.monitor_combo.current(int(config["monitor"].split(",")[0]))
@@ -286,22 +287,22 @@ class Editor(tk.Frame):
             self.place_inputs_by_layers()
 
             # Hours
-            self.hours_position_x.insert(0, hours[1])
-            self.hours_position_y.insert(0, hours[2])
-            self.hours_color_entry.insert(0, f"#{hours[3]}")
-            self.hours_size.insert(0, hours[4])
+            self.hours_input.set_position_x(hours[1])
+            self.hours_input.set_position_y(hours[2])
+            self.hours_input.set_color(f"#{hours[3]}")
+            self.hours_input.set_size(hours[4])
 
             # Minutes
-            self.minutes_position_x.insert(0, minutes[1])
-            self.minutes_position_y.insert(0, minutes[2])
-            self.minutes_color_entry.insert(0, f"#{minutes[3]}")
-            self.minutes_size.insert(0, minutes[4])
+            self.minutes_input.set_position_x(minutes[1])
+            self.minutes_input.set_position_y(minutes[2])
+            self.minutes_input.set_color(f"#{minutes[3]}")
+            self.minutes_input.set_size(minutes[4])
 
             # Split
-            self.split_position_x.insert(0, split[1])
-            self.split_position_y.insert(0, split[2])
-            self.split_color_entry.insert(0, f"#{split[3]}")
-            self.split_size.insert(0, split[4])
+            self.split_input.set_position_x(split[1])
+            self.split_input.set_position_y(split[2])
+            self.split_input.set_color(f"#{split[3]}")
+            self.split_input.set_size(split[4])
 
     def __modify_config_name(self):
         new_config_name = simpledialog.askstring(
@@ -543,9 +544,11 @@ class Editor(tk.Frame):
         resolution = self.__get_monitor_resolution(monitor_id)
         monitor = f"{monitor_id},{resolution[0]},{resolution[1]}"
 
-        text_hours = f"{self.layers["hours"]},{self.hours_input.get_position_x()},{self.hours_input.get_position_y()},{self.hours_input.get_color()[1:]},{self.hours_input.get_size()}"
-        text_minutes = f"{self.layers["minutes"]},{self.minutes_input.get_position_x()},{self.minutes_input.get_position_y()},{self.minutes_input.get_color()[1:]},{self.minutes_input.get_size()}"
-        text_split = f"{self.layers["split"]},{self.split_input.get_position_x()},{self.split_input.get_position_y()},{self.split_input.get_color()[1:]},{self.split_input.get_size()}"
+        text_hours = f"{self.layers["hours"]},{self.hours_input.get_input_config()}"
+        text_minutes = (
+            f"{self.layers["minutes"]},{self.minutes_input.get_input_config()}"
+        )
+        text_split = f"{self.layers["split"]},{self.split_input.get_input_config()}"
 
         if mode == "edit":
             self.config_editor.modify_section(
