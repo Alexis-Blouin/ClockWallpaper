@@ -18,7 +18,7 @@ def apply_config(self, section_names, config_name, root=None):
 
         self.config_editor.apply_config(config_name)
 
-        subprocess.run(["pythonw", "src/taskNoTime.pyw"])
+        subprocess.run(["pythonw", "src/program.pyw"])
         show_alert("Success", "Configuration applied successfully.", "info")
 
         show_window(self.parent)

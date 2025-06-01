@@ -1,5 +1,6 @@
 $LogOnTaskName = "WallPaperTask"
 $LoopTaskName = "WallPaperTaskLoop"
+
 # Remove the possible already existing tasks.
 # **If you change the task names, make sure to remove the older tasks, as they won't be remove with this specific code.
 if (Get-ScheduledTask -TaskName $LogOnTaskName -ErrorAction SilentlyContinue) {

@@ -10,8 +10,8 @@ from window_utils import apply_config, hide_window, show_window
 
 class Menu(tk.Frame):
     def __init__(self, parent):
+        super().__init__(parent)
         self.parent = parent
-        tk.Frame.__init__(self, self.parent)
         self.config_editor = ConfigEditor()
 
         self.title = tk.Label(self, text="Clock Wallpaper", anchor="center")
@@ -60,7 +60,7 @@ class Menu(tk.Frame):
         confirm_button = tk.Button(
             root,
             text="OK",
-            command=lambda: apply_config(section_names, combo.get(), root),
+            command=lambda: apply_config(self, section_names, combo.get(), root),
         )
         confirm_button.grid(row=2, column=0, sticky="ew", padx=(15, 5), pady=(10, 5))
         cancel_button = tk.Button(
@@ -92,10 +92,10 @@ class Menu(tk.Frame):
         for widget in self.winfo_children():
             widget.destroy()
 
-        popup = tk.Toplevel()
-        editor = Editor(popup, config_name, "add")
-        # self.__init_editing_frame(config_name, "add")
-        show_window(popup)
+        new_window = tk.Toplevel()
+        editor = Editor(new_window, config_name, "add")
+        editor.grid()
+        show_window(new_window)
 
     def __edit_config(self):
         hide_window(self.parent)
@@ -130,12 +130,13 @@ class Menu(tk.Frame):
 
             for widget in self.winfo_children():
                 widget.destroy()
-            editor = Editor(self.parent, config_name, "edit")
-            # self.__init_editing_frame(config_name, "edit")
-            # self.__instanciate_config(config_name)
+
+            new_window = tk.Toplevel()
+            editor = Editor(new_window, config_name, "edit")
+            editor.grid()
             self.config_editor.set_edit_config_name(config_name)
 
-            show_window(editor)
+            show_window(new_window)
         else:
             show_alert(
                 "Invalid Selection",

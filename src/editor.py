@@ -16,8 +16,8 @@ from window_utils import apply_config, hide_window, show_window
 
 class Editor(tk.Frame):
     def __init__(self, parent, config_name, mode):
+        super().__init__(parent)
         self.parent = parent
-        tk.Frame.__init__(self, self.parent)
         self.config_editor = ConfigEditor()
 
         self.__init_editing_frame(config_name, mode)
@@ -69,7 +69,7 @@ class Editor(tk.Frame):
         confirm_button = tk.Button(
             root,
             text="OK",
-            command=lambda: apply_config(section_names, combo.get(), root),
+            command=lambda: apply_config(self, section_names, combo.get(), root),
         )
         confirm_button.grid(row=2, column=0, sticky="ew", padx=(15, 5), pady=(10, 5))
         cancel_button = tk.Button(
@@ -78,22 +78,6 @@ class Editor(tk.Frame):
             command=lambda: self.__close_choosing_window(root, self.parent),
         )
         cancel_button.grid(row=2, column=1, sticky="ew", padx=(5, 15), pady=(10, 5))
-
-    def __apply_config(self, section_names, config_name, root=None):
-        if config_name in section_names:
-            if root:
-                root.destroy()
-
-            self.config_editor.apply_config(config_name)
-
-            subprocess.run(["pythonw", "src/taskNoTime.pyw"])
-            show_alert("Success", "Configuration applied successfully.", "info")
-
-            show_window(self.parent)
-        else:
-            show_alert(
-                "Invalid Selection", "Please select a valid configuration.", "warning"
-            )
 
     def __add_config(self):
         hide_window(self.parent)
@@ -590,7 +574,7 @@ class Editor(tk.Frame):
             self.__ask_question("Apply Config", "Do you want to apply the new config?")
             == "yes"
         ):
-            apply_config([config_name], config_name)
+            apply_config(self, [config_name], config_name)
 
         self.__return_to_menu()
 

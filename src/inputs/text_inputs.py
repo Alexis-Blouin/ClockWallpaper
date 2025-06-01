@@ -21,9 +21,11 @@ class TextInputs(tk.Frame):
             text=">",
             command=lambda: self.parent.change_layer("down", label.lower()),
         )
+        # Enable
+        self.enable_check = tk.Checkbutton(self, text="Enabled")
         # Position
         self.position_x_label = tk.Label(self, text="Position X", anchor="w")
-        self.position_x = tk.Entry(self)
+        self.position_x = tk.Entry(self, name="test")
         self.position_y_label = tk.Label(self, text="Position Y", anchor="w")
         self.position_y = tk.Entry(self)
         # Size
@@ -44,6 +46,9 @@ class TextInputs(tk.Frame):
         # Layer
         self.layer_up.grid(row=row_num, column=1, sticky="e", padx=5)
         self.layer_down.grid(row=row_num, column=2, sticky="w", padx=5)
+        row_num += 1
+        # Enable
+        self.enable_check.grid(row=row_num, column=1, sticky="ew", padx=5)
         row_num += 1
         # Position
         self.position_x_label.grid(row=row_num, column=0, sticky="ew", padx=5)
