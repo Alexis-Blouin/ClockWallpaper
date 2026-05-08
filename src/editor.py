@@ -338,7 +338,7 @@ class Editor(tk.Frame):
             self.split_input.set_position_y(split[2])
             self.split_input.set_color(f"#{split[3]}")
             self.split_input.set_size(split[4])
-            self.minutes_input.set_enabled(split[5])
+            self.split_input.set_enabled(split[5])
 
     def __modify_config_name(self):
         new_config_name = simpledialog.askstring(
@@ -403,7 +403,7 @@ class Editor(tk.Frame):
         return row_num
 
     def __set_image_preview(
-        self, image_path, font_path, hours_params, minutes_params, split_params
+            self, image_path, font_path, hours_params, minutes_params, split_params
     ):
         clockWallpaper = ClockWallpaper()
 
@@ -639,8 +639,8 @@ class Editor(tk.Frame):
         show_alert("Success", "Configuration saved successfully.", "info")
 
         if (
-            self.__ask_question("Apply Config", "Do you want to apply the new config?")
-            == "yes"
+                self.__ask_question("Apply Config", "Do you want to apply the new config?")
+                == "yes"
         ):
             apply_config(self, [config_name], config_name)
 
@@ -653,21 +653,21 @@ class Editor(tk.Frame):
             return False
 
         if not self.__check_position(
-            "Hours",
-            self.hours_input.get_position_x(),
-            self.hours_input.get_position_y(),
+                "Hours",
+                self.hours_input.get_position_x(),
+                self.hours_input.get_position_y(),
         ):
             return False
         if not self.__check_position(
-            "Minutes",
-            self.minutes_input.get_position_x(),
-            self.minutes_input.get_position_y(),
+                "Minutes",
+                self.minutes_input.get_position_x(),
+                self.minutes_input.get_position_y(),
         ):
             return False
         if not self.__check_position(
-            "Split",
-            self.split_input.get_position_x(),
-            self.split_input.get_position_y(),
+                "Split",
+                self.split_input.get_position_x(),
+                self.split_input.get_position_y(),
         ):
             return False
 
@@ -698,15 +698,9 @@ class Editor(tk.Frame):
         resolution = self.__get_monitor_resolution(monitor_id)
         monitor = f"{monitor_id},{resolution[0]},{resolution[1]}"
 
-        text_hours = (
-            f"{self.layers["hours"]},{self.hours_input.get_position_x()},{self.hours_input.get_position_y()},{self.hours_input.get_color()[1:]},{self.hours_input.get_size()}"
-        ).split(",")
-        text_minutes = (
-            f"{self.layers["minutes"]},{self.minutes_input.get_position_x()},{self.minutes_input.get_position_y()},{self.minutes_input.get_color()[1:]},{self.minutes_input.get_size()}"
-        ).split(",")
-        text_split = (
-            f"{self.layers["split"]},{self.split_input.get_position_x()},{self.split_input.get_position_y()},{self.split_input.get_color()[1:]},{self.split_input.get_size()}"
-        ).split(",")
+        text_hours = [self.layers["hours"],self.hours_input.get_position_x(),self.hours_input.get_position_y(),self.hours_input.get_color()[1:],self.hours_input.get_size(),self.hours_input.get_enabled()]
+        text_minutes = [self.layers["minutes"],self.minutes_input.get_position_x(),self.minutes_input.get_position_y(),self.minutes_input.get_color()[1:],self.minutes_input.get_size(),self.minutes_input.get_enabled()]
+        text_split = [self.layers["split"],self.split_input.get_position_x(),self.split_input.get_position_y(),self.split_input.get_color()[1:],self.split_input.get_size(),self.split_input.get_enabled()]
 
         clockWallpaper = ClockWallpaper()
         img = clockWallpaper.draw_clock(
