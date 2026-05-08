@@ -20,6 +20,9 @@ class Editor(tk.Frame):
         self.parent = parent
         self.config_editor = ConfigEditor()
 
+        if mode == "edit":
+            self.config_editor.set_edit_config_name(config_name)
+
         self.__init_editing_frame(config_name, mode)
         self.__instanciate_config(config_name)
 

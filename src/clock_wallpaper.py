@@ -94,7 +94,6 @@ class ClockWallpaper:
         return ImageFont.truetype(font_path, size=int(params[4]))
 
     def __is_enabled(self, params):
-        print(params)
         return params[5] == 1
 
     def __draw_clock(self, draw, text, font_path, params):
