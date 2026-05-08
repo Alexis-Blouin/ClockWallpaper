@@ -21,7 +21,8 @@ class TextInputs(tk.Frame):
             command=lambda: self.parent.change_layer("down", label.lower()),
         )
         # Enabled
-        self.enable_check = tk.Checkbutton(self, text="Enabled")
+        self.enable_var = tk.IntVar()
+        self.enable_check = tk.Checkbutton(self, text="Enabled", variable=self.enable_var)
         # Position
         self.position_x_label = tk.Label(self, text="Position X", anchor="w")
         self.position_x = tk.Entry(self, name="test")
@@ -109,11 +110,7 @@ class TextInputs(tk.Frame):
         self.color_entry.insert(0, color)
 
     def get_enabled(self):
-        return self.enable_check.getint()
-
-    def set_enabled(self, enabled):
-        if enabled:
-            self.enable_check.select()
+        return self.enable_var.get()
 
     def get_input_config(self):
         return f"{self.get_position_x()},{self.get_position_y()},{self.get_color()[1:]},{self.get_size()},{self.get_enabled()}"
