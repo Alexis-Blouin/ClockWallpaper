@@ -95,7 +95,7 @@ class TextInputs(tk.Frame):
         return self.position_y.get()
 
     def set_position_y(self, y):
-        self.position_x.insert(0, y)
+        self.position_y.insert(0, y)
 
     def get_size(self):
         return self.size.get()
@@ -111,6 +111,10 @@ class TextInputs(tk.Frame):
 
     def get_enabled(self):
         return self.enable_var.get()
+
+    def set_enabled(self, enabled):
+        if enabled == 1:
+            self.enable_check.select()
 
     def get_input_config(self):
         return f"{self.get_position_x()},{self.get_position_y()},{self.get_color()[1:]},{self.get_size()},{self.get_enabled()}"

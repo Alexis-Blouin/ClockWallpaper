@@ -7,11 +7,10 @@ from PIL import Image, ImageTk
 from tkinter import filedialog, colorchooser, ttk, messagebox, simpledialog
 from clock_wallpaper import ClockWallpaper
 from config_editor import ConfigEditor
-from color_picker import get_dominant_colors
 from idesktop_wallpaper import IDesktopWallpaper
 from inputs.file_picker import FilePicker
 from inputs.text_inputs import TextInputs
-from utils import check_path, is_hex_color, show_alert
+from utils import check_path, is_hex_color, show_alert, get_color_palette
 from window_utils import apply_config, hide_window, show_window
 
 
@@ -294,8 +293,14 @@ class Editor(tk.Frame):
 
             # Image preview
             hours = config["hours"].split(",")
+            hours[0] = int(hours[0])
+            hours[5] = int(hours[5])
             minutes = config["minutes"].split(",")
+            minutes[0] = int(minutes[0])
+            minutes[5] = int(minutes[5])
             split = config["split"].split(",")
+            split[0] = int(split[0])
+            split[5] = int(split[5])
             self.__set_image_preview(
                 image_path,
                 font_path,
@@ -316,18 +321,21 @@ class Editor(tk.Frame):
             self.hours_input.set_position_y(hours[2])
             self.hours_input.set_color(f"#{hours[3]}")
             self.hours_input.set_size(hours[4])
+            self.hours_input.set_enabled(hours[5])
 
             # Minutes
             self.minutes_input.set_position_x(minutes[1])
             self.minutes_input.set_position_y(minutes[2])
             self.minutes_input.set_color(f"#{minutes[3]}")
             self.minutes_input.set_size(minutes[4])
+            self.minutes_input.set_enabled(minutes[5])
 
             # Split
             self.split_input.set_position_x(split[1])
             self.split_input.set_position_y(split[2])
             self.split_input.set_color(f"#{split[3]}")
             self.split_input.set_size(split[4])
+            self.minutes_input.set_enabled(split[5])
 
     def __modify_config_name(self):
         new_config_name = simpledialog.askstring(
@@ -399,7 +407,7 @@ class Editor(tk.Frame):
         monitor_id = self.monitor_combo.current()
         resolutions = self.__get_monitor_resolution(monitor_id)
 
-        palette = get_dominant_colors(image_path)
+        palette = get_color_palette(image_path)
 
         img = clockWallpaper.draw_clock(
             image_path,
@@ -456,7 +464,8 @@ class Editor(tk.Frame):
         hours_color = hours_color if hours_color else "000000"
         hours_size = self.hours_input.get_size()
         hours_size = hours_size if hours_size else 1
-        hours_params = [self.layers["hours"], hours_x, hours_y, hours_color, hours_size]
+        hours_enabled = self.hours_input.get_enabled()
+        hours_params = [self.layers["hours"], hours_x, hours_y, hours_color, hours_size, hours_enabled]
 
         minutes_x = self.minutes_input.get_position_x()
         minutes_x = minutes_x if minutes_x else 0
@@ -466,12 +475,14 @@ class Editor(tk.Frame):
         minutes_color = minutes_color if minutes_color else "000000"
         minutes_size = self.minutes_input.get_size()
         minutes_size = minutes_size if minutes_size else 1
+        minutes_enabled = self.minutes_input.get_enabled()
         minutes_params = [
             self.layers["minutes"],
             minutes_x,
             minutes_y,
             minutes_color,
             minutes_size,
+            minutes_enabled
         ]
 
         split_x = self.split_input.get_position_x()
@@ -482,7 +493,8 @@ class Editor(tk.Frame):
         split_color = split_color if split_color else "000000"
         split_size = self.split_input.get_size()
         split_size = split_size if split_size else 1
-        split_params = [self.layers["split"], split_x, split_y, split_color, split_size]
+        split_enabled = self.split_input.get_enabled()
+        split_params = [self.layers["split"], split_x, split_y, split_color, split_size, split_enabled]
 
         self.__set_image_preview(
             image_path, font_path, hours_params, minutes_params, split_params

@@ -23,11 +23,11 @@ class ClockWallpaper:
             self.__get_layer(split_params),
         )
         for i in range(3):
-            if i == layers[0]:
+            if i == layers[0] and self.__is_enabled(hours_params):
                 self.__draw_clock(draw, hours, font_path, hours_params)
-            elif i == layers[1]:
+            elif i == layers[1] and self.__is_enabled(minutes_params):
                 self.__draw_clock(draw, minutes, font_path, minutes_params)
-            elif i == layers[2]:
+            elif i == layers[2] and self.__is_enabled(split_params):
                 self.__draw_clock(draw, day_split, font_path, split_params)
 
         return img
@@ -92,6 +92,10 @@ class ClockWallpaper:
 
     def __get_font(self, font_path, params):
         return ImageFont.truetype(font_path, size=int(params[4]))
+
+    def __is_enabled(self, params):
+        print(params)
+        return params[5] == 1
 
     def __draw_clock(self, draw, text, font_path, params):
         position = self.__get_position(params)

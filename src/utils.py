@@ -1,5 +1,6 @@
 import re
 from tkinter import messagebox
+from colorthief import ColorThief
 from clock_wallpaper import ClockWallpaper
 
 
@@ -31,3 +32,10 @@ def show_alert(title, message, type):
 def is_hex_color(color) -> bool:
     regex = r"^#[0-9a-fA-F]{6}$"
     return re.match(regex, color)
+
+
+def get_color_palette(img_path, num_colors=5):
+    color_thief = ColorThief(img_path)
+    palette_rgb = color_thief.get_palette(num_colors)
+    for color in palette_rgb:
+        yield '#%02x%02x%02x' % color
