@@ -7,6 +7,7 @@ from PIL import Image, ImageTk
 from tkinter import filedialog, colorchooser, ttk, messagebox, simpledialog
 from clock_wallpaper import ClockWallpaper
 from config_editor import ConfigEditor
+from color_picker import get_dominant_colors
 from idesktop_wallpaper import IDesktopWallpaper
 from inputs.file_picker import FilePicker
 from inputs.text_inputs import TextInputs
@@ -175,6 +176,8 @@ class Editor(tk.Frame):
         self.monitor_combo = ttk.Combobox(self, values=values)
         self.monitor_combo.current(0)
 
+        self.color_palette = tk.Frame(self)
+
         # Image preview
         self.image_preview = tk.Label(self)
         self.image_preview_button = tk.Button(
@@ -225,6 +228,28 @@ class Editor(tk.Frame):
         self.monitor_combo.grid(
             row=row_num, column=1, columnspan=2, sticky="ew", padx=5, pady=5
         )
+
+        # Color palette
+        colors = ["#000000", "#000000", "#000000", "#000000", "#000000"]  # your extracted colors
+        for hex_color in colors:
+            swatch = tk.Label(
+                self.color_palette,
+                bg=hex_color,
+                width=2,
+                height=1,
+                relief="solid",
+                borderwidth=1,
+                cursor="hand2"
+            )
+            swatch.bind("<Button-1>", lambda e, c=hex_color: (
+                self.clipboard_clear(),
+                self.clipboard_append(c),
+                self.update()
+            ))
+            swatch.pack(side="left", padx=2)
+
+        self.color_palette.grid(row=row_num, column=3, sticky="ew", padx=5, pady=5)
+        row_num += 1
 
         # Image preview
         self.image_preview.grid(
@@ -374,6 +399,8 @@ class Editor(tk.Frame):
         monitor_id = self.monitor_combo.current()
         resolutions = self.__get_monitor_resolution(monitor_id)
 
+        palette = get_dominant_colors(image_path)
+
         img = clockWallpaper.draw_clock(
             image_path,
             resolutions,
@@ -382,6 +409,29 @@ class Editor(tk.Frame):
             minutes_params,
             split_params,
         )
+
+        # Update the color squares
+        # Clear existing swatches
+        for widget in self.color_palette.winfo_children():
+            widget.destroy()
+
+        # Add new ones
+        for hex_color in palette:
+            swatch = tk.Label(
+                self.color_palette,
+                bg=hex_color,
+                width=2,
+                height=1,
+                relief="solid",
+                borderwidth=1,
+                cursor="hand2"
+            )
+            swatch.bind("<Button-1>", lambda e, c=hex_color: (
+                self.clipboard_clear(),
+                self.clipboard_append(c),
+                self.update()
+            ))
+            swatch.pack(side="left", padx=2)
 
         # Resize the image to fit the selected monitor
         img = img.resize((480, 270))
