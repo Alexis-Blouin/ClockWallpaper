@@ -20,7 +20,7 @@ You will also need:
 ## Setup
 1. Clone the repository
 ```PowerShell
-git clone <your-repository-url>
+git clone https://github.com/Alexis-Blouin/ClockWallpaper
 cd WallpaperSwitch
 ```
 2. Install dependencies
