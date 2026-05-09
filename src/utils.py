@@ -39,3 +39,9 @@ def get_color_palette(img_path, num_colors=5):
     palette_rgb = color_thief.get_palette(num_colors)
     for color in palette_rgb:
         yield '#%02x%02x%02x' % color
+
+def parse_text(text):
+    parsed_text = text.split(",")
+    parsed_text[0] = int(parsed_text[0])
+    parsed_text[5] = int(parsed_text[5])
+    return parsed_text

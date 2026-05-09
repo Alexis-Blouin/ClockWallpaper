@@ -1,7 +1,7 @@
 from clock_wallpaper import ClockWallpaper
 from config_editor import ConfigEditor
 from idesktop_wallpaper import IDesktopWallpaper
-from time import sleep
+from utils import parse_text
 
 
 if __name__ == "__main__":
@@ -11,13 +11,12 @@ if __name__ == "__main__":
     config_name = configEditor.get_config_name()
     config = configEditor.get_section(config_name)
 
-    # TODO fix import by creating a util function 'parse_config' or whatever
     image_path = config["imagepath"]
     font_path = config["fontpath"]
     monitor = config["monitor"].split(",")
-    hours_params = config["hours"].split(",")
-    minutes_params = config["minutes"].split(",")
-    split_params = config["split"].split(",")
+    hours_params = parse_text(config["hours"])
+    minutes_params = parse_text(config["minutes"])
+    split_params = parse_text(config["split"])
 
     img = clockWallpaper.draw_clock(
         image_path,

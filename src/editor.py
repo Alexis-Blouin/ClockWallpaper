@@ -10,7 +10,7 @@ from config_editor import ConfigEditor
 from idesktop_wallpaper import IDesktopWallpaper
 from inputs.file_picker import FilePicker
 from inputs.text_inputs import TextInputs
-from utils import check_path, is_hex_color, show_alert, get_color_palette
+from utils import check_path, is_hex_color, show_alert, get_color_palette, parse_text
 from window_utils import apply_config, hide_window, show_window
 
 
@@ -295,15 +295,9 @@ class Editor(tk.Frame):
             self.monitor_combo.current(int(config["monitor"].split(",")[0]))
 
             # Image preview
-            hours = config["hours"].split(",")
-            hours[0] = int(hours[0])
-            hours[5] = int(hours[5])
-            minutes = config["minutes"].split(",")
-            minutes[0] = int(minutes[0])
-            minutes[5] = int(minutes[5])
-            split = config["split"].split(",")
-            split[0] = int(split[0])
-            split[5] = int(split[5])
+            hours = parse_text(config["hours"])
+            minutes = parse_text(config["minutes"])
+            split = parse_text(config["split"])
             self.__set_image_preview(
                 image_path,
                 font_path,
@@ -313,9 +307,9 @@ class Editor(tk.Frame):
             )
 
             self.layers = {
-                "hours": int(hours[0]),
-                "minutes": int(minutes[0]),
-                "split": int(split[0]),
+                "hours": hours[0],
+                "minutes": minutes[0],
+                "split": split[0],
             }
             self.place_inputs_by_layers()
 

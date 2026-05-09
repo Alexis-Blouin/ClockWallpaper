@@ -1,7 +1,6 @@
 # Created by https://www.toptal.com/developers/gitignore/api/pycharm
 # Edit at https://www.toptal.com/developers/gitignore?templates=pycharm
 
-config/config.ini
 power_shell/config.ps1
 
 ### PyCharm ###
