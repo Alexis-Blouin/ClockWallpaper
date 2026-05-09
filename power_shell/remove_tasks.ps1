@@ -1,5 +1,5 @@
-$LogOnTaskName = "WallPaperTask"
-$LoopTaskName = "WallPaperTaskLoop"
+# Load private config
+. "$PSScriptRoot\config.ps1"
 
 # Remove the possible already existing tasks.
 # **If you change the task names, make sure to remove the older tasks, as they won't be remove with this specific code.

@@ -17,6 +17,12 @@ You will also need:
 - Python 3 installed and added to PATH
 - Administrator privileges (required for task creation/removal)
 
+## Configuration
+- Copy `config.template.ps1` to `config.ps1` and edit the values
+  - Execute `get_exec_path.py` to determine the correct path to your Python executable
+  - Set the `PythonExePath` variable in `config.ps1` to the output of `get_exec_path.py` and add w after python (e.g., `C:\path\to\pythonw.exe`)
+  - Set the `WorkingDirectory` variable to the root folder of the project (e.g., `C:\path\to\ClockWallpaper`)
+
 ## Setup
 1. Clone the repository
 ```PowerShell

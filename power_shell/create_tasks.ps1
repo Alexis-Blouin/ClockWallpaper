@@ -1,8 +1,9 @@
-$LogOnTaskName = "WallPaperTask"
-$LoopTaskName = "WallPaperTaskLoop"
+# Load private config
+. "$PSScriptRoot\config.ps1"
 
-$PythonExePath = "Put here the result of print(sys.executable) after adding w to get pythonw.exe"
-$WorkingDirectory = "Put here the root folder of the application"
+# Remove existing tasks if they exist
+& "$PSScriptRoot\remove_tasks.ps1"
+
 # Task that runs on log on
 $Action = New-ScheduledTaskAction -Execute $PythonExePath `
     -Argument "src\program.pyw" -WorkingDirectory $WorkingDirectory
@@ -10,6 +11,7 @@ $UserName = [Environment]::UserName
 $Trigger = New-ScheduledTaskTrigger -AtLogOn -User $UserName
 $Principal = New-ScheduledTaskPrincipal -UserId "NT AUTHORITY\SYSTEM" -RunLevel Highest
 Register-ScheduledTask -TaskName $LogOnTaskName -Action $Action -Trigger $Trigger -Principal $Principal
+Start-ScheduledTask -TaskName $LogOnTaskName
 
 # Task that runs every minutes
 $Action = New-ScheduledTaskAction -Execute $PythonExePath `
@@ -21,3 +23,4 @@ $Trigger = New-ScheduledTaskTrigger -Once -At (Get-Date) `
     -RepetitionDuration $MaxTaskDuration
 $Principal = New-ScheduledTaskPrincipal -UserId "NT AUTHORITY\SYSTEM" -RunLevel Highest
 Register-ScheduledTask -TaskName $LoopTaskName -Action $Action -Trigger $Trigger -Principal $Principal
+Start-ScheduledTask -TaskName $LoopTaskName

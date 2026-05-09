@@ -11,6 +11,7 @@ if __name__ == "__main__":
     config_name = configEditor.get_config_name()
     config = configEditor.get_section(config_name)
 
+    # TODO fix import by creating a util function 'parse_config' or whatever
     image_path = config["imagepath"]
     font_path = config["fontpath"]
     monitor = config["monitor"].split(",")
