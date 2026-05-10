@@ -23,6 +23,7 @@ class TextInputs(tk.Frame):
         # Enabled
         self.enable_var = tk.IntVar()
         self.enable_check = tk.Checkbutton(self, text="Enabled", variable=self.enable_var)
+        self.set_enabled(1)
         # Position
         self.position_x_label = tk.Label(self, text="Position X", anchor="w")
         self.position_x = tk.Entry(self, name="test")

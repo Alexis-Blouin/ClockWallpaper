@@ -66,9 +66,11 @@ class Menu(tk.Frame):
         cancel_button = tk.Button(
             root,
             text="Cancel",
-            command=lambda: self.__close_choosing_window(root, self.parent),
+            command=lambda: self.__close_child_window(root, self.parent),
         )
         cancel_button.grid(row=2, column=1, sticky="ew", padx=(5, 15), pady=(10, 5))
+
+        root.protocol("WM_DELETE_WINDOW", lambda: cancel_button.invoke())
 
     def __add_config(self):
         hide_window(self.parent)
@@ -89,10 +91,8 @@ class Menu(tk.Frame):
         if not config_name:
             config_name = self.config_editor.generate_default_config_name()
 
-        for widget in self.winfo_children():
-            widget.destroy()
-
         new_window = tk.Toplevel()
+        new_window.protocol("WM_DELETE_WINDOW", lambda: self.__close_child_window(new_window, self.parent))
         editor = Editor(new_window, config_name, "add")
         editor.grid()
         show_window(new_window)
@@ -120,18 +120,18 @@ class Menu(tk.Frame):
         cancel_button = tk.Button(
             root,
             text="Cancel",
-            command=lambda: self.__close_choosing_window(root, self.parent),
+            command=lambda: self.__close_child_window(root, self.parent),
         )
         cancel_button.grid(row=2, column=1, sticky="ew", padx=(5, 15), pady=(10, 5))
+
+        root.protocol("WM_DELETE_WINDOW", lambda: cancel_button.invoke())
 
     def __confirm_edit_selection(self, root, config_name):
         if self.config_editor.config_name_exist(config_name):
             root.destroy()
 
-            for widget in self.winfo_children():
-                widget.destroy()
-
             new_window = tk.Toplevel()
+            new_window.protocol("WM_DELETE_WINDOW", lambda: self.__close_child_window(new_window, self.parent))
             editor = Editor(new_window, config_name, "edit")
             editor.grid()
             self.config_editor.set_edit_config_name(config_name)
@@ -144,7 +144,7 @@ class Menu(tk.Frame):
                 "warning",
             )
 
-    def __close_choosing_window(self, root, window):
+    def __close_child_window(self, root, window):
         root.destroy()
         show_window(window)
 
