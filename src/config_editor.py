@@ -84,7 +84,7 @@ class ConfigEditor:
 
     def get_config_name(self):
         self.__read_config()
-        return self.config.defaults()["currentconfig"]
+        return self.config.defaults().get("currentconfig", "")
 
     def get_section(self, config_name):
         self.__read_config()

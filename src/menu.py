@@ -54,7 +54,10 @@ class Menu(tk.Frame):
         label.grid(row=0, column=0, columnspan=2, sticky="ew", padx=10)
 
         combo = ttk.Combobox(root, values=section_names)
-        combo.current(section_names.index(self.config_editor.get_config_name()))
+        # Will select the currently active config if it exists by default
+        current_config_name = self.config_editor.get_config_name()
+        if current_config_name:
+            combo.current(section_names.index(current_config_name))
         combo.grid(row=1, column=0, columnspan=2, sticky="ew", padx=10)
 
         confirm_button = tk.Button(
@@ -109,6 +112,10 @@ class Menu(tk.Frame):
         label.grid(row=0, column=0, columnspan=2, sticky="ew", padx=10)
 
         combo = ttk.Combobox(root, values=section_names)
+        # Will select the currently active config if it exists by default
+        current_config_name = self.config_editor.get_config_name()
+        if current_config_name:
+            combo.current(section_names.index(current_config_name))
         combo.grid(row=1, column=0, columnspan=2, sticky="ew", padx=10)
 
         confirm_button = tk.Button(
