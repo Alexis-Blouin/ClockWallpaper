@@ -1,4 +1,4 @@
-# WallpaperSwitch
+# ClockWallpaper
 A Python utility that displays the current time directly on your desktop wallpaper and updates it automatically through Windows Task Scheduler.
 
 ## Features
