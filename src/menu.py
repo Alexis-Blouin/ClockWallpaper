@@ -69,7 +69,7 @@ class Menu(tk.Frame):
         cancel_button = tk.Button(
             root,
             text="Cancel",
-            command=lambda: self.__close_child_window(root, self.parent),
+            command=lambda: self.__return_to_menu(root, self.parent),
         )
         cancel_button.grid(row=2, column=1, sticky="ew", padx=(5, 15), pady=(10, 5))
 
@@ -95,8 +95,8 @@ class Menu(tk.Frame):
             config_name = self.config_editor.generate_default_config_name()
 
         new_window = tk.Toplevel()
-        new_window.protocol("WM_DELETE_WINDOW", lambda: self.__close_child_window(new_window, self.parent))
-        editor = Editor(new_window, config_name, "add")
+        new_window.protocol("WM_DELETE_WINDOW", lambda: self.__return_to_menu(new_window, self.parent))
+        editor = Editor(new_window, config_name, "add", lambda: self.__return_to_menu(new_window, self.parent))
         editor.grid()
         show_window(new_window)
 
@@ -127,7 +127,7 @@ class Menu(tk.Frame):
         cancel_button = tk.Button(
             root,
             text="Cancel",
-            command=lambda: self.__close_child_window(root, self.parent),
+            command=lambda: self.__return_to_menu(root, self.parent),
         )
         cancel_button.grid(row=2, column=1, sticky="ew", padx=(5, 15), pady=(10, 5))
 
@@ -138,8 +138,8 @@ class Menu(tk.Frame):
             root.destroy()
 
             new_window = tk.Toplevel()
-            new_window.protocol("WM_DELETE_WINDOW", lambda: self.__close_child_window(new_window, self.parent))
-            editor = Editor(new_window, config_name, "edit")
+            new_window.protocol("WM_DELETE_WINDOW", lambda: self.__return_to_menu(new_window, self.parent))
+            editor = Editor(new_window, config_name, "edit", lambda: self.__return_to_menu(new_window, self.parent))
             editor.grid()
             self.config_editor.set_edit_config_name(config_name)
 
@@ -151,7 +151,7 @@ class Menu(tk.Frame):
                 "warning",
             )
 
-    def __close_child_window(self, root, window):
+    def __return_to_menu(self, root, window):
         root.destroy()
         show_window(window)
 
