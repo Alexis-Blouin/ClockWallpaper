@@ -1,4 +1,4 @@
-# WallpaperSwitch
+# ClockWallpaper
 A Python utility that displays the current time directly on your desktop wallpaper and updates it automatically through Windows Task Scheduler.
 
 ## Features
@@ -60,3 +60,9 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 python -m pip install -r requirements.txt
 ```
 instead of `pip install`
+
+## Usage
+- You can use the furnished fonts or use your own
+  - You can use them from any folder or add them the '/Fonts'
+- Same thing applies for the images
+  - The images with the clock will be placed in the folder '/Images'
