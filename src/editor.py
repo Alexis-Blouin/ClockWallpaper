@@ -10,6 +10,7 @@ from config_editor import ConfigEditor
 from idesktop_wallpaper import IDesktopWallpaper
 from inputs.file_picker import FilePicker
 from inputs.text_inputs import TextInputs
+from src.inputs.monitor_select import MonitorSelect
 from utils import check_path, is_hex_color, show_alert, get_color_palette, parse_text
 from window_utils import apply_config, hide_window, show_window
 
@@ -42,13 +43,11 @@ class Editor(tk.Frame):
         self.file_picker_font = FilePicker(self, "font")
 
         # Monitor
-        self.monitor_label = tk.Label(self, text="Choose monitor:", anchor="w")
         monitor_count = self.__get_monitor_count()
         values = []
         for i in range(monitor_count):
             values.append(f"Monitor {i + 1}")
-        self.monitor_combo = ttk.Combobox(self, values=values)
-        self.monitor_combo.current(0)
+        self.monitor_select = MonitorSelect(self, values)
 
         self.color_palette = tk.Frame(self)
 
@@ -98,10 +97,7 @@ class Editor(tk.Frame):
         row_num += 1
 
         # Monitor
-        self.monitor_label.grid(row=row_num, column=0, sticky="ew", padx=5, pady=5)
-        self.monitor_combo.grid(
-            row=row_num, column=1, columnspan=2, sticky="ew", padx=5, pady=5
-        )
+        self.monitor_select.grid(row=row_num, column=0, sticky="ew", padx=5, pady=5)
 
         # Color palette
         colors = ["#000000", "#000000", "#000000", "#000000", "#000000"]  # your extracted colors
@@ -122,7 +118,7 @@ class Editor(tk.Frame):
             ))
             swatch.pack(side="left", padx=2)
 
-        self.color_palette.grid(row=row_num, column=3, sticky="ew", padx=5, pady=5)
+        self.color_palette.grid(row=row_num, column=5, sticky="ew", padx=5, pady=5)
         row_num += 1
 
         # Image preview
