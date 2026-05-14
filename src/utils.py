@@ -34,7 +34,7 @@ def is_hex_color(color) -> bool:
     return re.match(regex, color)
 
 
-def get_color_palette(img_path, num_colors=5):
+def get_color_palette(img_path, num_colors):
     color_thief = ColorThief(img_path)
     palette_rgb = color_thief.get_palette(num_colors)
     for color in palette_rgb:

@@ -11,7 +11,7 @@ class FilePicker(tk.Frame):
         self.parent = parent
         super().__init__(self.parent)
 
-        self.label = tk.Label(self, text="Choose " + file_type + ":", anchor="w")
+        self.label = tk.Label(self, text="Choose " + file_type, anchor="w")
         self.entry = tk.Entry(self)
         self.button = tk.Button(
             self,
@@ -55,6 +55,7 @@ class FilePicker(tk.Frame):
 
         if new_file:
             self.parent.update_image_preview()
+            self.parent.set_color_palette(self.parent.color_palette_count)
 
     def get(self):
         return self.entry.get()

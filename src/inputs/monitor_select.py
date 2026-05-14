@@ -9,7 +9,7 @@ class MonitorSelect(tk.Frame):
         self.parent = parent
         super().__init__(self.parent)
 
-        self.label = tk.Label(self, text="Choose Monitor:", anchor="w")
+        self.label = tk.Label(self, text="Choose Monitor", anchor="w")
         self.entry = ttk.Combobox(self, values=monitor_values)
         self.entry.current(0)
 
@@ -20,9 +20,8 @@ class MonitorSelect(tk.Frame):
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=1)
 
-    def get(self):
-        monitor = self.entry.get()
-        if check_path(monitor, "monitor"):
-            return monitor
-        else:
-            return None
+    def get_current(self):
+        return self.entry.current()
+
+    def set_current(self, monitor):
+        self.entry.current(monitor)

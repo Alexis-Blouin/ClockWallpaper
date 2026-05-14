@@ -10,6 +10,7 @@ from config_editor import ConfigEditor
 from idesktop_wallpaper import IDesktopWallpaper
 from inputs.file_picker import FilePicker
 from inputs.text_inputs import TextInputs
+from src.inputs.image_color_picker import ImageColorPicker
 from src.inputs.monitor_select import MonitorSelect
 from utils import check_path, is_hex_color, show_alert, get_color_palette, parse_text
 from window_utils import apply_config, hide_window, show_window
@@ -20,6 +21,8 @@ class Editor(tk.Frame):
         super().__init__(parent)
         self.parent = parent
         self.config_editor = ConfigEditor()
+
+        self.color_palette_count = 5
 
         if mode == "edit":
             self.config_editor.set_edit_config_name(config_name)
@@ -52,7 +55,7 @@ class Editor(tk.Frame):
         self.color_palette = tk.Frame(self)
 
         # Image preview
-        self.image_preview = tk.Label(self)
+        self.image_preview = ImageColorPicker(self, self.on_color_picked)
         self.image_preview_button = tk.Button(
             self, text="Update Preview", command=self.update_image_preview
         )
@@ -99,25 +102,6 @@ class Editor(tk.Frame):
         # Monitor
         self.monitor_select.grid(row=row_num, column=0, sticky="ew", padx=5, pady=5)
 
-        # Color palette
-        colors = ["#000000", "#000000", "#000000", "#000000", "#000000"]  # your extracted colors
-        for hex_color in colors:
-            swatch = tk.Label(
-                self.color_palette,
-                bg=hex_color,
-                width=2,
-                height=1,
-                relief="solid",
-                borderwidth=1,
-                cursor="hand2"
-            )
-            swatch.bind("<Button-1>", lambda e, c=hex_color: (
-                self.clipboard_clear(),
-                self.clipboard_append(c),
-                self.update()
-            ))
-            swatch.pack(side="left", padx=2)
-
         self.color_palette.grid(row=row_num, column=5, sticky="ew", padx=5, pady=5)
         row_num += 1
 
@@ -160,7 +144,7 @@ class Editor(tk.Frame):
             self.file_picker_font.set(font_path)
 
             # Monitor
-            self.monitor_combo.current(int(config["monitor"].split(",")[0]))
+            self.monitor_select.set_current(int(config["monitor"].split(",")[0]))
 
             # Image preview
             hours = parse_text(config["hours"])
@@ -173,6 +157,8 @@ class Editor(tk.Frame):
                 minutes,
                 split,
             )
+
+            self.set_color_palette(self.color_palette_count)
 
             self.layers = {
                 "hours": hours[0],
@@ -269,10 +255,8 @@ class Editor(tk.Frame):
     ):
         clockWallpaper = ClockWallpaper()
 
-        monitor_id = self.monitor_combo.current()
+        monitor_id = self.monitor_select.get_current()
         resolutions = self.__get_monitor_resolution(monitor_id)
-
-        palette = get_color_palette(image_path)
 
         img = clockWallpaper.draw_clock(
             image_path,
@@ -283,6 +267,21 @@ class Editor(tk.Frame):
             split_params,
         )
 
+        # Resize the image to fit the selected monitor
+        img = img.resize((480, 270))
+
+        self.image_preview.set_image(img)
+
+    def set_color_palette(self, num_colors):
+        image_path = self.file_picker_image.get()
+        if not image_path or not check_path(image_path, "image"):
+            return
+        font_path = self.file_picker_font.get()
+        if not font_path or not check_path(font_path, "font"):
+            return
+
+        palette = get_color_palette(image_path, num_colors)
+
         # Update the color squares
         # Clear existing swatches
         for widget in self.color_palette.winfo_children():
@@ -290,28 +289,29 @@ class Editor(tk.Frame):
 
         # Add new ones
         for hex_color in palette:
-            swatch = tk.Label(
-                self.color_palette,
-                bg=hex_color,
-                width=2,
-                height=1,
-                relief="solid",
-                borderwidth=1,
-                cursor="hand2"
-            )
-            swatch.bind("<Button-1>", lambda e, c=hex_color: (
-                self.clipboard_clear(),
-                self.clipboard_append(c),
-                self.update()
-            ))
-            swatch.pack(side="left", padx=2)
+            self.__add_swatch(hex_color)
+        self.__add_swatch("#ffffff") # Swatch for the color picker
 
-        # Resize the image to fit the selected monitor
-        img = img.resize((480, 270))
-        img = ImageTk.PhotoImage(img)
+    def __add_swatch(self, hex_color):
+        swatch = tk.Label(
+            self.color_palette,
+            bg=hex_color,
+            width=2,
+            height=1,
+            relief="solid",
+            borderwidth=1,
+            cursor="hand2"
+        )
+        swatch.bind("<Button-1>", lambda e, c=hex_color: (
+            self.clipboard_clear(),
+            self.clipboard_append(c),
+            self.update()
+        ))
+        swatch.pack(side="left", padx=2)
 
-        self.image_preview.config(image=img)
-        self.image_preview.image = img
+    def on_color_picked(self, hex_color):
+        self.color_palette.winfo_children()[-1].destroy()
+        self.__add_swatch(hex_color)
 
     def update_image_preview(self):
         image_path = self.file_picker_image.get()
@@ -465,7 +465,7 @@ class Editor(tk.Frame):
         image_path = self.file_picker_image.get()
         font_path = self.file_picker_font.get()
 
-        monitor_id = self.monitor_combo.current()
+        monitor_id = self.monitor_select.get_current()
         resolution = self.__get_monitor_resolution(monitor_id)
         monitor = f"{monitor_id},{resolution[0]},{resolution[1]}"
 
@@ -554,7 +554,7 @@ class Editor(tk.Frame):
         image_path = self.file_picker_image.get()
         font_path = self.file_picker_font.get()
 
-        monitor_id = self.monitor_combo.current()
+        monitor_id = self.monitor_select.get_current()
         resolution = self.__get_monitor_resolution(monitor_id)
         monitor = f"{monitor_id},{resolution[0]},{resolution[1]}"
 
