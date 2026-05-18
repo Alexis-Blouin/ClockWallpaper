@@ -10,6 +10,7 @@ from config_editor import ConfigEditor
 from idesktop_wallpaper import IDesktopWallpaper
 from inputs.file_picker import FilePicker
 from inputs.text_inputs import TextInputs
+from src.inputs.configuration_name import ConfigurationName
 from src.inputs.image_color_picker import ImageColorPicker
 from src.inputs.monitor_select import MonitorSelect
 from utils import check_path, is_hex_color, show_alert, get_color_palette, parse_text
@@ -35,9 +36,7 @@ class Editor(tk.Frame):
 
     def __init_editing_frame(self, config_name, mode):
         # Conf name
-        self.conf_name_entry = tk.Entry(self, name="config_name")
-        self.conf_name_entry.insert(0, config_name)
-        self.conf_name_entry.bind("<FocusOut>", self.__check_config_name)
+        self.config_name = ConfigurationName(self, config_name, self.__check_config_name)
 
         # Image
         self.file_picker_image = FilePicker(self, "image")
@@ -87,8 +86,7 @@ class Editor(tk.Frame):
         row_num = 0
 
         # Conf name
-        self.conf_name_entry.grid(row=row_num, column=3, sticky="ew", padx=5, pady=5)
-        # self.conf_name_button.grid(row=row_num, column=4, sticky="ew", padx=5, pady=5)
+        self.config_name.grid(row=row_num, column=0, sticky="ew", padx=5)
         row_num += 1
 
         # Image
@@ -453,7 +451,7 @@ class Editor(tk.Frame):
         if not self.__check_inputs():
             return
 
-        config_name = self.conf_name_entry.get()
+        config_name = self.config_name.get()
 
         image_path = self.file_picker_image.get()
         font_path = self.file_picker_font.get()
@@ -505,9 +503,10 @@ class Editor(tk.Frame):
         self.__return_to_menu()
 
     def __check_inputs(self, check_config_name = True) -> bool:
-        if check_config_name and not Editor.config_editor.config_name_valid(self.conf_name_entry.get()):
-            return False
+        # TODO Fix when saving a new config and focused on the name input, throws error, but shouldn't
         self.focus_set() # Unfocuses the input to maybe get the error message, so it's not called again after the save
+        if check_config_name and not Editor.config_editor.config_name_valid(self.config_name.get()):
+            return False
 
         if not check_path(self.file_picker_image.get(), "image"):
             return False

@@ -26,7 +26,7 @@ class TextInputs(tk.Frame):
         self.set_enabled(1)
         # Position
         self.position_x_label = tk.Label(self, text="Position X", anchor="w")
-        self.position_x = tk.Entry(self, name="test")
+        self.position_x = tk.Entry(self)
         self.position_y_label = tk.Label(self, text="Position Y", anchor="w")
         self.position_y = tk.Entry(self)
         # Size
