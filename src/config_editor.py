@@ -103,8 +103,11 @@ class ConfigEditor:
         self.__read_config()
         return self.config.sections()
 
-    def config_name_exist(self, config_name):
-        return config_name != self.edit_config_name and config_name in self.get_section_names()
+    def config_name_exists(self, config_name):
+        return config_name in self.get_section_names()
+
+    def config_name_valid(self, config_name):
+        return config_name == self.edit_config_name or not config_name in self.get_section_names()
 
     def generate_default_config_name(self):
         section_names = self.get_section_names()

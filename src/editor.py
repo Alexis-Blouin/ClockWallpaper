@@ -190,7 +190,7 @@ class Editor(tk.Frame):
 
     @staticmethod
     def __check_config_name(event):
-        if Editor.config_editor.config_name_exist(event.widget.get()):
+        if not Editor.config_editor.config_name_valid(event.widget.get()):
             show_alert(
                 "Config Name Error", "This config name is already existing.", "error"
             )
@@ -505,7 +505,7 @@ class Editor(tk.Frame):
         self.__return_to_menu()
 
     def __check_inputs(self, check_config_name = True) -> bool:
-        if check_config_name and Editor.config_editor.config_name_exist(self.conf_name_entry.get()):
+        if check_config_name and not Editor.config_editor.config_name_valid(self.conf_name_entry.get()):
             return False
         self.focus_set() # Unfocuses the input to maybe get the error message, so it's not called again after the save
 

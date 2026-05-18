@@ -78,21 +78,7 @@ class Menu(tk.Frame):
     def __add_config(self):
         hide_window(self.parent)
 
-        config_name = simpledialog.askstring(
-            "Config Name", "Enter the new configuration name:"
-        )
-        while config_name and self.config_editor.config_name_exist(config_name):
-            show_alert(
-                "Config Name Error", "This config name is already existing.", "error"
-            )
-            config_name = simpledialog.askstring(
-                "Config Name", "Enter the new configuration name:"
-            )
-        if config_name is None:
-            show_window(self.parent)
-            return
-        if not config_name:
-            config_name = self.config_editor.generate_default_config_name()
+        config_name = self.config_editor.generate_default_config_name()
 
         new_window = tk.Toplevel()
         new_window.protocol("WM_DELETE_WINDOW", lambda: self.__return_to_menu(new_window, self.parent))
@@ -134,7 +120,7 @@ class Menu(tk.Frame):
         root.protocol("WM_DELETE_WINDOW", lambda: cancel_button.invoke())
 
     def __confirm_edit_selection(self, root, config_name):
-        if self.config_editor.config_name_exist(config_name):
+        if self.config_editor.config_name_exists(config_name):
             root.destroy()
 
             new_window = tk.Toplevel()
