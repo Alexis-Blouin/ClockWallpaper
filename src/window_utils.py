@@ -11,7 +11,7 @@ def show_window(window):
     window.deiconify()
 
 
-def apply_config(self, section_names, config_name, root=None):
+def apply_config(self, section_names, config_name, root=None, confirmation=True):
     if config_name in section_names:
         if root:
             root.destroy()
@@ -19,7 +19,8 @@ def apply_config(self, section_names, config_name, root=None):
         self.config_editor.apply_config(config_name)
 
         subprocess.run(["pythonw", "src/program.pyw"])
-        show_alert("Success", "Configuration applied successfully.", "info")
+        if confirmation:
+            show_alert("Success", "Configuration applied successfully.", "info")
 
         show_window(self.parent)
     else:

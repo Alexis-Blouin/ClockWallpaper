@@ -491,18 +491,23 @@ class Editor(tk.Frame):
 
         show_alert("Success", "Configuration saved successfully.", "info")
 
-        if (
-                self.__ask_question("Apply Config", "Do you want to apply the new config?")
-                == "yes"
-        ):
-            apply_config(self, [config_name], config_name)
+        if mode == 'edit':
+            edit_config_name = Editor.config_editor.get_edit_config_name()
+            if Editor.config_editor.get_config_name() == edit_config_name:
+                if edit_config_name != config_name:
+                    apply_config(self, [config_name], config_name, confirmation=False)
+            elif self.__ask_question("Apply Config", "Do you want to apply the configuration?") == "yes":
+                apply_config(self, [config_name], config_name)
+        else:
+            if self.__ask_question("Apply Config", "Do you want to apply the configuration?") == "yes":
+                apply_config(self, [config_name], config_name)
 
         self.__return_to_menu()
 
     def __check_inputs(self, check_config_name = True) -> bool:
         if check_config_name and Editor.config_editor.config_name_exist(self.conf_name_entry.get()):
-            self.focus_set() # Unfocuses the input to get the error message
             return False
+        self.focus_set() # Unfocuses the input to maybe get the error message, so it's not called again after the save
 
         if not check_path(self.file_picker_image.get(), "image"):
             return False

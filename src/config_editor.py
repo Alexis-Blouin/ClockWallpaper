@@ -86,6 +86,9 @@ class ConfigEditor:
         self.__read_config()
         return self.config.defaults().get("currentconfig", "")
 
+    def get_edit_config_name(self):
+        return self.edit_config_name
+
     def get_section(self, config_name):
         self.__read_config()
         values = {}
@@ -101,7 +104,7 @@ class ConfigEditor:
         return self.config.sections()
 
     def config_name_exist(self, config_name):
-        return config_name in self.get_section_names()
+        return config_name != self.edit_config_name and config_name in self.get_section_names()
 
     def generate_default_config_name(self):
         section_names = self.get_section_names()
