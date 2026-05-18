@@ -17,15 +17,16 @@ from window_utils import apply_config, hide_window, show_window
 
 
 class Editor(tk.Frame):
+    config_editor = ConfigEditor()
+
     def __init__(self, parent, config_name, mode, return_lambda):
         super().__init__(parent)
         self.parent = parent
-        self.config_editor = ConfigEditor()
 
         self.color_palette_count = 5
 
         if mode == "edit":
-            self.config_editor.set_edit_config_name(config_name)
+            Editor.config_editor.set_edit_config_name(config_name)
 
         self.__init_editing_frame(config_name, mode)
         self.__instanciate_config(config_name)
@@ -34,10 +35,9 @@ class Editor(tk.Frame):
 
     def __init_editing_frame(self, config_name, mode):
         # Conf name
-        self.conf_name_label = tk.Label(self, text=config_name, anchor="center")
-        self.conf_name_button = tk.Button(
-            self, text="Modify", command=self.__modify_config_name
-        )
+        self.conf_name_entry = tk.Entry(self, name="config_name")
+        self.conf_name_entry.insert(0, config_name)
+        self.conf_name_entry.bind("<FocusOut>", self.__check_config_name)
 
         # Image
         self.file_picker_image = FilePicker(self, "image")
@@ -87,8 +87,8 @@ class Editor(tk.Frame):
         row_num = 0
 
         # Conf name
-        self.conf_name_label.grid(row=row_num, column=3, sticky="ew", padx=5, pady=5)
-        self.conf_name_button.grid(row=row_num, column=4, sticky="ew", padx=5, pady=5)
+        self.conf_name_entry.grid(row=row_num, column=3, sticky="ew", padx=5, pady=5)
+        # self.conf_name_button.grid(row=row_num, column=4, sticky="ew", padx=5, pady=5)
         row_num += 1
 
         # Image
@@ -188,20 +188,13 @@ class Editor(tk.Frame):
             self.split_input.set_size(split[4])
             self.split_input.set_enabled(split[5])
 
-    def __modify_config_name(self):
-        new_config_name = simpledialog.askstring(
-            "Config Name", "Enter the new configuration name:"
-        )
-        while new_config_name and self.config_editor.config_name_exist(new_config_name):
+    @staticmethod
+    def __check_config_name(event):
+        if Editor.config_editor.config_name_exist(event.widget.get()):
             show_alert(
                 "Config Name Error", "This config name is already existing.", "error"
             )
-            new_config_name = simpledialog.askstring(
-                "Config Name", "Enter the new configuration name:"
-            )
-
-        if new_config_name:
-            self.conf_name_label.config(text=new_config_name)
+            event.widget.focus_set()
 
     def change_layer(self, direction, element):
         if element == "hours":
@@ -460,7 +453,7 @@ class Editor(tk.Frame):
         if not self.__check_inputs():
             return
 
-        config_name = self.conf_name_label["text"]
+        config_name = self.conf_name_entry.get()
 
         image_path = self.file_picker_image.get()
         font_path = self.file_picker_font.get()
@@ -506,7 +499,11 @@ class Editor(tk.Frame):
 
         self.__return_to_menu()
 
-    def __check_inputs(self) -> bool:
+    def __check_inputs(self, check_config_name = True) -> bool:
+        if check_config_name and Editor.config_editor.config_name_exist(self.conf_name_entry.get()):
+            self.focus_set() # Unfocuses the input to get the error message
+            return False
+
         if not check_path(self.file_picker_image.get(), "image"):
             return False
         if not check_path(self.file_picker_font.get(), "font"):
@@ -548,7 +545,7 @@ class Editor(tk.Frame):
         return True
 
     def __test_preview_on_monitor(self):
-        if not (self.__check_inputs):
+        if not self.__check_inputs(check_config_name=False):
             return False
 
         image_path = self.file_picker_image.get()
