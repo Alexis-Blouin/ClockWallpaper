@@ -35,14 +35,22 @@ class Editor(tk.Frame):
         self.__return_lambda = return_lambda
 
     def __init_editing_frame(self, config_name, mode):
+        row_num = 0
+
         # Conf name
         self.config_name = ConfigurationName(self, config_name, self.__check_config_name)
+        self.config_name.grid(row=row_num, column=0, sticky="ew", padx=5)
+        row_num += 1
 
         # Image
         self.file_picker_image = FilePicker(self, "image")
+        self.file_picker_image.grid(row=row_num, column=0, sticky="ew", padx=5)
+        row_num += 1
 
         # Font
         self.file_picker_font = FilePicker(self, "font")
+        self.file_picker_font.grid(row=row_num, column=0, sticky="ew", padx=5)
+        row_num += 1
 
         # Monitor
         monitor_count = self.__get_monitor_count()
@@ -50,85 +58,58 @@ class Editor(tk.Frame):
         for i in range(monitor_count):
             values.append(f"Monitor {i + 1}")
         self.monitor_select = MonitorSelect(self, values)
+        self.monitor_select.grid(row=row_num, column=0, sticky="ew", padx=5, pady=5)
+        row_num += 1
 
+        # Inputs
+        self.hours_input = TextInputs(self, "Hours")
+        self.minutes_input = TextInputs(self, "Minutes")
+        self.split_input = TextInputs(self, "Split")
+        self.layers = {"hours": 0, "minutes": 1, "split": 2}
+
+        row_num = self.place_inputs_by_layers(row_num)
+
+        # Color palette
         self.color_palette = tk.Frame(self)
+        self.color_palette.grid(row=row_num - 5, column=3, sticky="ew", padx=5, pady=5)
 
-        # Image preview
-        self.image_preview = ImageColorPicker(self, self.on_color_picked)
+        # Update image preview button
         self.image_preview_button = tk.Button(
             self, text="Update Preview", command=self.update_image_preview
         )
+        self.image_preview_button.grid(row=row_num - 5, column=4, sticky="ew", padx=5)
 
         # Test on monitor button
         self.test_on_monitor_button = tk.Button(
             self, text="Test on Monitor", command=self.__test_preview_on_monitor
         )
-
-        # Hours
-        self.hours_input = TextInputs(self, "Hours")
-
-        # Minutes
-        self.minutes_input = TextInputs(self, "Minutes")
-
-        # Split
-        self.split_input = TextInputs(self, "Split")
+        self.test_on_monitor_button.grid(
+            row=row_num - 5, column=5, sticky="ew", padx=5
+        )
 
         # Cancel button
         self.cancel_button = tk.Button(
             self, text="Cancel", command=self.__return_to_menu
         )
+        self.cancel_button.grid(row=row_num, column=4, sticky="ew", padx=5, pady=5)
+
         # Save button
         self.save_button = tk.Button(
             self, text="Save", command=lambda: self.__save_config(mode)
         )
-
-        # Show the options
-        row_num = 0
-
-        # Conf name
-        self.config_name.grid(row=row_num, column=0, sticky="ew", padx=5)
-        row_num += 1
-
-        # Image
-        self.file_picker_image.grid(row=row_num, column=0, sticky="ew", padx=5)
-        row_num += 1
-
-        # Font
-        self.file_picker_font.grid(row=row_num, column=0, sticky="ew", padx=5)
-        row_num += 1
-
-        # Monitor
-        self.monitor_select.grid(row=row_num, column=0, sticky="ew", padx=5, pady=5)
-
-        self.color_palette.grid(row=row_num, column=5, sticky="ew", padx=5, pady=5)
-        row_num += 1
+        self.save_button.grid(row=row_num, column=5, sticky="ew", padx=5, pady=5)
 
         # Image preview
+        self.image_preview = ImageColorPicker(self, self.on_color_picked)
         self.image_preview.grid(
-            row=row_num,
-            column=4,
-            rowspan=14,
-            columnspan=6,
+            row=0,
+            column=1,
+            rowspan=row_num + 1, # Will be centered vertically
+            columnspan=5,
             sticky="ew",
             padx=5,
             pady=5,
         )
-        self.image_preview_button.grid(row=row_num + 15, column=5, sticky="ew", padx=5)
-
-        # Test on monitor button
-        self.test_on_monitor_button.grid(
-            row=row_num + 15, column=6, sticky="ew", padx=5
-        )
-        row_num += 1
-
-        # Inputs
-        self.layers = {"hours": 0, "minutes": 1, "split": 2}
-        row_num = self.place_inputs_by_layers(row_num)
-
-        # Cancel button
-        self.cancel_button.grid(row=row_num, column=7, sticky="ew", padx=5, pady=5)
-        # Save button
-        self.save_button.grid(row=row_num, column=8, sticky="ew", padx=5, pady=5)
 
         show_window(self.parent)
 
@@ -228,16 +209,14 @@ class Editor(tk.Frame):
         for i in reversed(range(3)):
             if i == int(self.layers["hours"]):
                 # Hours
-                self.hours_input.grid(row=row_num, column=0, sticky="ew", padx=5)
-                row_num += 1
+                self.hours_input.grid(row=row_num, column=0, rowspan=6, sticky="ew", padx=5)
             elif i == int(self.layers["minutes"]):
                 # Minutes
-                self.minutes_input.grid(row=row_num, column=0, sticky="ew", padx=5)
-                row_num += 1
+                self.minutes_input.grid(row=row_num, column=0, rowspan=6, sticky="ew", padx=5)
             elif i == int(self.layers["split"]):
                 # Split
-                self.split_input.grid(row=row_num, column=0, sticky="ew", padx=5)
-                row_num += 1
+                self.split_input.grid(row=row_num, column=0, rowspan=6, sticky="ew", padx=5)
+            row_num += 6
 
         return row_num
 
