@@ -9,13 +9,14 @@ class ClockWallpaper:
         image_path,
         resolution,
         font_path,
+        hours_format,
         hours_params,
         minutes_params,
         split_params,
     ):
         draw, img = self.__open_image(image_path, resolution)
 
-        hours, minutes, day_split = self.get_time()
+        hours, minutes, day_split = self.get_time(hours_format)
 
         layers = (
             self.__get_layer(hours_params),
@@ -64,10 +65,10 @@ class ClockWallpaper:
 
         return cropped_img
 
-    def get_time(self):
+    def get_time(self, hours_format):
         day_split = strftime("%p")
         hours = strftime("%H")
-        if int(hours) > 12:
+        if int(hours) > 12 and hours_format == "12":
             hours = str(int(hours) - 12)
         if len(hours) == 1:
             hours = "0" + hours

@@ -11,6 +11,7 @@ from idesktop_wallpaper import IDesktopWallpaper
 from inputs.file_picker import FilePicker
 from inputs.text_inputs import TextInputs
 from src.inputs.configuration_name import ConfigurationName
+from src.inputs.hours_format_radio import HoursFormatRadio
 from src.inputs.image_color_picker import ImageColorPicker
 from src.inputs.monitor_select import MonitorSelect
 from utils import check_path, is_hex_color, show_alert, get_color_palette, parse_text
@@ -59,6 +60,11 @@ class Editor(tk.Frame):
             values.append(f"Monitor {i + 1}")
         self.monitor_select = MonitorSelect(self, values)
         self.monitor_select.grid(row=row_num, column=0, sticky="ew", padx=5, pady=5)
+        row_num += 1
+
+        # Hours format
+        self.hours_format_radio = HoursFormatRadio(self)
+        self.hours_format_radio.grid(row=row_num, column=0, sticky="ew", padx=10, pady=5)
         row_num += 1
 
         # Inputs
@@ -125,6 +131,10 @@ class Editor(tk.Frame):
             # Monitor
             self.monitor_select.set_current(int(config["monitor"].split(",")[0]))
 
+            # Hours format
+            hours_format = config["hours_format"]
+            self.hours_format_radio.set_current(hours_format)
+
             # Image preview
             hours = parse_text(config["hours"])
             minutes = parse_text(config["minutes"])
@@ -132,6 +142,7 @@ class Editor(tk.Frame):
             self.__set_image_preview(
                 image_path,
                 font_path,
+                hours_format,
                 hours,
                 minutes,
                 split,
@@ -221,7 +232,7 @@ class Editor(tk.Frame):
         return row_num
 
     def __set_image_preview(
-            self, image_path, font_path, hours_params, minutes_params, split_params
+            self, image_path, font_path, hours_format, hours_params, minutes_params, split_params
     ):
         clockWallpaper = ClockWallpaper()
 
@@ -232,6 +243,7 @@ class Editor(tk.Frame):
             image_path,
             resolutions,
             font_path,
+            hours_format,
             hours_params,
             minutes_params,
             split_params,
@@ -291,6 +303,8 @@ class Editor(tk.Frame):
         if not font_path or not check_path(font_path, "font"):
             return
 
+        hours_format = self.hours_format_radio.get_current()
+
         hours_x = self.hours_input.get_position_x()
         hours_x = hours_x if hours_x else 0
         hours_y = self.hours_input.get_position_y()
@@ -332,7 +346,7 @@ class Editor(tk.Frame):
         split_params = [self.layers["split"], split_x, split_y, split_color, split_size, split_enabled]
 
         self.__set_image_preview(
-            image_path, font_path, hours_params, minutes_params, split_params
+            image_path, font_path, hours_format, hours_params, minutes_params, split_params
         )
 
     def __quit(self):
@@ -439,6 +453,8 @@ class Editor(tk.Frame):
         resolution = self.__get_monitor_resolution(monitor_id)
         monitor = f"{monitor_id},{resolution[0]},{resolution[1]}"
 
+        hours_format = self.hours_format_radio.get_current()
+
         text_hours = f"{self.layers["hours"]},{self.hours_input.get_input_config()}"
         text_minutes = (
             f"{self.layers["minutes"]},{self.minutes_input.get_input_config()}"
@@ -451,6 +467,7 @@ class Editor(tk.Frame):
                 image_path,
                 font_path,
                 monitor,
+                hours_format,
                 text_hours,
                 text_minutes,
                 text_split,
@@ -461,6 +478,7 @@ class Editor(tk.Frame):
                 image_path,
                 font_path,
                 monitor,
+                hours_format,
                 text_hours,
                 text_minutes,
                 text_split,
@@ -538,6 +556,8 @@ class Editor(tk.Frame):
         resolution = self.__get_monitor_resolution(monitor_id)
         monitor = f"{monitor_id},{resolution[0]},{resolution[1]}"
 
+        hours_format = self.hours_format_radio.get_current()
+
         text_hours = [self.layers["hours"],self.hours_input.get_position_x(),self.hours_input.get_position_y(),self.hours_input.get_color()[1:],self.hours_input.get_size(),self.hours_input.get_enabled()]
         text_minutes = [self.layers["minutes"],self.minutes_input.get_position_x(),self.minutes_input.get_position_y(),self.minutes_input.get_color()[1:],self.minutes_input.get_size(),self.minutes_input.get_enabled()]
         text_split = [self.layers["split"],self.split_input.get_position_x(),self.split_input.get_position_y(),self.split_input.get_color()[1:],self.split_input.get_size(),self.split_input.get_enabled()]
@@ -547,6 +567,7 @@ class Editor(tk.Frame):
             image_path,
             resolution,
             font_path,
+            hours_format,
             text_hours,
             text_minutes,
             text_split,

@@ -16,6 +16,7 @@ if __name__ == "__main__":
         image_path = config["imagepath"]
         font_path = config["fontpath"]
         monitor = config["monitor"].split(",")
+        hours_format = config["hours_format"]
         hours_params = parse_text(config["hours"])
         minutes_params = parse_text(config["minutes"])
         split_params = parse_text(config["split"])
@@ -24,6 +25,7 @@ if __name__ == "__main__":
             image_path,
             (monitor[1], monitor[2]),
             font_path,
+            hours_format,
             hours_params,
             minutes_params,
             split_params,

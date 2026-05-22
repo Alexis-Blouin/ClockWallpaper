@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
 
-from clock_wallpaper import ClockWallpaper
 from utils import check_path
 
 class MonitorSelect(tk.Frame):
