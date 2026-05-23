@@ -13,6 +13,8 @@ class ClockWallpaper:
         hours_params,
         minutes_params,
         split_params,
+        custom_params,
+        custom_char,
     ):
         draw, img = self.__open_image(image_path, resolution)
 
@@ -22,14 +24,17 @@ class ClockWallpaper:
             self.__get_layer(hours_params),
             self.__get_layer(minutes_params),
             self.__get_layer(split_params),
+            self.__get_layer(custom_params),
         )
-        for i in range(3):
+        for i in range(4):
             if i == layers[0] and self.__is_enabled(hours_params):
                 self.__draw_clock(draw, hours, font_path, hours_params)
             elif i == layers[1] and self.__is_enabled(minutes_params):
                 self.__draw_clock(draw, minutes, font_path, minutes_params)
             elif i == layers[2] and self.__is_enabled(split_params):
                 self.__draw_clock(draw, day_split, font_path, split_params)
+            elif i == layers[3] and self.__is_enabled(custom_params):
+                self.__draw_clock(draw, custom_char, font_path, custom_params)
 
         return img
 

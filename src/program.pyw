@@ -20,6 +20,8 @@ if __name__ == "__main__":
         hours_params = parse_text(config["hours"])
         minutes_params = parse_text(config["minutes"])
         split_params = parse_text(config["split"])
+        custom_params = parse_text(config["custom"])
+        custom_char = config["custom_char"]
 
         img = clockWallpaper.draw_clock(
             image_path,
@@ -29,6 +31,8 @@ if __name__ == "__main__":
             hours_params,
             minutes_params,
             split_params,
+            custom_params,
+            custom_char,
         )
 
         clockWallpaper.save_image(img, image_path)

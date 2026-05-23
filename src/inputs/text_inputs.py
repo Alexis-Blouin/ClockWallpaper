@@ -5,10 +5,18 @@ from utils import is_hex_color
 
 
 class TextInputs(tk.Frame):
-    def __init__(self, parent, label):
+    def __init__(self, parent, label, char=None):
         self.parent = parent
         super().__init__(self.parent)
+        row_num = 0
+        # Label or custom char input
         self.label = tk.Label(self, text=label, anchor="w")
+        self.label.grid(row=row_num, column=0, sticky="ew", padx=5)
+        if char is not None:
+            self.custom_char = tk.Entry(self)
+            self.custom_char.grid(row=0, column=1, sticky="nsew")
+            self.custom_char.insert(0, char)
+
         # Layer
         self.layer_up = tk.Button(
             self,
@@ -20,18 +28,36 @@ class TextInputs(tk.Frame):
             text=">",
             command=lambda: self.parent.change_layer("down", label.lower()),
         )
+        self.layer_up.grid(row=row_num, column=2, sticky="e", padx=5)
+        self.layer_down.grid(row=row_num, column=3, sticky="w", padx=5)
+        row_num += 1
+
         # Enabled
         self.enable_var = tk.IntVar()
         self.enable_check = tk.Checkbutton(self, text="Enabled", variable=self.enable_var)
         self.set_enabled(1)
+        self.enable_check.grid(row=row_num, column=1, sticky="ew", padx=5)
+        row_num += 1
+
         # Position
         self.position_x_label = tk.Label(self, text="Position X", anchor="w")
         self.position_x = tk.Entry(self)
         self.position_y_label = tk.Label(self, text="Position Y", anchor="w")
         self.position_y = tk.Entry(self)
+        self.position_x_label.grid(row=row_num, column=0, sticky="ew", padx=5)
+        self.position_x.grid(row=row_num, column=1, columnspan=2, sticky="ew", padx=5)
+        row_num += 1
+        self.position_y_label.grid(row=row_num, column=0, sticky="ew", padx=5)
+        self.position_y.grid(row=row_num, column=1, columnspan=2, sticky="ew", padx=5)
+        row_num += 1
+
         # Size
         self.size_label = tk.Label(self, text="Size", anchor="w")
         self.size = tk.Entry(self)
+        self.size_label.grid(row=row_num, column=0, sticky="ew", padx=5)
+        self.size.grid(row=row_num, column=1, columnspan=2, sticky="ew", padx=5)
+        row_num += 1
+
         # Color
         self.color_label = tk.Label(self, text="Color", anchor="w")
         self.color_entry = tk.Entry(self)
@@ -40,29 +66,6 @@ class TextInputs(tk.Frame):
             text="...",
             command=lambda: self.__select_color(self.color_entry),
         )
-
-        row_num = 0
-        # self.label.pack()
-        self.label.grid(row=row_num, column=0, sticky="ew", padx=5)
-        # Layer
-        self.layer_up.grid(row=row_num, column=1, sticky="e", padx=5)
-        self.layer_down.grid(row=row_num, column=2, sticky="w", padx=5)
-        row_num += 1
-        # Enabled
-        self.enable_check.grid(row=row_num, column=1, sticky="ew", padx=5)
-        row_num += 1
-        # Position
-        self.position_x_label.grid(row=row_num, column=0, sticky="ew", padx=5)
-        self.position_x.grid(row=row_num, column=1, columnspan=2, sticky="ew", padx=5)
-        row_num += 1
-        self.position_y_label.grid(row=row_num, column=0, sticky="ew", padx=5)
-        self.position_y.grid(row=row_num, column=1, columnspan=2, sticky="ew", padx=5)
-        row_num += 1
-        # Size
-        self.size_label.grid(row=row_num, column=0, sticky="ew", padx=5)
-        self.size.grid(row=row_num, column=1, columnspan=2, sticky="ew", padx=5)
-        row_num += 1
-        # Color
         self.color_label.grid(row=row_num, column=0, sticky="ew", padx=5)
         self.color_entry.grid(row=row_num, column=1, columnspan=2, sticky="ew", padx=5)
         self.color.grid(row=row_num, column=3, sticky="ew", padx=5, pady=2)
@@ -119,3 +122,10 @@ class TextInputs(tk.Frame):
 
     def get_input_config(self):
         return f"{self.get_position_x()},{self.get_position_y()},{self.get_color()[1:]},{self.get_size()},{self.get_enabled()}"
+
+    def set_custom_char(self, char):
+        self.custom_char.delete(0, "end")
+        self.custom_char.insert(0, char)
+
+    def get_custom_char(self):
+        return self.custom_char.get()

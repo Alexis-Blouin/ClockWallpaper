@@ -35,6 +35,8 @@ class ConfigEditor:
         hours,
         minutes,
         split,
+        custom,
+        custom_char,
     ):
         self.__read_config()
         self.config.add_section(config_name)
@@ -46,6 +48,8 @@ class ConfigEditor:
             hours,
             minutes,
             split,
+            custom,
+            custom_char,
         )
         with open(self.config_path, "w") as configfile:
             self.config.write(configfile)
@@ -60,6 +64,8 @@ class ConfigEditor:
         hours,
         minutes,
         split,
+        custom,
+        custom_char,
     ):
         self.__read_config()
         if self.edit_config_name == config_name:
@@ -71,6 +77,8 @@ class ConfigEditor:
                 hours,
                 minutes,
                 split,
+                custom,
+                custom_char,
             )
         else:
             self.config.remove_section(self.edit_config_name)
@@ -83,6 +91,8 @@ class ConfigEditor:
                 hours,
                 minutes,
                 split,
+                custom,
+                custom_char,
             )
         with open(self.config_path, "w") as configfile:
             self.config.write(configfile)
@@ -134,6 +144,8 @@ class ConfigEditor:
         hours,
         minutes,
         split,
+        custom,
+        custom_char,
     ):
         return {
             "imagepath": images_path,
@@ -143,6 +155,8 @@ class ConfigEditor:
             "hours": hours,
             "minutes": minutes,
             "split": split,
+            "custom": custom,
+            "custom_char": custom_char,
         }
 
     def __read_config(self):
