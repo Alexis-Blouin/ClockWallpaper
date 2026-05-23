@@ -164,33 +164,13 @@ class Editor(tk.Frame):
             self.place_inputs_by_layers()
 
             # Hours
-            self.hours_input.set_position_x(hours[1])
-            self.hours_input.set_position_y(hours[2])
-            self.hours_input.set_color(f"#{hours[3]}")
-            self.hours_input.set_size(hours[4])
-            self.hours_input.set_enabled(hours[5])
-
+            self.hours_input.set_inputs(hours)
             # Minutes
-            self.minutes_input.set_position_x(minutes[1])
-            self.minutes_input.set_position_y(minutes[2])
-            self.minutes_input.set_color(f"#{minutes[3]}")
-            self.minutes_input.set_size(minutes[4])
-            self.minutes_input.set_enabled(minutes[5])
-
+            self.minutes_input.set_inputs(minutes)
             # Split
-            self.split_input.set_position_x(split[1])
-            self.split_input.set_position_y(split[2])
-            self.split_input.set_color(f"#{split[3]}")
-            self.split_input.set_size(split[4])
-            self.split_input.set_enabled(split[5])
-
+            self.split_input.set_inputs(split)
             # Custom
-            self.custom_input.set_custom_char(custom_char)
-            self.custom_input.set_position_x(custom[1])
-            self.custom_input.set_position_y(custom[2])
-            self.custom_input.set_color(f"#{custom[3]}")
-            self.custom_input.set_size(custom[4])
-            self.custom_input.set_enabled(custom[5])
+            self.custom_input.set_inputs(custom, custom_char)
 
     @staticmethod
     def __check_config_name(event):
@@ -207,7 +187,7 @@ class Editor(tk.Frame):
             current_layer = self.layers["minutes"]
         elif element == "split":
             current_layer = self.layers["split"]
-        elif element == "custom":
+        else: # custom
             current_layer = self.layers["custom"]
 
         if current_layer == 0 and direction == "down":
@@ -215,6 +195,7 @@ class Editor(tk.Frame):
         if current_layer == 3 and direction == "up":
             return
 
+        layer_index_to_change = None
         if direction == "up":
             for key, value in self.layers.items():
                 if value == current_layer + 1:
@@ -249,12 +230,12 @@ class Editor(tk.Frame):
     def __set_image_preview(
             self, image_path, font_path, hours_format, hours_params, minutes_params, split_params, custom_params, custom_char
     ):
-        clockWallpaper = ClockWallpaper()
+        clock_wallpaper = ClockWallpaper()
 
         monitor_id = self.monitor_select.get_current()
         resolutions = self.__get_monitor_resolution(monitor_id)
 
-        img = clockWallpaper.draw_clock(
+        img = clock_wallpaper.draw_clock(
             image_path,
             resolutions,
             font_path,
@@ -322,57 +303,11 @@ class Editor(tk.Frame):
 
         hours_format = self.hours_format_radio.get_current()
 
-        hours_x = self.hours_input.get_position_x()
-        hours_x = hours_x if hours_x else 0
-        hours_y = self.hours_input.get_position_y()
-        hours_y = hours_y if hours_y else 0
-        hours_color = self.hours_input.get_color()[1:]
-        hours_color = hours_color if hours_color else "000000"
-        hours_size = self.hours_input.get_size()
-        hours_size = hours_size if hours_size else 1
-        hours_enabled = self.hours_input.get_enabled()
-        hours_params = [self.layers["hours"], hours_x, hours_y, hours_color, hours_size, hours_enabled]
-
-        minutes_x = self.minutes_input.get_position_x()
-        minutes_x = minutes_x if minutes_x else 0
-        minutes_y = self.minutes_input.get_position_y()
-        minutes_y = minutes_y if minutes_y else 0
-        minutes_color = self.minutes_input.get_color()[1:]
-        minutes_color = minutes_color if minutes_color else "000000"
-        minutes_size = self.minutes_input.get_size()
-        minutes_size = minutes_size if minutes_size else 1
-        minutes_enabled = self.minutes_input.get_enabled()
-        minutes_params = [
-            self.layers["minutes"],
-            minutes_x,
-            minutes_y,
-            minutes_color,
-            minutes_size,
-            minutes_enabled
-        ]
-
-        split_x = self.split_input.get_position_x()
-        split_x = split_x if split_x else 0
-        split_y = self.split_input.get_position_y()
-        split_y = split_y if split_y else 0
-        split_color = self.split_input.get_color()[1:]
-        split_color = split_color if split_color else "000000"
-        split_size = self.split_input.get_size()
-        split_size = split_size if split_size else 1
-        split_enabled = self.split_input.get_enabled()
-        split_params = [self.layers["split"], split_x, split_y, split_color, split_size, split_enabled]
-
+        hours_params = self.hours_input.get_inputs(self.layers["hours"])
+        minutes_params = self.minutes_input.get_inputs(self.layers["minutes"])
+        split_params = self.split_input.get_inputs(self.layers["split"])
+        custom_params = self.custom_input.get_inputs(self.layers["custom"])
         custom_char = self.custom_input.get_custom_char()
-        custom_x = self.custom_input.get_position_x()
-        custom_x = custom_x if custom_x else 0
-        custom_y = self.custom_input.get_position_y()
-        custom_y = custom_y if custom_y else 0
-        custom_color = self.custom_input.get_color()[1:]
-        custom_color = custom_color if custom_color else "000000"
-        custom_size = self.custom_input.get_size()
-        custom_size = custom_size if custom_size else 1
-        custom_enabled = self.custom_input.get_enabled()
-        custom_params = [self.layers["custom"], custom_x, custom_y, custom_color, custom_size, custom_enabled]
 
         self.__set_image_preview(
             image_path, font_path, hours_format, hours_params, minutes_params, split_params, custom_params, custom_char

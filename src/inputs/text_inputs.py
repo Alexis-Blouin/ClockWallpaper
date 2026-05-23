@@ -131,3 +131,24 @@ class TextInputs(tk.Frame):
 
     def get_custom_char(self):
         return self.custom_char.get()
+
+    def set_inputs(self, config, custom_char=None):
+        self.set_position_x(config[1])
+        self.set_position_y(config[2])
+        self.set_color(f"#{config[3]}")
+        self.set_size(config[4])
+        self.set_enabled(config[5])
+        if custom_char is not None:
+            self.set_custom_char(custom_char)
+
+    def get_inputs(self, layer):
+        x = self.get_position_x()
+        x = x if x else 0
+        y = self.get_position_y()
+        y = y if y else 0
+        color = self.get_color()[1:]
+        color = color if color else "000000"
+        size = self.get_size()
+        size = size if size else 1
+        enabled = self.get_enabled()
+        return [layer, x, y, color, size, enabled]
