@@ -119,6 +119,8 @@ class TextInputs(tk.Frame):
     def set_enabled(self, enabled):
         if enabled == 1:
             self.enable_check.select()
+        else:
+            self.enable_check.deselect()
 
     def get_input_config(self):
         return f"{self.get_position_x()},{self.get_position_y()},{self.get_color()[1:]},{self.get_size()},{self.get_enabled()}"
