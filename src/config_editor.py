@@ -22,7 +22,7 @@ class ConfigEditor:
     def apply_config(self, config_name):
         self.__read_config()
         self.config["DEFAULT"] = {"currentconfig": config_name}
-        with open(self.config_path, "w") as configfile:
+        with open(self.config_path, "w", encoding="utf-8") as configfile:
             self.config.write(configfile)
 
     def add_section(
@@ -51,7 +51,7 @@ class ConfigEditor:
             custom,
             custom_char,
         )
-        with open(self.config_path, "w") as configfile:
+        with open(self.config_path, "w", encoding="utf-8") as configfile:
             self.config.write(configfile)
 
     def modify_section(
@@ -94,7 +94,7 @@ class ConfigEditor:
                 custom,
                 custom_char,
             )
-        with open(self.config_path, "w") as configfile:
+        with open(self.config_path, "w", encoding="utf-8") as configfile:
             self.config.write(configfile)
 
     def get_config_name(self):
@@ -160,4 +160,4 @@ class ConfigEditor:
         }
 
     def __read_config(self):
-        self.config.read(self.config_path)
+        self.config.read(self.config_path, encoding="utf-8")
