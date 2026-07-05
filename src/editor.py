@@ -1,6 +1,7 @@
 import os
 import re
 import subprocess
+import time
 import tkinter as tk
 import screeninfo
 from PIL import Image, ImageTk
@@ -557,10 +558,9 @@ class Editor(tk.Frame):
             custom_char,
         )
 
+        image_path = clockWallpaper.get_save_path(image_path)
         clockWallpaper.save_image(img, image_path)
 
         desktop_wallpaper = IDesktopWallpaper.CoCreateInstance()
         monitor = desktop_wallpaper.GetMonitorDevicePathAt(int(monitor.split(",")[0]))
-        desktop_wallpaper.SetWallpaper(
-            monitor, clockWallpaper.get_save_path(image_path)
-        )
+        desktop_wallpaper.SetWallpaper(monitor, image_path)

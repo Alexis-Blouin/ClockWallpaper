@@ -128,7 +128,7 @@ class ClockWallpaper:
         return ImageDraw.Draw(img), img
 
     def save_image(self, img, image_path):
-        img.save(self.get_save_path(image_path))
+        img.save(image_path)
 
     def get_save_path(self, image_path):
         path_split = image_path.split("\\")

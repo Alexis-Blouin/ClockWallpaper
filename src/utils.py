@@ -1,3 +1,4 @@
+import os
 import re
 from tkinter import messagebox
 from colorthief import ColorThief
@@ -45,3 +46,7 @@ def parse_text(text):
     parsed_text[0] = int(parsed_text[0])
     parsed_text[5] = int(parsed_text[5])
     return parsed_text
+
+def delete_image(image_path):
+    if os.path.exists(image_path):
+        os.remove(image_path)

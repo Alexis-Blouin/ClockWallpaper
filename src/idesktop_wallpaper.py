@@ -1,3 +1,4 @@
+import time
 from pathlib import Path
 import random
 from ctypes import HRESULT, POINTER, pointer
@@ -5,6 +6,8 @@ from ctypes.wintypes import LPCWSTR, UINT, LPWSTR
 
 import comtypes
 from comtypes import IUnknown, GUID, COMMETHOD
+
+from src.utils import delete_image
 
 
 # The code from this class comes from this page : https://stackoverflow.com/questions/66375014/is-it-possible-to-use-idesktopwallpaper-in-python
@@ -52,6 +55,10 @@ class IDesktopWallpaper(IUnknown):
 
     def SetWallpaper(self, monitorId: str, wallpaper: str):
         self.__com_SetWallpaper(LPCWSTR(monitorId), LPCWSTR(wallpaper))
+
+        time.sleep(2) # Wait for the wallpaper to be properly set before deleting the image
+
+        delete_image(wallpaper)
 
     def GetWallpaper(self, monitorId: str) -> str:
         wallpaper = LPWSTR()
