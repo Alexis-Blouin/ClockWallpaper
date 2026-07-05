@@ -292,6 +292,8 @@ class Editor(tk.Frame):
     def on_color_picked(self, hex_color):
         self.color_palette.winfo_children()[-1].destroy()
         self.__add_swatch(hex_color)
+        self.clipboard_clear()
+        self.clipboard_append(hex_color)
 
     def update_image_preview(self):
         image_path = self.file_picker_image.get()
