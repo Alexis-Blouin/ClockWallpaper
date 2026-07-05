@@ -7,7 +7,7 @@ from ctypes.wintypes import LPCWSTR, UINT, LPWSTR
 import comtypes
 from comtypes import IUnknown, GUID, COMMETHOD
 
-from src.utils import delete_image
+from utils import delete_image
 
 
 # The code from this class comes from this page : https://stackoverflow.com/questions/66375014/is-it-possible-to-use-idesktopwallpaper-in-python

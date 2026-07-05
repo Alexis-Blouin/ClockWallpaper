@@ -35,8 +35,9 @@ if __name__ == "__main__":
             custom_char,
         )
 
+        image_path = clockWallpaper.get_save_path(image_path)
         clockWallpaper.save_image(img, image_path)
 
         desktop_wallpaper = IDesktopWallpaper.CoCreateInstance()
         monitor = desktop_wallpaper.GetMonitorDevicePathAt(int(monitor[0]))
-        desktop_wallpaper.SetWallpaper(monitor, clockWallpaper.get_save_path(image_path))
+        desktop_wallpaper.SetWallpaper(monitor, image_path)
